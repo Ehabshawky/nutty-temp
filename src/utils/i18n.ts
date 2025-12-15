@@ -137,6 +137,55 @@ const resources = {
       featuredProjects: "Featured Projects",
       teamMembers: "Our Team",
       testimonialsSections: "What People Say",
+      
+      // Projects
+      projects: {
+        title: "Our Projects",
+        lead: "Innovative initiatives transforming science education globally",
+        categories: {
+          all: "All Projects",
+          education: "Education",
+          technology: "Technology",
+          personalized: "Personalized STEM",
+          media: "Media",
+          product: "Product",
+        },
+        featured: "Featured",
+        meta: {
+          members: "Members",
+        },
+        action: {
+          viewProject: "View Project",
+        },
+        cta: {
+          title: "Have a Project Idea?",
+          desc: "We are always looking for innovative partnerships and collaborations.",
+          button: "Propose a Project",
+        },
+      },
+
+      // Services Extra
+      services: {
+        lead: "Explore our comprehensive range of science education services designed to inspire and educate",
+        schoolProgramsTitle: "School Programs",
+        schoolProgramsDesc: "Curriculum-aligned science programs for schools",
+        stemTitle: "STEM Education",
+        stemDesc: "Comprehensive STEM learning pathways",
+        onlineTitle: "Online Courses",
+        onlineDesc: "Virtual science learning experiences",
+        competitionsTitle: "Science Competitions",
+        competitionsDesc: "Annual science fairs and hackathons",
+        stats: {
+          satisfactionRate: "Satisfaction Rate",
+          happyStudents: "Happy Students",
+          schoolsPartnered: "Schools Partnered",
+          supportAvailable: "Support Available",
+        },
+        cta: {
+          title: "Ready to Start Your Science Journey?",
+          desc: "Book a workshop or consultation with our expert scientists today!",
+        },
+      },
       // Articles
       articlesSection: {
         title: "Science Articles & Insights",
@@ -635,7 +684,7 @@ i18n.use(initReactI18next).init({
     escapeValue: false,
   },
   detection: {
-    order: ["localStorage", "navigator"],
+    order: ["localStorage"],
     caches: ["localStorage"],
   },
 });

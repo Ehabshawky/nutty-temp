@@ -1,6 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: "export", 
+
   images: {
+    unoptimized: true, 
     remotePatterns: [
       {
         protocol: "https",
@@ -9,6 +12,7 @@ const nextConfig = {
       },
     ],
   },
+
   // Internationalization handled via i18n in the app (react-i18next)
   // Allow local dev origin (e.g. 192.168.3.70) to request /_next/* resources
   // This avoids the cross-origin dev-server warning during development.

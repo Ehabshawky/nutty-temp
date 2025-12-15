@@ -17,6 +17,8 @@ function writeData(data: any) {
   fs.writeFileSync(DATA_PATH, JSON.stringify(data, null, 2), "utf8");
 }
 
+export const dynamic = 'force-static';
+
 export async function GET() {
   const data = readData();
   if (!data) {

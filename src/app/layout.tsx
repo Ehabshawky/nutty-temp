@@ -5,7 +5,6 @@ import Providers from "./providers";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import { getFontForLanguage, getFontClasses, type FontLanguage, PRIMARY_FONTS, SECONDARY_FONTS } from './fonts';
-import { cookies } from "next/headers";
 
 import ClientComponents from "@/components/ClientComponents";
 import LoadingOverlay from "@/components/LoadingOverlay";
@@ -48,16 +47,15 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const cookieStore = await cookies();
-  const cookieLang = cookieStore.get("language")?.value;
-  const language: FontLanguage = (cookieLang === 'ar' || cookieLang === 'en') ? cookieLang : 'en';
+  // Static export cannot use cookies() at build time
+  const language: FontLanguage = 'en';
   const htmlLang = language;
-  const htmlDir = language === "ar" ? "rtl" : "ltr";
+  const htmlDir = "ltr";
   
   /* Removed dynamic fontSettings and fontClasses to allow CSS-based switching */
 
@@ -145,7 +143,7 @@ export default async function RootLayout({
               id="main-content"
               className="flex-grow pt-16 md:pt-20"
               role="main"
-              aria-label={language === "ar" ? "المحتوى الرئيسي" : "Main content"}
+              aria-label="Main content"
             >
               {children}
             </main>

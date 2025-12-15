@@ -13,126 +13,41 @@ import {
   TrendingUp,
   Filter
 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+
+// Import articles from shared data
+// @ts-ignore
+import { articles as originalArticles } from '@/data/articles';
+
+interface Article {
+  id: string | number;
+  title: string;
+  excerpt: string;
+  author: string;
+  date: string;
+  readTime: string;
+  category: string;
+  image: string;
+  featured: boolean;
+  trending: boolean;
+  views: number;
+  comments: number;
+}
 
 const Articles = () => {
   const { t, i18n } = useTranslation();
+  const router = useRouter();
   const [activeCategory, setActiveCategory] = useState('all');
   const dir = i18n.language === 'ar' ? 'rtl' : 'ltr';
 
-  const articles = [
-    {
-      id: 1,
-      title: i18n.language === 'ar' ? 'مستقبل تعليم STEM في عالم ما بعد الجائحة' : 'The Future of STEM Education in a Post-Pandemic World',
-      excerpt: i18n.language === 'ar' ? 'كيف تعيد التكنولوجيا تشكيل تعليم العلوم وما يعنيه ذلك للجيل القادم من العلماء.' : 'How technology is reshaping science education and what it means for the next generation of scientists.',
-      author: i18n.language === 'ar' ? 'د. سارة جونسون' : 'Dr. Sarah Johnson',
-      date: i18n.language === 'ar' ? '١٥ مارس ٢٠٢٤' : 'Mar 15, 2024',
-      readTime: i18n.language === 'ar' ? '٨ دقائق للقراءة' : '8 min read',
-      category: 'education',
-      views: 2450,
-      comments: 42,
-      image: 'https://images.unsplash.com/photo-1532094349884-543bc11b234d',
-      featured: true,
-      trending: true
-    },
-    {
-      id: 2,
-      title: i18n.language === 'ar' ? '١٠ تجارب كيميائية بسيطة يمكنك القيام بها في المنزل' : '10 Simple Chemistry Experiments You Can Do at Home',
-      excerpt: i18n.language === 'ar' ? 'تجارب آمنة ومثيرة باستخدام أدوات منزلية لإثارة الفضول لدى العقول الشابة.' : 'Safe and exciting experiments using household items to spark curiosity in young minds.',
-      author: i18n.language === 'ar' ? 'د. ماريا رودريغيز' : 'Dr. Maria Rodriguez',
-      date: i18n.language === 'ar' ? '٢٨ فبراير ٢٠٢٤' : 'Feb 28, 2024',
-      readTime: i18n.language === 'ar' ? '٦ دقائق للقراءة' : '6 min read',
-      category: 'chemistry',
-      views: 1890,
-      comments: 31,
-      image: 'https://images.unsplash.com/photo-1532187863486-abf9dbad1b69',
-      featured: true,
-      trending: true
-    },
-    {
-      id: 3,
-      title: i18n.language === 'ar' ? 'دور الذكاء الاصطناعي في تعلم العلوم المخصص' : 'The Role of AI in Personalized Science Learning',
-      excerpt: i18n.language === 'ar' ? 'استكشاف كيف تحدث ثورة الذكاء الاصطناعي في مسارات التعليم الفردية.' : 'Exploring how artificial intelligence is revolutionizing individualized education paths.',
-      author: i18n.language === 'ar' ? 'أحمد حسن' : 'Ahmed Hassan',
-      date: i18n.language === 'ar' ? '١٥ فبراير ٢٠٢٤' : 'Feb 15, 2024',
-      readTime: i18n.language === 'ar' ? '١٠ دقائق للقراءة' : '10 min read',
-      category: 'technology',
-      views: 3120,
-      comments: 56,
-      image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995',
-      featured: false,
-      trending: true
-    },
-    {
-      id: 4,
-      title: i18n.language === 'ar' ? 'فهم تغير المناخ: دليل للعلماء الشباب' : 'Understanding Climate Change: A Guide for Young Scientists',
-      excerpt: i18n.language === 'ar' ? 'تفكيك مفاهيم المناخ المعقدة إلى مفاهيم مفهومة للطلاب.' : 'Breaking down complex climate science into understandable concepts for students.',
-      author: i18n.language === 'ar' ? 'د. فاطمة المنصوري' : 'Dr. Fatima Al-Mansoori',
-      date: i18n.language === 'ar' ? '٣٠ يناير ٢٠٢٤' : 'Jan 30, 2024',
-      readTime: i18n.language === 'ar' ? '١٢ دقيقة للقراءة' : '12 min read',
-      category: 'environment',
-      views: 1670,
-      comments: 28,
-      image: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09',
-      featured: false,
-      trending: false
-    },
-    {
-      id: 5,
-      title: i18n.language === 'ar' ? 'بناء روبوتك الأول: دليل خطوة بخطوة' : 'Building Your First Robot: A Step-by-Step Guide',
-      excerpt: i18n.language === 'ar' ? 'مشروع روبوتات صديق للمبتدئين باستخدام مكونات ميسورة التكلفة وبرمجة بسيطة.' : 'Beginner-friendly robotics project using affordable components and simple programming.',
-      author: i18n.language === 'ar' ? 'كينجي تاناكا' : 'Kenji Tanaka',
-      date: i18n.language === 'ar' ? '٢٢ يناير ٢٠٢٤' : 'Jan 22, 2024',
-      readTime: i18n.language === 'ar' ? '١٥ دقيقة للقراءة' : '15 min read',
-      category: 'robotics',
-      views: 2230,
-      comments: 39,
-      image: 'https://images.unsplash.com/photo-1581094794329-c8112a89af12',
-      featured: false,
-      trending: false
-    },
-    {
-      id: 6,
-      title: i18n.language === 'ar' ? 'علم نفس الفضول العلمي لدى الأطفال' : 'The Psychology of Scientific Curiosity in Children',
-      excerpt: i18n.language === 'ar' ? 'رؤى قائمة على الأبحاث حول رعاية الفضول الطبيعي وتطوير التفكير النقدي.' : 'Research-based insights on nurturing natural curiosity and developing critical thinking.',
-      author: i18n.language === 'ar' ? 'د. سارة جونسون' : 'Dr. Sarah Johnson',
-      date: i18n.language === 'ar' ? '١٠ يناير ٢٠٢٤' : 'Jan 10, 2024',
-      readTime: i18n.language === 'ar' ? '٩ دقائق للقراءة' : '9 min read',
-      category: 'psychology',
-      views: 1450,
-      comments: 24,
-      image: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3',
-      featured: false,
-      trending: false
-    },
-    {
-      id: 7,
-      title: i18n.language === 'ar' ? 'مختبرات الواقع الافتراضي: فصل الغد الدراسي' : 'Virtual Reality Labs: The Classroom of Tomorrow',
-      excerpt: i18n.language === 'ar' ? 'كيف تخلق تقنية الواقع الافتراضي تجارب تعلم غامرة دون حدود مادية.' : 'How VR technology is creating immersive learning experiences without physical boundaries.',
-      author: i18n.language === 'ar' ? 'أحمد حسن' : 'Ahmed Hassan',
-      date: i18n.language === 'ar' ? '١٨ ديسمبر ٢٠٢٣' : 'Dec 18, 2023',
-      readTime: i18n.language === 'ar' ? '١١ دقيقة للقراءة' : '11 min read',
-      category: 'technology',
-      views: 2780,
-      comments: 47,
-      image: 'https://images.unsplash.com/photo-1593508512255-86ab42a8e620',
-      featured: false,
-      trending: false
-    },
-    {
-      id: 8,
-      title: i18n.language === 'ar' ? 'المرأة في العلوم: كسر الحواجز وبناء المستقبل' : 'Women in Science: Breaking Barriers and Building Futures',
-      excerpt: i18n.language === 'ar' ? 'الاحتفال بالعالمات ومناقشة استراتيجيات لتشجيع المزيد من الفتيات في مجالات STEM.' : 'Celebrating female scientists and discussing strategies to encourage more girls in STEM.',
-      author: i18n.language === 'ar' ? 'د. ماريا رودريغيز' : 'Dr. Maria Rodriguez',
-      date: i18n.language === 'ar' ? '٥ ديسمبر ٢٠٢٣' : 'Dec 5, 2023',
-      readTime: i18n.language === 'ar' ? '٧ دقائق للقراءة' : '7 min read',
-      category: 'diversity',
-      views: 1980,
-      comments: 35,
-      image: 'https://images.unsplash.com/photo-1581094794329-c8112a89af12',
-      featured: false,
-      trending: false
-    }
-  ];
+  const articles: Article[] = originalArticles.map((article: any) => ({
+    ...article,
+    title: i18n.language === 'ar' ? article.title_ar : article.title_en,
+    excerpt: i18n.language === 'ar' ? article.excerpt_ar : article.excerpt_en,
+    author: i18n.language === 'ar' ? article.author_ar : article.author_en,
+    date: i18n.language === 'ar' ? article.date_ar : article.date_en,
+    readTime: i18n.language === 'ar' ? article.readTime_ar : article.readTime_en,
+  }));
 
   const categories = [
     { id: 'all', label: t('articlesSection.categories.all'), count: articles.length },
@@ -208,7 +123,8 @@ const Articles = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
-              className="group"
+              className="group cursor-pointer"
+              onClick={() => router.push(`/article/${article.id}`)}
             >
               <div className="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300">
                 {/* Image */}
@@ -313,7 +229,8 @@ const Articles = () => {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.1 }}
-                  className="group"
+                  className="group cursor-pointer"
+                  onClick={() => router.push(`/article/${article.id}`)}
                 >
                   <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 h-full">
                     <div className="flex items-center mb-4">
@@ -357,7 +274,8 @@ const Articles = () => {
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.05 }}
                 whileHover={{ y: -5 }}
-                className="group"
+                className="group cursor-pointer"
+                onClick={() => router.push(`/article/${article.id}`)}
               >
                 <div className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 h-full">
                   {/* Image */}

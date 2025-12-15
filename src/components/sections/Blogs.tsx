@@ -16,6 +16,25 @@ import {
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
+// Import blog posts from shared data
+// @ts-ignore
+import { blogPosts as originalBlogPosts } from '@/data/blogs';
+
+interface BlogPost {
+  id: string | number;
+  title: string;
+  excerpt: string;
+  author: string;
+  date: string;
+  readTime: string;
+  category: string;
+  image: string;
+  featured: boolean;
+  views: number;
+  comments: number;
+  tags: string[];
+}
+
 const Blogs = () => {
   const { t, i18n } = useTranslation();
   const router = useRouter();
@@ -23,128 +42,15 @@ const Blogs = () => {
   const [activeCategory, setActiveCategory] = useState('all');
   const dir = i18n.language === 'ar' ? 'rtl' : 'ltr';
 
-  const blogPosts = [
-    {
-      id: 1,
-      title: i18n.language === 'ar' ? 'كيفية إنشاء مختبر علوم منزلي للأطفال' : 'How to Create a Home Science Lab for Kids',
-      excerpt: i18n.language === 'ar' ? 'دليل كامل لإنشاء مختبر علوم آمن ومثير في المنزل باستخدام مواد يومية.' : 'A complete guide to setting up a safe and exciting science lab at home with everyday materials.',
-      author: i18n.language === 'ar' ? 'د. ماريا رودريغيز' : 'Dr. Maria Rodriguez',
-      date: i18n.language === 'ar' ? '١٠ أبريل ٢٠٢٤' : 'Apr 10, 2024',
-      readTime: i18n.language === 'ar' ? '١٠ دقائق للقراءة' : '10 min read',
-      category: 'parenting',
-      tags: i18n.language === 'ar' ? ['اصنعها بنفسك', 'السلامة', 'تجارب'] : ['DIY', 'Safety', 'Experiments'],
-      views: 3120,
-      comments: 45,
-      likes: 189,
-      image: 'https://images.unsplash.com/photo-1532187863486-abf9dbad1b69',
-      featured: true
-    },
-    {
-      id: 2,
-      title: i18n.language === 'ar' ? 'علم الأعصاب وراء الفضول لدى الأطفال' : 'The Neuroscience Behind Curiosity in Children',
-      excerpt: i18n.language === 'ar' ? 'فهم كيفية تطور الفضول في الدماغ وطرق عملية لتنميته.' : 'Understanding how the brain develops curiosity and practical ways to nurture it.',
-      author: i18n.language === 'ar' ? 'د. سارة جونسون' : 'Dr. Sarah Johnson',
-      date: i18n.language === 'ar' ? '٥ أبريل ٢٠٢٤' : 'Apr 5, 2024',
-      readTime: i18n.language === 'ar' ? '١٢ دقيقة للقراءة' : '12 min read',
-      category: 'neuroscience',
-      tags: i18n.language === 'ar' ? ['علم الدماغ', 'التطوير', 'التعلم'] : ['Brain Science', 'Development', 'Learning'],
-      views: 2870,
-      comments: 32,
-      likes: 156,
-      image: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3',
-      featured: true
-    },
-    {
-      id: 3,
-      title: i18n.language === 'ar' ? 'العلوم المستدامة: تجارب صديقة للبيئة' : 'Sustainable Science: Eco-Friendly Experiments',
-      excerpt: i18n.language === 'ar' ? 'أنشطة علمية واعية بيئيًا تعلم مبادئ الاستدامة.' : 'Environmentally conscious science activities that teach sustainability principles.',
-      author: i18n.language === 'ar' ? 'د. فاطمة المنصوري' : 'Dr. Fatima Al-Mansoori',
-      date: i18n.language === 'ar' ? '٢٨ مارس ٢٠٢٤' : 'Mar 28, 2024',
-      readTime: i18n.language === 'ar' ? '٨ دقائق للقراءة' : '8 min read',
-      category: 'sustainability',
-      tags: i18n.language === 'ar' ? ['صديقة للبيئة', 'إعادة التدوير', 'الطبيعة'] : ['Eco-Friendly', 'Recycling', 'Nature'],
-      views: 2450,
-      comments: 28,
-      likes: 132,
-      image: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09',
-      featured: false
-    },
-    {
-      id: 4,
-      title: i18n.language === 'ar' ? 'البرمجة للأطفال: من أين تبدأ' : 'Coding for Kids: Where to Start with Programming',
-      excerpt: i18n.language === 'ar' ? 'مفاهيم البرمجة المناسبة للعمر والأدوات لتقديم البرمجة للأطفال.' : 'Age-appropriate programming concepts and tools to introduce coding to children.',
-      author: i18n.language === 'ar' ? 'أحمد حسن' : 'Ahmed Hassan',
-      date: i18n.language === 'ar' ? '٢٢ مارس ٢٠٢٤' : 'Mar 22, 2024',
-      readTime: i18n.language === 'ar' ? '١٥ دقيقة للقراءة' : '15 min read',
-      category: 'technology',
-      tags: i18n.language === 'ar' ? ['برمجة', 'coding', 'STEM'] : ['Coding', 'Programming', 'STEM'],
-      views: 3210,
-      comments: 52,
-      likes: 210,
-      image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c',
-      featured: false
-    },
-    {
-      id: 5,
-      title: i18n.language === 'ar' ? 'سحر كيمياء المطبخ' : 'The Magic of Kitchen Chemistry',
-      excerpt: i18n.language === 'ar' ? 'تفاعلات كيميائية مذهلة يمكنك إنشاؤها بمكونات من مطبخك.' : 'Amazing chemical reactions you can create with ingredients from your kitchen.',
-      author: i18n.language === 'ar' ? 'د. ماريا رودريغيز' : 'Dr. Maria Rodriguez',
-      date: i18n.language === 'ar' ? '١٥ مارس ٢٠٢٤' : 'Mar 15, 2024',
-      readTime: i18n.language === 'ar' ? '٧ دقائق للقراءة' : '7 min read',
-      category: 'chemistry',
-      tags: i18n.language === 'ar' ? ['علوم المطبخ', 'تفاعلات', 'طعام'] : ['Kitchen Science', 'Reactions', 'Food'],
-      views: 1980,
-      comments: 24,
-      likes: 98,
-      image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64',
-      featured: false
-    },
-    {
-      id: 6,
-      title: i18n.language === 'ar' ? 'بناء المرونة من خلال الفشل العلمي' : 'Building Resilience Through Science Failures',
-      excerpt: i18n.language === 'ar' ? 'كيف تعلم التجارب الفاشلة الأطفال المثابرة ومهارات حل المشكلات.' : 'How failed experiments teach children perseverance and problem-solving skills.',
-      author: i18n.language === 'ar' ? 'د. سارة جونسون' : 'Dr. Sarah Johnson',
-      date: i18n.language === 'ar' ? '٨ مارس ٢٠٢٤' : 'Mar 8, 2024',
-      readTime: i18n.language === 'ar' ? '٩ دقائق للقراءة' : '9 min read',
-      category: 'psychology',
-      tags: i18n.language === 'ar' ? ['المرونة', 'عقلية النمو', 'التعلم'] : ['Resilience', 'Growth Mindset', 'Learning'],
-      views: 1760,
-      comments: 19,
-      likes: 87,
-      image: 'https://images.unsplash.com/photo-1542831371-29b0f74f9713',
-      featured: false
-    },
-    {
-      id: 7,
-      title: i18n.language === 'ar' ? 'علم الفلك للمبتدئين: دليل مراقبة النجوم' : 'Astronomy for Beginners: Stargazing Guide',
-      excerpt: i18n.language === 'ar' ? 'كيف تبدأ استكشاف سماء الليل مع الأطفال، لا حاجة لتلسكوب.' : 'How to start exploring the night sky with children, no telescope required.',
-      author: i18n.language === 'ar' ? 'د. فاطمة المنصوري' : 'Dr. Fatima Al-Mansoori',
-      date: i18n.language === 'ar' ? '١ مارس ٢٠٢٤' : 'Mar 1, 2024',
-      readTime: i18n.language === 'ar' ? '١١ دقيقة للقراءة' : '11 min read',
-      category: 'astronomy',
-      tags: i18n.language === 'ar' ? ['نجوم', 'كواكب', 'مراقبة'] : ['Stars', 'Planets', 'Observation'],
-      views: 2230,
-      comments: 31,
-      likes: 145,
-      image: 'https://images.unsplash.com/photo-1446776653964-20c1d3a81b06',
-      featured: false
-    },
-    {
-      id: 8,
-      title: i18n.language === 'ar' ? 'مستقبل تكنولوجيا التعليم: اتجاهات تستحق المراقبة' : 'The Future of EdTech: Trends to Watch',
-      excerpt: i18n.language === 'ar' ? 'تقنيات ناشئة تشكل مستقبل التعليم.' : 'Emerging technologies that are shaping the future of education.',
-      author: i18n.language === 'ar' ? 'أحمد حسن' : 'Ahmed Hassan',
-      date: i18n.language === 'ar' ? '٢٤ فبراير ٢٠٢٤' : 'Feb 24, 2024',
-      readTime: i18n.language === 'ar' ? '١٤ دقيقة للقراءة' : '14 min read',
-      category: 'technology',
-      tags: i18n.language === 'ar' ? ['تكنولوجيا التعليم', 'ابتكار', 'مستقبل'] : ['EdTech', 'Innovation', 'Future'],
-      views: 2890,
-      comments: 47,
-      likes: 178,
-      image: 'https://images.unsplash.com/photo-1518709268805-4e9042af2176',
-      featured: false
-    }
-  ];
+  const blogPosts: BlogPost[] = originalBlogPosts.map((post: any) => ({
+    ...post,
+    title: i18n.language === 'ar' ? post.title_ar : post.title_en,
+    excerpt: i18n.language === 'ar' ? post.excerpt_ar : post.excerpt_en,
+    author: i18n.language === 'ar' ? post.author_ar : post.author_en,
+    date: i18n.language === 'ar' ? post.date_ar : post.date_en,
+    readTime: i18n.language === 'ar' ? post.readTime_ar : post.readTime_en,
+    tags: i18n.language === 'ar' ? post.tags_ar : post.tags_en,
+  }));
 
   const categories = [
     { id: 'all', label: t('blogsSection.categories.all'), count: blogPosts.length },

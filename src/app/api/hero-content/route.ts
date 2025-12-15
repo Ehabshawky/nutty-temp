@@ -1,6 +1,8 @@
 // app/api/hero-content/route.ts
 import { NextResponse } from "next/server";
 
+export const dynamic = 'force-static';
+
 export async function GET() {
   // Fetch from database
   return NextResponse.json({
