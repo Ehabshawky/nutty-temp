@@ -9,6 +9,7 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        "nutty-orange": "#FF6B35",
         "nutty-yellow": "#FFD700",
         "nutty-blue": "#1E40AF",
         "nutty-green": "#10B981",

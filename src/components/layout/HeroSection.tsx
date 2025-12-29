@@ -48,6 +48,14 @@ const HeroSection = () => {
         ? "تعلم الروبوتات والبرمجة"
         : "Learning robotics and programming",
     },
+    {
+      id: 4,
+      image: "/hero4.jpg",
+      title: isRTL ? "التعلم العملي" : "Hands-On Learning",
+      description: isRTL
+        ? "ورش عمل علمية تفاعلية للعقول الصغيرة"
+        : "Interactive science workshops for young minds",
+    },
   ];
 
   const statsData = [
@@ -69,21 +77,32 @@ const HeroSection = () => {
     },
   ];
 
-  // Auto slide change
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, [heroSlides.length]);
-
   // Load editable hero content from API (if present)
   const [editableHero, setEditableHero] = useState<any>(null);
+
+  // Auto slide change with dynamic duration
+  useEffect(() => {
+    const slides = (editableHero?.slides && editableHero.slides.length > 0) 
+      ? editableHero.slides 
+      : heroSlides;
+    
+    if (slides.length <= 1) return;
+
+    const currentSlideData = slides[currentSlide % slides.length];
+    // Set 20 seconds for video, 8 seconds for images
+    const duration = currentSlideData?.video ? 40000 : 8000;
+
+    const timeout = setTimeout(() => {
+      setCurrentSlide((prev) => (prev + 1) % slides.length);
+    }, duration);
+
+    return () => clearTimeout(timeout);
+  }, [currentSlide, editableHero?.slides, heroSlides]);
   useEffect(() => {
     let mounted = true;
     async function load() {
       try {
-        const res = await fetch("/api/site-content");
+        const res = await fetch(`/api/site-content?t=${Date.now()}`);
         if (!res.ok) return;
         const data = await res.json();
         if (!mounted) return;
@@ -99,51 +118,98 @@ const HeroSection = () => {
   }, []);
 
   const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
+    const slides = (editableHero?.slides && editableHero.slides.length > 0) 
+      ? editableHero.slides 
+      : heroSlides;
+    setCurrentSlide((prev) => (prev + 1) % slides.length);
   };
 
   const prevSlide = () => {
+    const slides = (editableHero?.slides && editableHero.slides.length > 0) 
+      ? editableHero.slides 
+      : heroSlides;
     setCurrentSlide(
-      (prev) => (prev - 1 + heroSlides.length) % heroSlides.length
+      (prev) => (prev - 1 + slides.length) % slides.length
     );
   };
 
   return (
     <section id="home" className="relative pt-20 overflow-hidden">
-      {/* Manual Slider */}
+      {/* Background Image - Use editable hero slides if available, otherwise use hardcoded slides */}
       <div className="absolute inset-0 z-0">
-        {heroSlides.map((slide, index) => (
-          <div
-            key={slide.id}
-            className={`absolute inset-0 transition-opacity duration-1000 ${
-              index === currentSlide
-                ? "opacity-100"
-                : "opacity-0 pointer-events-none"
-            }`}
-          >
-            <div
-              className="absolute inset-0 bg-cover bg-center"
-              style={{ backgroundImage: `url(${slide.image})` }}
-            />
-            <div className="absolute inset-0 bg-black/50" />
-          </div>
-        ))}
+        {editableHero?.slides && editableHero.slides.length > 0 ? (
+          // Use editable hero slides
+          <>
+            {editableHero.slides.map((slide: any, index: number) => (
+              <div
+                key={slide.id}
+                className={`absolute inset-0 transition-opacity duration-[1500ms] ${
+                  index === currentSlide % editableHero.slides.length
+                    ? "opacity-100"
+                    : "opacity-0 pointer-events-none"
+                }`}
+              >
+                {slide.video ? (
+                  <video
+                    src={slide.video}
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    className="absolute inset-0 w-full h-full object-cover"
+                  />
+                ) : (
+                  <div
+                    className="absolute inset-0 bg-contain md:bg-cover bg-no-repeat bg-center"
+                    style={{ backgroundImage: `url(${slide.image})` }}
+                  />
+                )}
+                <div className="absolute inset-0 bg-black/40" />
+              </div>
+            ))}
+          </>
+        ) : (
+          // Fallback to hardcoded slides
+          <>
+            {heroSlides.map((slide, index) => (
+              <div
+                key={slide.id}
+                className={`absolute inset-0 transition-opacity duration-[1500ms] ${
+                  index === currentSlide
+                    ? "opacity-100"
+                    : "opacity-0 pointer-events-none"
+                }`}
+              >
+                <div
+                  className="absolute inset-0 bg-contain md:bg-cover bg-no-repeat bg-center"
+                  style={{ backgroundImage: `url(${slide.image})` }}
+                />
+                <div className="absolute inset-0 bg-black/60" />
+              </div>
+            ))}
+          </>
+        )}
       </div>
 
-      {/* Navigation Buttons */}
-      <button
-        onClick={prevSlide}
-        className="absolute left-4 top-1/2 transform -translate-y-1/2 z-20 bg-white/20 hover:bg-white/40 backdrop-blur-sm rounded-full p-3 transition-all duration-300"
-      >
-        <ChevronLeft className="h-6 w-6 text-white" />
-      </button>
+      {/* Navigation Buttons - Show if we have multiple slides */}
+      {((editableHero?.slides && editableHero.slides.length > 1) || 
+        (!editableHero?.slides && heroSlides.length > 1)) && (
+        <>
+          <button
+            onClick={prevSlide}
+            className="absolute left-4 top-1/2 transform -translate-y-1/2 z-20 bg-white/20 hover:bg-white/40 backdrop-blur-sm rounded-full p-3 transition-all duration-300"
+          >
+            <ChevronLeft className="h-6 w-6 text-white" />
+          </button>
 
-      <button
-        onClick={nextSlide}
-        className="absolute right-4 top-1/2 transform -translate-y-1/2 z-20 bg-white/20 hover:bg-white/40 backdrop-blur-sm rounded-full p-3 transition-all duration-300"
-      >
-        <ChevronRight className="h-6 w-6 text-white" />
-      </button>
+          <button
+            onClick={nextSlide}
+            className="absolute right-4 top-1/2 transform -translate-y-1/2 z-20 bg-white/20 hover:bg-white/40 backdrop-blur-sm rounded-full p-3 transition-all duration-300"
+          >
+            <ChevronRight className="h-6 w-6 text-white" />
+          </button>
+        </>
+      )}
 
       {/* Main Content */}
       <div className="relative z-10">
@@ -176,9 +242,10 @@ const HeroSection = () => {
               transition={{ duration: 0.8 }}
               className="text-5xl md:text-7xl font-bold text-white mb-6"
             >
-              {editableHero
-                ? (isRTL ? editableHero.title_ar : editableHero.title_en) ||
-                  t("heroTitle")
+              {editableHero?.slides && editableHero.slides.length > 0
+                ? (isRTL 
+                    ? editableHero.slides[currentSlide % editableHero.slides.length]?.title_ar 
+                    : editableHero.slides[currentSlide % editableHero.slides.length]?.title_en) || t("heroTitle")
                 : t("heroTitle")}
             </motion.h1>
 
@@ -189,10 +256,10 @@ const HeroSection = () => {
               transition={{ duration: 0.8, delay: 0.2 }}
               className="text-2xl md:text-3xl text-yellow-400 mb-8"
             >
-              {editableHero
+              {editableHero?.slides && editableHero.slides.length > 0
                 ? (isRTL
-                    ? editableHero.subtitle_ar
-                    : editableHero.subtitle_en) || t("heroSubtitle")
+                    ? editableHero.slides[currentSlide % editableHero.slides.length]?.subtitle_ar
+                    : editableHero.slides[currentSlide % editableHero.slides.length]?.subtitle_en) || t("heroSubtitle")
                 : t("heroSubtitle")}
             </motion.h2>
 
@@ -203,10 +270,10 @@ const HeroSection = () => {
               transition={{ duration: 0.8, delay: 0.4 }}
               className="text-xl text-white/90 max-w-3xl mx-auto mb-12"
             >
-              {editableHero
+              {editableHero?.slides && editableHero.slides.length > 0
                 ? (isRTL
-                    ? editableHero.description_ar
-                    : editableHero.description_en) || t("heroDescription")
+                    ? editableHero.slides[currentSlide % editableHero.slides.length]?.description_ar
+                    : editableHero.slides[currentSlide % editableHero.slides.length]?.description_en) || t("heroDescription")
                 : t("heroDescription")}
             </motion.p>
 
@@ -219,13 +286,23 @@ const HeroSection = () => {
             >
               <button
                 className="px-8 py-3 bg-yellow-500 text-gray-900 rounded-full font-semibold text-lg hover:bg-yellow-400 transition-colors transform hover:scale-105 shadow-lg"
-                onClick={() => console.log("Get Started")}
+                onClick={() => {
+                  const contactSection = document.getElementById("contact");
+                  if (contactSection) {
+                    contactSection.scrollIntoView({ behavior: "smooth" });
+                  }
+                }}
               >
                 {t("getStarted")}
               </button>
               <button
                 className="px-8 py-3 border-2 border-white text-white rounded-full font-semibold text-lg hover:bg-white hover:text-gray-900 transition-colors shadow-lg"
-                onClick={() => console.log("Learn More")}
+                onClick={() => {
+                  const servicesSection = document.getElementById("services");
+                  if (servicesSection) {
+                    servicesSection.scrollIntoView({ behavior: "smooth" });
+                  }
+                }}
               >
                 {t("learnMore")}
               </button>

@@ -2,6 +2,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
+import Link from "next/link";
 import {
   Users,
   Target,
@@ -11,53 +12,94 @@ import {
   Globe,
   Shield,
   Heart,
+  ArrowRight,
+  Beaker,
+  FlaskRound,
+  Atom,
+  Rocket,
+  Brain,
+  Microscope,
 } from "lucide-react";
 
 const About = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === "ar";
+  const [aboutData, setAboutData] = React.useState<any>(null);
 
-  const values = [
-    {
-      icon: Heart,
-      title: t("about.value1Title"),
-      description: t("about.value1Desc"),
-    },
-    {
-      icon: Users,
-      title: t("about.value2Title"),
-      description: t("about.value2Desc"),
-    },
-    {
-      icon: Shield,
-      title: t("about.value3Title"),
-      description: t("about.value3Desc"),
-    },
-    {
-      icon: Globe,
-      title: t("about.value4Title"),
-      description: t("about.value4Desc"),
-    },
-    {
-      icon: Clock,
-      title: t("about.value5Title"),
-      description: t("about.value5Desc"),
-    },
-    {
-      icon: Award,
-      title: t("about.value6Title"),
-      description: t("about.value6Desc"),
-    },
-  ];
+  React.useEffect(() => {
+    async function fetchAbout() {
+      try {
+        const res = await fetch(`/api/site-content?t=${Date.now()}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data?.about) {
+            setAboutData(data.about);
+          }
+        }
+      } catch (err) {
+        console.error("Error fetching about content:", err);
+      }
+    }
+    fetchAbout();
+  }, []);
 
-  const milestones = [
-    { year: "2010", event: t("about.milestones.2010") },
-    { year: "2012", event: t("about.milestones.2012") },
-    { year: "2015", event: t("about.milestones.2015") },
-    { year: "2018", event: t("about.milestones.2018") },
-    { year: "2020", event: t("about.milestones.2020") },
-    { year: "2023", event: t("about.milestones.2023") },
-    { year: "2025", event: t("about.milestones.2025") },
-  ];
+  const milestones = aboutData?.milestones?.length > 0
+    ? aboutData.milestones.map((m: any) => ({
+        year: m.year,
+        event: isRTL ? m.event_ar : m.event_en
+      }))
+    : [
+        { year: "2010", event: t("about.milestones.2010") },
+        { year: "2012", event: t("about.milestones.2012") },
+        { year: "2015", event: t("about.milestones.2015") },
+        { year: "2018", event: t("about.milestones.2018") },
+        { year: "2020", event: t("about.milestones.2020") },
+        { year: "2023", event: t("about.milestones.2023") },
+        { year: "2025", event: t("about.milestones.2025") },
+      ];
+
+  const iconMap: Record<string, any> = {
+    Heart, Users, Shield, Globe, Clock, Award, Beaker, FlaskRound, Atom, Rocket, Brain, Microscope, Target, Eye
+  };
+
+  const displayValues = aboutData?.values?.length > 0
+    ? aboutData.values.map((v: any) => ({
+        icon: iconMap[v.icon] || Heart,
+        title: isRTL ? v.title_ar : v.title_en,
+        description: isRTL ? v.description_ar : v.description_en
+      }))
+    : [
+        {
+          icon: Heart,
+          title: t("about.value1Title"),
+          description: t("about.value1Desc"),
+        },
+        {
+          icon: Users,
+          title: t("about.value2Title"),
+          description: t("about.value2Desc"),
+        },
+        {
+          icon: Shield,
+          title: t("about.value3Title"),
+          description: t("about.value3Desc"),
+        },
+        {
+          icon: Globe,
+          title: t("about.value4Title"),
+          description: t("about.value4Desc"),
+        },
+        {
+          icon: Clock,
+          title: t("about.value5Title"),
+          description: t("about.value5Desc"),
+        },
+        {
+          icon: Award,
+          title: t("about.value6Title"),
+          description: t("about.value6Desc"),
+        },
+      ];
 
   return (
     <section id="about" className="py-20 bg-white dark:bg-gray-900">
@@ -70,10 +112,10 @@ const About = () => {
           className="text-center mb-16"
         >
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
-            {t("aboutTitle")}
+            {(isRTL ? aboutData?.hero?.title_ar : aboutData?.hero?.title_en) || t("aboutTitle")}
           </h2>
           <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
-            {t("about.lead")}
+            {(isRTL ? aboutData?.hero?.subtitle_ar : aboutData?.hero?.subtitle_en) || t("about.lead")}
           </p>
         </motion.div>
 
@@ -88,11 +130,11 @@ const About = () => {
             <div className="flex items-center mb-6">
               <Target className="w-12 h-12 text-nutty-blue mr-4" />
               <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
-                {t("mission")}
+                {(isRTL ? aboutData?.mission?.title_ar : aboutData?.mission?.title_en) || t("mission")}
               </h3>
             </div>
             <p className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
-              {t("missionText")}
+              {(isRTL ? aboutData?.mission?.description_ar : aboutData?.mission?.description_en) || t("missionText")}
             </p>
           </motion.div>
 
@@ -106,11 +148,11 @@ const About = () => {
             <div className="flex items-center mb-6">
               <Eye className="w-12 h-12 text-nutty-yellow mr-4" />
               <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
-                {t("vision")}
+                {(isRTL ? aboutData?.vision?.title_ar : aboutData?.vision?.title_en) || t("vision")}
               </h3>
             </div>
             <p className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
-              {t("visionText")}
+              {(isRTL ? aboutData?.vision?.description_ar : aboutData?.vision?.description_en) || t("visionText")}
             </p>
           </motion.div>
         </div>
@@ -126,7 +168,7 @@ const About = () => {
             {t("about.coreValues")}
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {values.map((value, index) => (
+            {displayValues.map((value: any, index: number) => (
               <motion.div
                 key={index}
                 whileHover={{ scale: 1.05 }}
@@ -160,7 +202,7 @@ const About = () => {
             {/* Timeline line */}
             <div className="absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-gradient-to-b from-nutty-blue to-nutty-yellow"></div>
 
-            {milestones.map((milestone, index) => (
+            {milestones.map((milestone: any, index: number) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 20 }}
@@ -219,6 +261,22 @@ const About = () => {
               </div>
             ))}
           </div>
+        </motion.div>
+
+        {/* More About Button */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="mt-16 text-center"
+        >
+          <Link
+            href="/about"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-nutty-blue text-white rounded-full font-bold text-lg hover:bg-nutty-blue/90 transition-all transform hover:scale-105 shadow-lg group"
+          >
+            {isRTL ? "المزيد عنا" : "More About Us"}
+            <ArrowRight className={`w-5 h-5 transition-transform duration-300 ${isRTL ? "rotate-180 group-hover:-translate-x-2" : "group-hover:translate-x-2"}`} />
+          </Link>
         </motion.div>
       </div>
     </section>

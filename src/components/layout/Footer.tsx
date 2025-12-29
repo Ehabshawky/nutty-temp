@@ -18,16 +18,25 @@ import {
 const Footer = () => {
   const { t, i18n } = useTranslation();
   const [editableFooter, setEditableFooter] = React.useState<any>(null);
+  const [settings, setSettings] = React.useState<any>({
+    logo_url: "/Nutt Logo.png",
+    contact_email: "info@nuttyscientists-egypt.com",
+    career_email: "careers@nuttyscientists.com",
+    phone: "01222668543",
+    address_en: "Garden 8 mall, New Cairo, 1st Settlement",
+    address_ar: "مول جاردن 8، القاهرة الجديدة، الحي الأول"
+  });
 
   React.useEffect(() => {
     let mounted = true;
     async function load() {
       try {
-        const res = await fetch("/api/site-content");
+        const res = await fetch("/api/site-content?t=" + Date.now());
         if (!res.ok) return;
         const data = await res.json();
         if (!mounted) return;
         if (data?.footer) setEditableFooter(data.footer);
+        if (data?.settings) setSettings(data.settings);
       } catch (e) {
         // ignore
       }
@@ -100,7 +109,7 @@ const Footer = () => {
   };
 
   return (
-    <footer className="bg-gray-900 text-white pt-16 pb-8">
+       <footer className="bg-white dark:bg-gray-900 text-gray-900 dark:text-white pt-16 pb-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12 ${isArabic ? 'rtl-container text-right' : 'text-left'}`}>
           {/* Brand Column */}
@@ -112,7 +121,7 @@ const Footer = () => {
           >
             <div className="flex items-center mb-6 justify-center md:justify-start">
               <img
-                src="/Nutt Logo.png"
+                src={settings.logo_url || "/Nutt Logo.png"}
                 alt="Nutty Scientists Logo"
                 className="w-40 h-auto md:w-48 lg:w-56 object-contain"
               />
@@ -127,7 +136,7 @@ const Footer = () => {
                   <a
                     key={index}
                     href={social.href}
-                    className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-nutty-blue transition-colors"
+                    className="w-10 h-10 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center hover:bg-nutty-blue transition-colors"
                     aria-label={social.label}
                   >
                     <Icon className="w-5 h-5" />
@@ -151,7 +160,7 @@ const Footer = () => {
                 <li key={index}>
                   <a
                     href={link.href}
-                    className="text-gray-400 hover:text-nutty-yellow transition-colors block py-1"
+                  className="text-gray-600 dark:text-gray-400 hover:text-nutty-yellow transition-colors block py-1"
                   >
                     {link.label}
                   </a>
@@ -196,49 +205,38 @@ const Footer = () => {
               <li className="flex items-start">
                 <MapPin className={`w-5 h-5 text-nutty-yellow ${isArabic ? 'ml-3 mr-0' : 'mr-3'} mt-1 flex-shrink-0`} />
                 <span className="text-gray-400">
-                  {footerTexts.addressLine1}, <br />
-                  {footerTexts.addressLine2}
+                  {isArabic ? settings.address_ar : settings.address_en}
                 </span>
               </li>
               <li className="flex items-center">
                 <Phone className={`w-5 h-5 text-nutty-yellow ${isArabic ? 'ml-3 mr-0' : 'mr-3'} flex-shrink-0`} />
                 <a
-                  href="tel:01222668543"
+                  href={`tel:${settings.phone}`}
                   className="text-gray-400 hover:text-nutty-yellow font-sans"
                   dir="ltr"
                 >
-                  {t("contactSection.cards.phone1")}
-                </a>
-              </li>
-              <li className="flex items-center">
-                <Phone className={`w-5 h-5 text-nutty-yellow ${isArabic ? 'ml-3 mr-0' : 'mr-3'} flex-shrink-0`} />
-                <a
-                  href="tel:01123239999"
-                  className="text-gray-400 hover:text-nutty-yellow font-sans"
-                  dir="ltr"
-                >
-                  {t("contactSection.cards.phone2")}
+                  {settings.phone}
                 </a>
               </li>
               <li className="flex items-center">
                 <Mail className={`w-5 h-5 text-nutty-yellow ${isArabic ? 'ml-3 mr-0' : 'mr-3'} flex-shrink-0`} />
                 <a
-                  href="mailto:info@nuttyscientists-egypt.com"
+                  href={`mailto:${settings.contact_email}`}
                   className="text-gray-400 hover:text-nutty-yellow"
                 >
-                  info@nuttyscientists-egypt.com
+                  {settings.contact_email}
                 </a>
               </li>
             </ul>
 
             {/* Newsletter */}
-            <div className="mt-8">
+            <div className="mt-8 ">
               <h4 className="font-semibold mb-4">{footerTexts.newsletterTitle}</h4>
               <div className={`flex ${isArabic ? 'flex-row-reverse' : ''}`}>
                 <input
                   type="email"
                   placeholder={footerTexts.newsletterPlaceholder}
-                  className={`flex-1 px-4 py-2 bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-nutty-yellow ${
+                  className={`flex-1 px-4 py-2 bg-gray-100 dark:bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-nutty-yellow ${
                     isArabic ? 'rounded-r-lg' : 'rounded-l-lg'
                   }`}
                 />

@@ -1,0 +1,8 @@
+--- ADMIN SEED DATA ---
+Username: admin
+Password (Original): Nutty2025
+Password (Hashed): $2b$10$nH62RY6Tz/B3wzGgWMCz1uo6.C8yvQQaWsdnY53/sot8uoMACVEfi
+-----------------------
+
+Run this SQL in Supabase to create the admin:
+INSERT INTO admins (username, password) VALUES ('admin', '$2b$10$nH62RY6Tz/B3wzGgWMCz1uo6.C8yvQQaWsdnY53/sot8uoMACVEfi');

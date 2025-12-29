@@ -1,11 +1,58 @@
 {
   "hero": {
-    "title_en": "Nutty Scientists",
-    "title_ar": "ناتي ساينتستس",
-    "subtitle_en": "Where Science Meets Fun!",
-    "subtitle_ar": "حيث يلتقي العلم بالمرح!",
-    "description_en": "Transforming young minds through innovative science education and interactive experiments.",
-    "description_ar": "نحول عقول الشباب من خلال التعليم العلمي المبتكر والتجارب التفاعلية."
+    "slides": [
+      {
+        "id": 1,
+        "image": "/uploads/hero-1765831374576.jpg",
+        "title_en": "Nutty Scientists Camps",
+        "title_ar": "ناتي ساينتستس لمعسكرات",
+        "subtitle_en": "Curiosity and critical thinking",
+        "subtitle_ar": "تنمية حب الاستكشاف والفضول العلمي",
+        "description_en": "We provide end-to-end management of interactive science camps designed to educate, inspire, and entertain children through hands-on experiments and fun scientific activities.",
+        "description_ar": "نقدم خدمات متكاملة لإدارة معسكرات العلوم التفاعلية التي تهدف إلى تعليم الأطفال وتحفيزهم وإمتاعهم من خلال التجارب العلمية العملية والأنشطة الممتعة."
+      },
+      {
+        "id": 1765831814380,
+        "image": "/uploads/hero-1766680784280.jpg",
+        "title_en": "Nutty Scientists",
+        "title_ar": "ناتي ساينتستس",
+        "subtitle_en": "Where Science Meets Fun!",
+        "subtitle_ar": "حيث يلتقي العلم بالمرح!",
+        "description_en": "Transforming young minds through innovative science education and interactive experiments.",
+        "description_ar": "تغيير عقول الشباب من خلال تعليم العلوم المبتكر والتجارب التفاعلية."
+      },
+      {
+        "id": 1766680575710,
+        "image": "/uploads/hero-1766680705299.jpg",
+        "title_en": "Nutty Scientists Egypt",
+        "title_ar": "ناتي ساينتستس مصر ",
+        "subtitle_en": "A lifelong love for science",
+        "subtitle_ar": "غرس حب العلوم مدى الحياة",
+        "description_en": "Planning and organizing age-appropriate science programs",
+        "description_ar": "التخطيط والتنظيم لبرامج علمية تناسب الفئات العمرية المختلفة"
+      },
+      {
+        "id": 1766685546045,
+        "image": "/uploads/hero-1766685790493.jpg",
+        "title_en": "Nutty Scientists Certified",
+        "title_ar": "مؤهلين ناتي ساينتستس ",
+        "subtitle_en": "Teamwork and communication",
+        "subtitle_ar": "تعزيز العمل الجماعي والتواصل",
+        "description_en": "Providing trained and certified Nutty Scientists instructors",
+        "description_ar": "توفير مدربين معتمدين ومؤهلين من ناتي ساينتستس"
+      },
+      {
+        "id": 1766686920480,
+        "image": "",
+        "title_en": "Nutty Scientists",
+        "title_ar": "ناتي ساينتستس",
+        "subtitle_en": "Where Science Meets Fun!....",
+        "subtitle_ar": "حيث يلتقي العلم بالمرح!",
+        "description_en": "Planning and organizing age-appropriate science programs ",
+        "description_ar": "نحول عقول الشباب من خلال التعليم العلمي المبتكر والتجارب التفاعلية",
+        "video": "/uploads/videos/hero-video-1766686932711-YTDown.com-YouTube-Among-US-Media-Q0-2gztcEvE-001-1080p.mp4"
+      }
+    ]
   },
   "footer": {
     "rights_en": "All rights reserved",
@@ -13,5 +60,211 @@
     "contact_en": "Contact Information",
     "contact_ar": "معلومات الاتصال"
   },
+  "about": {
+    "hero": {
+      "title_en": "About US",
+      "title_ar": "من نحن",
+      "image": "",
+      "subtitle_en": "Transforming Science Into an Exciting Adventure for Kids",
+      "subtitle_ar": "نحول العلوم إلى مغامرة مثيرة للأطفال"
+    },
+    "story": {
+      "title_en": "Our Story",
+      "title_ar": "قصتنا",
+      "image": "/uploads/hero-1766261924241.jpg",
+      "description_en": "Nutty Scientists is a leading global educational organization dedicated to making science fun and exciting for children of all ages. Since our founding, we've inspired millions of kids worldwide to explore the wonders of science through hands-on experiments and interactive activities.\n\nWe believe every child is a natural-born scientist, and our mission is to nurture their innate curiosity through engaging and educational science programs.",
+      "description_ar": "ناتي ساينتستس هي منظمة تعليمية عالمية رائدة متخصصة في جعل العلوم ممتعة ومثيرة للأطفال من جميع الأعمار. منذ تأسيسنا، قمنا بإلهام الملايين من الأطفال في جميع أنحاء العالم لاستكشاف عجائب العلوم من خلال التجارب العملية والأنشطة التفاعلية.\n\nنؤمن بأن كل طفل هو عالم بالفطرة، ومهمتنا هي تغذية فضولهم الطبيعي من خلال برامج علمية جذابة وتعليمية."
+    },
+    "mission": {
+      "title_en": "Our Mission",
+      "title_ar": "مهمتنا",
+      "image": "",
+      "description_en": "To empower children with scientific knowledge and skills through fun, engaging, hands-on experiments that inspire curiosity, creativity, and critical thinking.",
+      "description_ar": "تمكين الأطفال بالمعرفة العلمية والمهارات من خلال التجارب العملية الممتعة والجذابة التي تثير الفضول والإبداع والتفكير النقدي."
+    },
+    "vision": {
+      "title_en": "Our Vision",
+      "title_ar": "رؤيتنا",
+      "image": "",
+      "description_en": "To be the world's leading provider of fun science education, where every child discovers the joy of learning and develops a lifelong passion for science and discovery.",
+      "description_ar": "أن نكون المزود الرائد عالمياً للتعليم العلمي الممتع، حيث يكتشف كل طفل متعة التعلم ويطور شغفاً دائماً بالعلوم والاستكشاف."
+    },
+    "values": [
+      {
+        "id": 1766691334622,
+        "title_en": "Passion for Science",
+        "title_ar": "شغف بالعلم",
+        "description_en": "We believe in making science exciting and accessible to everyone.",
+        "description_ar": "نؤمن بجعل العلم ممتعًا وفي متناول الجميع.",
+        "icon": "Heart"
+      },
+      {
+        "id": 1766692696014,
+        "title_en": "Collaboration",
+        "title_ar": "التعاون",
+        "description_en": "Working together to create memorable learning experiences.",
+        "description_ar": "العمل معًا لخلق تجارب تعلم لا تُنسى.",
+        "icon": "Users"
+      },
+      {
+        "id": 1766692703384,
+        "title_en": "Safety First",
+        "title_ar": "السلامة أولاً",
+        "description_en": "All experiments are conducted with utmost safety precautions.",
+        "description_ar": "تُجرى جميع التجارب مع أقصى معايير السلامة.\n",
+        "icon": "Shield"
+      },
+      {
+        "id": 1766692704030,
+        "title_en": "Global Perspective",
+        "title_ar": "منظور عالمي",
+        "description_en": "Bringing international science education standards to local communities.",
+        "description_ar": "نقل معايير التعليم العلمي الدولية إلى المجتمعات المحلية.",
+        "icon": "Globe"
+      },
+      {
+        "id": 1766692711126,
+        "title_en": "Continuous Learning",
+        "title_ar": "التعلم المستمر",
+        "description_en": "We stay updated with the latest scientific discoveries and teaching methods.",
+        "description_ar": "نواكب أحدث الاكتشافات والأساليب التعليمية.",
+        "icon": "Clock"
+      },
+      {
+        "id": 1766692711590,
+        "title_en": "Excellence",
+        "title_ar": "التميز",
+        "description_en": "Committed to delivering the highest quality educational experiences.",
+        "description_ar": "ملتزمون بتقديم تجارب تعليمية عالية الجودة.",
+        "icon": "Award"
+      }
+    ],
+    "milestones": [
+      {
+        "id": 1766692949208,
+        "year": "2010",
+        "event_en": "Founded ",
+        "event_ar": "تأسست"
+      },
+      {
+        "id": 1766692996403,
+        "year": "2012",
+        "event_en": "First International Workshop",
+        "event_ar": "أول ورشة عمل دولية"
+      },
+      {
+        "id": 1766693011697,
+        "year": "2015",
+        "event_en": "Reached 1,000 Students",
+        "event_ar": "وصلنا إلى 1,000 طالب"
+      },
+      {
+        "id": 1766693012032,
+        "year": "2018",
+        "event_en": "Mobile Science Lab Launched",
+        "event_ar": "إطلاق مختبر العلوم المتنقل"
+      },
+      {
+        "id": 1766693012215,
+        "year": "2020",
+        "event_en": "Virtual Learning Platform",
+        "event_ar": "منصة التعلم الافتراضية"
+      },
+      {
+        "id": 1766693012395,
+        "year": "2023",
+        "event_en": "10,000+ Students Trained",
+        "event_ar": "تدريب أكثر من 10,000 طالب"
+      },
+      {
+        "id": 1766693034665,
+        "year": "2025",
+        "event_en": "20,000+ Students Trained",
+        "event_ar": "تدريب أكثر من 20,000 طالب"
+      }
+    ]
+  },
+  "services": [
+    {
+      "title_en": "Workshops",
+      "title_ar": "ورش عمل",
+      "description_en": "Nutty Scientists Egypt provides interactive STEM-based edutainment for children aged 4–16, operating primarily through labs, workshops, and seasonal camps.",
+      "description_ar": "تقدم \"ناتي ساينتستس مصر\" ورش عمل تعليمية ترفيهية للأطفال من سن 4 إلى 16 عاماً، تركز على مجالات العلوم والتكنولوجيا والهندسة والرياضيات (STEM).",
+      "image": "/uploads/hero-1766674602573.jpg",
+      "id": "1766674604965",
+      "long_description_en": "Core Programs & Workshops\nMonthly Programs: Recurring sessions that include science experiments and workshops every Friday, and robotics fun every Saturday. Themes range from the \"Magic of Light\" to \"Ancient Inventions\".\nScienterrific Workshops: Hands-on activities led by trained staff that combine theatrical shows with scientific experiments to explain concepts like force, motion, and electricity.\nRobotics & Programming: Specialized courses where children design, build, and program robots. Online live programming workshops are also available.\nSpecialized Labs:\nThe Mess Room: Features activities such as planting, cooking school, and arts & crafts.\nSTEAM Room: Merges science and art to develop multitasking and creative problem-solving.\nLife Skills Workshops: Includes \"Character Building\" to develop confidence and \"Little Businessman\" to teach basic entrepreneurship and idea pitching. ",
+      "long_description_ar": "البرامج وورش العمل الأساسية\nالبرامج الشهرية: جلسات دورية تتضمن تجارب وورش عمل علمية كل يوم جمعة، وأنشطة ممتعة في مجال الروبوتات كل يوم سبت. تتنوع المواضيع من \"سحر الضوء\" إلى \"الاختراعات القديمة\".\nورش عمل علمية تفاعلية: أنشطة عملية يقودها فريق عمل مدرب، تجمع بين العروض المسرحية والتجارب العلمية لشرح مفاهيم مثل القوة والحركة والكهرباء.\nالروبوتات والبرمجة: دورات متخصصة حيث يصمم الأطفال ويبنون ويبرمجون الروبوتات. كما تتوفر ورش عمل برمجة مباشرة عبر الإنترنت.\n\nالمختبرات المتخصصة:\nغرفة الأنشطة: تضم أنشطة مثل الزراعة، ومدرسة الطبخ، والفنون والحرف اليدوية.\nغرفة العلوم والتكنولوجيا والهندسة والفنون والرياضيات (STEAM): تدمج العلوم والفنون لتنمية مهارات تعدد المهام وحل المشكلات الإبداعي.\nورش عمل مهارات الحياة: تشمل \"بناء الشخصية\" لتنمية الثقة بالنفس، و\"رائد الأعمال الصغير\" لتعليم أساسيات ريادة الأعمال وعرض الأفكار.\nالمخيمات الموسمية (2025)\nالمخيم الشتوي (ديسمبر 2025): يقدم حاليًا مسارات في علوم الفضاء والروبوتات، بالإضافة إلى ورش عمل إضافية في العلاج بالفن والطبخ وإعادة التدوير.\nالمخيم الصيفي الضخم: يتضمن أسابيع ذات طابع خاص مثل \"مستكشفو العلوم\" و\"المحققون الصغار\" و\"مغامرة المحيط\" و\"مرحبًا كيميت\" (العلوم المصرية القديمة)."
+    },
+    {
+      "title_en": "Science Camps",
+      "title_ar": "معسكرات العلوم",
+      "description_en": "We provide end-to-end management of interactive science camps designed to educate, inspire, and entertain children through hands-on experiments and fun scientific activities.",
+      "description_ar": "نقدم خدمات متكاملة لإدارة معسكرات العلوم التفاعلية التي تهدف إلى تعليم الأطفال وتحفيزهم وإمتاعهم من خلال التجارب العلمية العملية والأنشطة الممتعة.",
+      "long_description_en": "Our Science Camps Management Services at Nutty Scientists Egypt are designed to deliver a complete, safe, and engaging educational experience for children of all ages.\n\nWe handle every aspect of the science camp, including:\n\nPlanning and organizing age-appropriate science programs\n\nDesigning fun, hands-on experiments aligned with STEM education\n\nProviding trained and certified Nutty Scientists instructors\n\nManaging schedules, sessions, and group activities\n\nEnsuring safety standards and child-friendly environments\n\nCustomizing camp themes (Space, Chemistry, Physics, Biology, Robotics, etc.)\n\nSupplying all scientific tools, materials, and equipment\n\nOur science camps encourage:\n\nCuriosity and critical thinking\n\nCreativity and problem-solving skills\n\nTeamwork and communication\n\nA lifelong love for science\n\nWhether the camp is hosted in schools, clubs, resorts, or special events, we guarantee a memorable learning adventure where science comes to life.",
+      "long_description_ar": "م تصميم خدمات إدارة معسكرات العلوم في Nutty Scientists Egypt لتقديم تجربة تعليمية متكاملة، آمنة، وممتعة للأطفال من مختلف الأعمار.\n\nنحن نتولى جميع جوانب تنظيم المعسكر، بما في ذلك:\n\nالتخطيط والتنظيم لبرامج علمية تناسب الفئات العمرية المختلفة\n\nتصميم تجارب علمية تفاعلية تعتمد على منهج STEM\n\nتوفير مدربين معتمدين ومؤهلين من Nutty Scientists\n\nإدارة الجداول الزمنية والأنشطة الجماعية\n\nتطبيق أعلى معايير السلامة وتهيئة بيئة صديقة للأطفال\n\nتخصيص موضوعات المعسكر (الفضاء، الكيمياء، الفيزياء، الأحياء، الروبوتات، وغيرها)\n\nتوفير جميع الأدوات والمستلزمات العلمية اللازمة\n\nتساعد معسكرات العلوم على:\n\nتنمية حب الاستكشاف والفضول العلمي\n\nتطوير التفكير النقدي وحل المشكلات\n\nتعزيز العمل الجماعي والتواصل\n\nغرس حب العلوم مدى الحياة\n\nسواء أُقيم المعسكر في المدارس، الأندية، المنتجعات، أو الفعاليات الخاصة، نضمن تجربة تعليمية لا تُنسى حيث يصبح العلم متعة حقيقية.",
+      "image": "/uploads/hero-1766679958997.jpg",
+      "id": "1766679962703"
+    },
+    {
+      "title_en": "Science Parties",
+      "title_ar": "حفلات العلوم",
+      "description_en": "Interactive science-themed parties that turn birthdays and special events into unforgettable scientific adventures full of fun, learning, and excitement.",
+      "description_ar": "حفلات ترفيهية تعليمية قائمة على العلوم تحوّل أعياد الميلاد والمناسبات الخاصة إلى مغامرات علمية مليئة بالمرح والتشويق.",
+      "long_description_en": "Science Parties by Nutty Scientists Egypt offer a unique celebration experience where fun meets science. Our parties are specially designed to entertain children while introducing them to the wonders of science through exciting, hands-on experiments.\n\nOur Science Parties include:\n\nLive interactive science shows\n\nFun and safe experiments suitable for different age groups\n\nEnergetic Nutty Scientists presenters\n\nEngaging scientific games and challenges\n\nColorful props and scientific equipment\n\nFull setup and cleanup handled by our team\n\nParty themes can be customized, such as:\n\nCrazy Chemistry\n\nSpace & Astronomy\n\nAmazing Physics\n\nSlime & Explosions\n\nDinosaurs & Biology\n\nScience Parties help children:\n\nLearn scientific concepts in a fun way\n\nBoost confidence and curiosity\n\nParticipate actively and think creatively\n\nEnjoy a memorable celebration beyond traditional parties\n\nPerfect for birthdays, school celebrations, clubs, malls, and special events — where every child becomes a scientist for the day.",
+      "long_description_ar": "تقدم حفلات العلوم من Nutty Scientists Egypt تجربة احتفال مختلفة تجمع بين الترفيه والتعليم. تم تصميم الحفلات لإسعاد الأطفال وتعريفهم بعالم العلوم من خلال تجارب شيقة وتفاعلية.\n\nتشمل حفلات العلوم:\n\nعروض علمية مباشرة وتفاعلية\n\nتجارب ممتعة وآمنة تناسب مختلف الأعمار\n\nمقدمو عروض محترفون من Nutty Scientists\n\nألعاب وتحديات علمية مشوقة\n\nأدوات ومواد علمية ملونة\n\nتجهيز وتنظيم كامل للحفلة مع التنظيف بعد الانتهاء\n\nيمكن تخصيص موضوع الحفلة مثل:\n\nالكيمياء المجنونة\n\nالفضاء والفلك\n\nالفيزياء المدهشة\n\nالسلايم والانفجارات الآمنة\n\nالديناصورات وعالم الأحياء\n\nتساعد حفلات العلوم الأطفال على:\n\nفهم المفاهيم العلمية بطريقة ممتعة\n\nتعزيز الثقة بالنفس والفضول\n\nالمشاركة الفعّالة وتنمية الإبداع\n\nالاستمتاع بحفلة مميزة غير تقليدية\n\nمثالية لأعياد الميلاد، احتفالات المدارس، الأندية، المولات، والمناسبات الخاصة — حيث يصبح كل طفل عالِمًا ليوم واحد 🔬🎈",
+      "image": "/uploads/hero-1766688265856.jpg",
+      "id": "1766688274169"
+    },
+    {
+      "title_en": "Corporate Events",
+      "title_ar": "الفعاليات والمؤتمرات للشركات",
+      "description_en": "Innovative science-based corporate events that engage families, employees, and guests through interactive shows and hands-on STEM experiences.",
+      "description_ar": "فعاليات علمية مبتكرة مخصصة للشركات تجمع بين الترفيه والتعليم من خلال عروض تفاعلية وتجارب STEM ممتعة.",
+      "long_description_en": "Corporate Events by Nutty Scientists Egypt deliver a unique and memorable experience that blends entertainment, education, and brand engagement. Our science-based events are ideal for companies looking to create impactful family days, product launches, CSR activities, or employee engagement events.\n\nOur Corporate Events services include:\n\nInteractive science shows and live demonstrations\n\nHands-on STEM activity stations for children and families\n\nProfessional Nutty Scientists presenters and facilitators\n\nCustomized activities aligned with your brand or event theme\n\nFull event planning, setup, and coordination\n\nSafe, age-appropriate, and high-quality scientific materials\n\nIdeal for:\n\nCompany Family Days\n\nProduct Launches & Brand Activations\n\nCSR & Community Engagement Events\n\nCorporate Celebrations & Festivals\n\nMall & Public Events\n\nBenefits for companies:\n\nStrengthens brand image through educational entertainment\n\nCreates meaningful engagement with employees and families\n\nSupports STEM education and social responsibility\n\nDelivers a fun, organized, and high-impact event experience\n\nWith Nutty Scientists Egypt, your corporate event becomes an inspiring scientific journey that leaves a lasting impression.",
+      "long_description_ar": "تقدم الفعاليات والمؤتمرات للشركات من ناتي ساينتستس مصر تجربة مميزة تجمع بين الترفيه والتعليم وتعزيز العلامة التجارية. تم تصميم فعالياتنا العلمية لتناسب الشركات التي تسعى لتنظيم أيام عائلية، إطلاق منتجات، أنشطة مسؤولية مجتمعية، أو فعاليات تفاعلية للموظفين.\n\nتشمل خدمات الفعاليات للشركات:\n\nعروض علمية تفاعلية وتجارب مباشرة\n\nمحطات أنشطة STEM عملية للأطفال والعائلات\n\nمقدمو عروض محترفون من Nutty Scientists\n\nأنشطة مخصصة تتماشى مع هوية الشركة أو موضوع الفعالية\n\nتخطيط وتنظيم كامل للفعالية من البداية حتى التنفيذ\n\nأدوات علمية آمنة وعالية الجودة تناسب جميع الأعمار\n\nمناسبة لـ:\n\nالأيام العائلية للشركات\n\nإطلاق المنتجات وتنشيط العلامات التجارية\n\nفعاليات المسؤولية المجتمعية (CSR)\n\nالاحتفالات والمهرجانات المؤسسية\n\nفعاليات المولات والأماكن العامة\n\nفوائد للشركات:\n\nتعزيز صورة العلامة التجارية من خلال الترفيه التعليمي\n\nخلق تفاعل إيجابي مع الموظفين وعائلاتهم\n\nدعم التعليم والعلوم في المجتمع\n\nتنظيم فعالية ممتعة واحترافية عالية التأثير\n\nمع Nutty Scientists Egypt تتحول فعاليتك المؤسسية إلى تجربة علمية ملهمة تترك أثرًا لا يُنسى.",
+      "image": "/uploads/hero-1766688416234.jpg",
+      "id": "1766688419881"
+    },
+    {
+      "title_en": "School Programs",
+      "title_ar": "البرامج المدرسية",
+      "description_en": "Educational science programs designed for schools to support curricula through interactive STEM activities and hands-on experiments.",
+      "description_ar": "برامج علمية تعليمية مخصصة للمدارس لدعم المناهج الدراسية من خلال أنشطة STEM تفاعلية وتجارب عملية ممتعة.",
+      "long_description_en": "School Programs by Nutty Scientists Egypt are carefully designed to enrich the educational experience in schools by transforming scientific concepts into fun, interactive, and memorable lessons.\n\nOur school programs include:\n\nCurriculum-aligned science workshops\n\nHands-on STEM experiments for different grade levels\n\nIn-class and on-site science activities\n\nTrained Nutty Scientists instructors\n\nCustomizable programs based on school needs\n\nSafe, engaging, and age-appropriate content\n\nProgram focus areas:\n\nPhysics, Chemistry, and Biology\n\nSpace Science & Astronomy\n\nEnvironmental Science & Sustainability\n\nRobotics & Engineering basics\n\nCritical thinking and problem-solving\n\nBenefits for schools and students:\n\nEnhances understanding of scientific concepts\n\nIncreases student engagement and participation\n\nSupports STEM learning outcomes\n\nEncourages curiosity and innovation\n\nComplements national and international curricula\n\nOur programs are ideal for public and private schools, international schools, and educational institutions, helping students discover that science is fun, exciting, and everywhere.",
+      "long_description_ar": "تم تصميم البرامج المدرسية من ناتي ساينتستس مصر لإثراء العملية التعليمية داخل المدارس وتحويل المفاهيم العلمية إلى دروس ممتعة وتفاعلية يسهل على الطلاب فهمها وتذكرها.\n\nتشمل البرامج المدرسية:\n\nورش عمل علمية متوافقة مع المناهج الدراسية\n\nتجارب STEM عملية تناسب مختلف المراحل التعليمية\n\nأنشطة علمية داخل الفصول أو في ساحة المدرسة\n\nمدربون متخصصون ومعتمدون من Nutty Scientists\n\nبرامج قابلة للتخصيص حسب احتياجات المدرسة\n\nمحتوى آمن وتفاعلي يناسب أعمار الطلاب\n\nمحاور البرامج:\n\nالفيزياء والكيمياء والأحياء\n\nعلوم الفضاء والفلك\n\nالعلوم البيئية والاستدامة\n\nأساسيات الروبوتات والهندسة\n\nتنمية التفكير النقدي وحل المشكلات\n\nفوائد البرامج للمدارس والطلاب:\n\nتعزيز فهم الطلاب للمفاهيم العلمية\n\nزيادة التفاعل والمشاركة داخل الفصل\n\nدعم نواتج التعلم في مجال STEM\n\nتحفيز الفضول العلمي والابتكار\n\nتكامل مثالي مع المناهج المحلية والدولية\n\nبرامجنا مناسبة للمدارس الحكومية والخاصة والدولية، وتساعد الطلاب على اكتشاف أن العلم ممتع وموجود في كل مكان 🔬📚",
+      "image": "/uploads/hero-1766689544316.jpg",
+      "id": "1766689546796"
+    },
+    {
+      "title_en": "STEM Education",
+      "title_ar": "تعليم STEM ",
+      "description_en": "Comprehensive STEM education programs that empower children to explore science, technology, engineering, and mathematics through hands-on learning experiences.",
+      "description_ar": "برامج تعليم STEM متكاملة تمكّن الأطفال من استكشاف العلوم والتكنولوجيا والهندسة والرياضيات من خلال التعلم العملي والتجارب التفاعلية.",
+      "long_description_en": "STEM Education programs by Nutty Scientists Egypt are designed to prepare children for the future by developing essential skills through inquiry-based and experiential learning.\n\nOur STEM education services include:\n\nHands-on science and engineering activities\n\nRobotics, coding, and basic technology programs\n\nProblem-solving and design-thinking challenges\n\nAge-appropriate STEM curriculum modules\n\nTrained STEM educators and facilitators\n\nPrograms for schools, camps, and learning centers\n\nKey learning outcomes:\n\nBuilds critical thinking and analytical skills\n\nEncourages creativity and innovation\n\nDevelops teamwork and communication\n\nStrengthens confidence in science and technology\n\nConnects theory with real-world applications\n\nOur STEM programs follow international best practices and are adaptable to different age groups and educational environments, helping learners become curious thinkers, confident innovators, and future leaders.",
+      "long_description_ar": "تهدف برامج تعليم STEM من ناتي ساينتستس مصر إلى إعداد الأطفال للمستقبل من خلال تنمية مهارات أساسية تعتمد على التعلم القائم على الاستكشاف والتجربة العملية.\n\nتشمل خدمات تعليم STEM:\n\nأنشطة علمية وهندسية عملية\n\nبرامج الروبوتات والبرمجة والتكنولوجيا الأساسية\n\nتحديات التفكير التصميمي وحل المشكلات\n\nمناهج STEM تناسب مختلف الفئات العمرية\n\nمدربون ومتخصصون في تعليم STEM\n\nبرامج مخصصة للمدارس، المعسكرات، والمراكز التعليمية\n\nأهم نواتج التعلم:\n\nتنمية التفكير النقدي والتحليلي\n\nتشجيع الإبداع والابتكار\n\nتعزيز العمل الجماعي والتواصل\n\nزيادة الثقة في العلوم والتكنولوجيا\n\nربط المفاهيم النظرية بالتطبيق العملي\n\nتعتمد برامجنا على أفضل الممارسات التعليمية العالمية، ويمكن تكييفها لتناسب مختلف الأعمار والبيئات التعليمية، مما يساعد الأطفال على أن يصبحوا مفكرين فضوليين ومبتكرين وقيادات المستقبل 🧠🔧",
+      "image": "/uploads/hero-1766689822014.webp",
+      "id": "1766689824053"
+    },
+    {
+      "title_en": "Online Courses",
+      "title_ar": "الدورات التعليمية عبر الإنترنت",
+      "description_en": "Interactive online science and STEM courses that allow children to learn, explore, and experiment anytime, anywhere.",
+      "description_ar": "دورات علمية وSTEM تفاعلية عبر الإنترنت تُمكّن الأطفال من التعلم والاستكشاف من أي مكان وفي أي وقت.",
+      "long_description_en": "Online Courses by Nutty Scientists Egypt provide a flexible and engaging learning experience that brings science and STEM education directly to students’ homes.\n\nOur online courses include:\n\nLive and recorded interactive sessions\n\nHands-on experiments using simple household materials\n\nStructured STEM modules for different age groups\n\nProfessional Nutty Scientists instructors\n\nEngaging visuals, activities, and challenges\n\nCertificates of participation or completion\n\nKey benefits:\n\nLearn from anywhere with flexible schedules\n\nCombines education with fun and interactivity\n\nEncourages independent learning and curiosity\n\nSupports school learning and skill development\n\nSafe, guided, and age-appropriate content\n\nCourses cover topics such as:\n\nFun Science Experiments\n\nBasic Chemistry & Physics\n\nSpace & Astronomy\n\nRobotics & Coding Basics\n\nSTEM Challenges and Projects\n\nOur online programs ensure that learning remains exciting and meaningful, helping children stay connected to science in a modern digital learning environment.",
+      "long_description_ar": "تقدم الدورات التعليمية عبر الإنترنت من ناتي ساينتستس مصر تجربة تعلم مرنة وممتعة تنقل تعليم العلوم وSTEM مباشرة إلى منازل الطلاب.\n\nتشمل الدورات عبر الإنترنت:\n\nجلسات تفاعلية مباشرة ومسجلة\n\nتجارب علمية باستخدام أدوات منزلية بسيطة\n\nوحدات تعليم STEM منظمة لمختلف الأعمار\n\nمدربون محترفون من Nutty Scientists\n\nأنشطة مرئية وتحديات تعليمية مشوقة\n\nشهادات مشاركة أو إتمام الدورة\n\nأهم المميزات:\n\nالتعلم من أي مكان بجدول مرن\n\nالجمع بين التعليم والمتعة والتفاعل\n\nتشجيع التعلم الذاتي والفضول العلمي\n\nدعم المناهج المدرسية وتنمية المهارات\n\nمحتوى آمن ومناسب لجميع الأعمار\n\nتشمل موضوعات الدورات:\n\nتجارب علمية ممتعة\n\nأساسيات الكيمياء والفيزياء\n\nالفضاء والفلك\n\nأساسيات الروبوتات والبرمجة\n\nتحديات ومشروعات STEM\n\nتضمن برامجنا التعليمية عبر الإنترنت استمرار متعة التعلم وإبقاء الأطفال على تواصل دائم مع عالم العلوم بأسلوب عصري وتفاعلي 💻🔬",
+      "image": "/uploads/hero-1766690316891.webp",
+      "id": "1766690319394"
+    },
+    {
+      "title_en": "Science Competitions",
+      "title_ar": "المسابقات العلمية",
+      "description_en": "Exciting science competitions that challenge students to think critically, innovate, and apply STEM concepts in a fun and competitive environment.",
+      "description_ar": "مسابقات علمية ممتعة تشجّع الطلاب على التفكير الإبداعي وتطبيق مفاهيم STEM في بيئة تنافسية مليئة بالحماس.",
+      "long_description_en": "Science Competitions by Nutty Scientists Egypt are designed to motivate students to explore science through teamwork, creativity, and problem-solving challenges.\n\nOur competitions include:\n\nIndividual and team-based science challenges\n\nSTEM problem-solving and innovation tasks\n\nAge-appropriate competition formats\n\nFair evaluation and judging criteria\n\nProfessional supervision by Nutty Scientists\n\nAwards, certificates, and recognition\n\nCompetition themes may include:\n\nEngineering & Design Challenges\n\nRobotics & Coding Basics\n\nPhysics & Chemistry Experiments\n\nEnvironmental & Sustainability Projects\n\nSpace Science Challenges\n\nKey benefits:\n\nEncourages creativity and innovation\n\nBuilds confidence and presentation skills\n\nEnhances teamwork and collaboration\n\nApplies theoretical knowledge in practice\n\nCreates a fun and inspiring learning experience\n\nIdeal for schools, educational institutions, science fairs, festivals, and corporate CSR initiatives, our science competitions turn learning into an exciting adventure.",
+      "long_description_ar": "تهدف المسابقات العلمية من ناتي ساينتستس مصر إلى تحفيز الطلاب على استكشاف العلوم من خلال العمل الجماعي، الإبداع، وتحديات حل المشكلات.\n\nتشمل المسابقات العلمية:\n\nتحديات علمية فردية وجماعية\n\nمهام STEM تعتمد على الابتكار وحل المشكلات\n\nأنظمة تنافسية تناسب مختلف الأعمار\n\nمعايير تقييم وتحكيم عادلة وشفافة\n\nإشراف متخصص من فريق Nutty Scientists\n\nجوائز وشهادات تقدير للمشاركين\n\nتشمل موضوعات المسابقات:\n\nتحديات الهندسة والتصميم\n\nأساسيات الروبوتات والبرمجة\n\nتجارب الفيزياء والكيمياء\n\nمشروعات الاستدامة والبيئة\n\nتحديات علوم الفضاء\n\nفوائد المسابقات العلمية:\n\nتنمية الإبداع والابتكار\n\nتعزيز الثقة بالنفس ومهارات العرض\n\nتشجيع العمل الجماعي والتعاون\n\nتطبيق المعرفة النظرية عمليًا\n\nتحويل التعلم إلى تجربة ممتعة وملهمة\n\nالمسابقات مناسبة للمدارس، المؤسسات التعليمية، المعارض العلمية، المهرجانات، ومبادرات المسؤولية المجتمعية للشركات، حيث يصبح العلم تحديًا ممتعًا 🧠🚀",
+      "image": "/uploads/hero-1766690604179.jpg",
+      "id": "1766690607097"
+    }
+  ],
   "sections": {}
 }

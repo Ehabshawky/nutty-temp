@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { 
@@ -16,8 +16,7 @@ import {
 import { useRouter } from 'next/navigation';
 
 // Import articles from shared data
-// @ts-ignore
-import { articles as originalArticles } from '@/data/articles';
+// Articles data is now loaded from API
 
 interface Article {
   id: string | number;
@@ -38,9 +37,104 @@ const Articles = () => {
   const { t, i18n } = useTranslation();
   const router = useRouter();
   const [activeCategory, setActiveCategory] = useState('all');
+  const [articlesData, setArticlesData] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  
+  // Newsletter Logic
+  const [email, setEmail] = useState('');
+  const [subscribing, setSubscribing] = useState(false);
+  const [subscribeMsg, setSubscribeMsg] = useState('');
+
+  const handleSubscribe = async () => {
+    if (!email) return;
+    setSubscribing(true);
+    setSubscribeMsg('');
+    try {
+      const res = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setSubscribeMsg(i18n.language === 'ar' ? 'تم الاشتراك بنجاح!' : 'Subscribed successfully!');
+        setEmail('');
+      } else {
+        setSubscribeMsg(data.error || 'Error');
+      }
+    } catch (e) {
+      setSubscribeMsg('Error subscribing');
+    } finally {
+      setSubscribing(false);
+    }
+  };
+
   const dir = i18n.language === 'ar' ? 'rtl' : 'ltr';
 
-  const articles: Article[] = originalArticles.map((article: any) => ({
+  // Bookmark Logic
+  const [bookmarkedIds, setBookmarkedIds] = useState<any[]>([]);
+
+  useEffect(() => {
+    const bookmarks = JSON.parse(localStorage.getItem('bookmarked_articles') || '[]');
+    setBookmarkedIds(bookmarks);
+  }, []);
+
+  const toggleBookmark = (e: React.MouseEvent, id: any) => {
+    e.stopPropagation();
+    let newBookmarks;
+    if (bookmarkedIds.includes(id)) {
+      newBookmarks = bookmarkedIds.filter(bId => bId !== id);
+    } else {
+      newBookmarks = [...bookmarkedIds, id];
+    }
+    setBookmarkedIds(newBookmarks);
+    localStorage.setItem('bookmarked_articles', JSON.stringify(newBookmarks));
+  };
+
+  /* ... */
+  // Copy Link Logic
+  const [copyMessage, setCopyMessage] = useState('');
+
+  const shareArticle = async (e: React.MouseEvent, article: any) => {
+    e.stopPropagation();
+    const url = `${window.location.origin}/article/${article.id}`;
+    const shareData = {
+      title: i18n.language === 'ar' ? article.title_ar : article.title_en,
+      text: i18n.language === 'ar' ? article.excerpt_ar : article.excerpt_en,
+      url: url,
+    };
+
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+      } catch (err) {
+        // user cancelled
+      }
+    } else {
+      navigator.clipboard.writeText(url);
+      setCopyMessage(i18n.language === 'ar' ? 'تم نسخ الرابط!' : 'Link copied!');
+      setTimeout(() => setCopyMessage(''), 3000);
+    }
+  };
+
+  useEffect(() => {
+    async function loadArticles() {
+      try {
+        const res = await fetch(`/api/articles?t=${Date.now()}`);
+        if (res.ok) {
+          const data = await res.json();
+          setArticlesData(data);
+        }
+      } catch (error) {
+        console.error("Error loading articles:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    loadArticles();
+  }, []);
+
+  const articles: Article[] = articlesData.map((article: any) => ({
     ...article,
     title: i18n.language === 'ar' ? article.title_ar : article.title_en,
     excerpt: i18n.language === 'ar' ? article.excerpt_ar : article.excerpt_en,
@@ -84,6 +178,13 @@ const Articles = () => {
             {t("articlesSection.lead")}
           </p>
         </motion.div>
+
+        {/* Copy Toast */}
+        {copyMessage && (
+           <div className="fixed top-24 left-1/2 transform -translate-x-1/2 z-50 bg-black/80 text-white px-6 py-3 rounded-full shadow-xl animate-fade-in-down">
+              {copyMessage}
+           </div>
+        )}
 
         {/* Category Filters */}
         <motion.div
@@ -149,10 +250,16 @@ const Articles = () => {
                       {t(`articlesSection.categories.${article.category}`)}
                     </span>
                     <div className="flex items-center space-x-4 rtl:space-x-reverse">
-                      <button className="text-gray-400 hover:text-nutty-blue transition-colors">
-                        <Bookmark className="w-5 h-5" />
+                      <button 
+                        onClick={(e) => toggleBookmark(e, article.id)}
+                        className={`transition-colors ${bookmarkedIds.includes(article.id) ? 'text-nutty-blue' : 'text-gray-400 hover:text-nutty-blue'}`}
+                      >
+                        <Bookmark className={`w-5 h-5 ${bookmarkedIds.includes(article.id) ? 'fill-current' : ''}`} />
                       </button>
-                      <button className="text-gray-400 hover:text-nutty-blue transition-colors">
+                      <button 
+                        onClick={(e) => shareArticle(e, article)}
+                        className="text-gray-400 hover:text-nutty-blue transition-colors"
+                      >
                         <Share2 className="w-5 h-5" />
                       </button>
                     </div>
@@ -206,62 +313,6 @@ const Articles = () => {
           ))}
         </div>
 
-        {/* Trending Section */}
-        {trendingArticles.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            className="mb-16"
-          >
-            <div className="flex items-center mb-8">
-              <TrendingUp className="w-6 h-6 text-nutty-yellow mr-3 rtl:ml-3 rtl:mr-0" />
-              <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
-                {t("articlesSection.trending")}
-              </h3>
-            </div>
-            
-            <div className="grid md:grid-cols-3 gap-6">
-              {trendingArticles.map((article, index) => (
-                <motion.article
-                  key={article.id}
-                  initial={{ opacity: 0, x: -20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1 }}
-                  className="group cursor-pointer"
-                  onClick={() => router.push(`/article/${article.id}`)}
-                >
-                  <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 h-full">
-                    <div className="flex items-center mb-4">
-                      <TrendingUp className="w-4 h-4 text-nutty-yellow mr-2 rtl:ml-2 rtl:mr-0" />
-                      <span className="text-sm font-semibold text-gray-500">{t("articlesSection.trendingLabel")}</span>
-                    </div>
-                    
-                    <h4 className="text-lg font-bold text-gray-900 dark:text-white mb-3 group-hover:text-nutty-blue transition-colors line-clamp-2">
-                      {article.title}
-                    </h4>
-                    
-                    <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
-                      <span>{article.author}</span>
-                      <span>{article.date}</span>
-                    </div>
-                    
-                    <div className="flex items-center justify-between">
-                      <span className="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-sm capitalize">
-                        {t(`articlesSection.categories.${article.category}`)}
-                      </span>
-                      <button className="text-nutty-blue hover:text-blue-700 text-sm font-semibold">
-                        {t("articlesSection.read")}
-                      </button>
-                    </div>
-                  </div>
-                </motion.article>
-              ))}
-            </div>
-          </motion.div>
-        )}
-
         {/* All Articles Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
           {filteredArticles
@@ -294,8 +345,11 @@ const Articles = () => {
                       <span className="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-sm capitalize">
                         {t(`articlesSection.categories.${article.category}`)}
                       </span>
-                      <button className="text-gray-400 hover:text-nutty-blue">
-                        <Bookmark className="w-4 h-4" />
+                      <button 
+                         onClick={(e) => toggleBookmark(e, article.id)}
+                         className={`transition-colors ${bookmarkedIds.includes(article.id) ? 'text-nutty-blue' : 'text-gray-400 hover:text-nutty-blue'}`}
+                      >
+                        <Bookmark className={`w-4 h-4 ${bookmarkedIds.includes(article.id) ? 'fill-current' : ''}`} />
                       </button>
                     </div>
 
@@ -315,7 +369,7 @@ const Articles = () => {
                       <div className="flex items-center space-x-3 rtl:space-x-reverse">
                         <span className="flex items-center">
                           <Eye className="w-3 h-3 mr-1 rtl:ml-1 rtl:mr-0" />
-                          {Math.floor(article.views / 1000)}k
+                          {article.views >= 1000 ? (article.views / 1000).toFixed(1) + 'k' : article.views}
                         </span>
                         <span className="flex items-center">
                           <MessageCircle className="w-3 h-3 mr-1 rtl:ml-1 rtl:mr-0" />
@@ -344,16 +398,25 @@ const Articles = () => {
               {t("articlesSection.newsletter.desc")}
             </p>
             <div className="max-w-md mx-auto">
-              <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex flex-col sm:flex-row gap-4 mb-4">
                 <input
                   type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   placeholder={t("articlesSection.newsletter.placeholder")}
                   className="flex-1 px-6 py-3 rounded-full bg-white/20 backdrop-blur-sm text-white placeholder-blue-200 border border-white/30 focus:outline-none focus:ring-2 focus:ring-white"
                 />
-                <button className="px-8 py-3 bg-white text-nutty-blue rounded-full font-semibold text-lg hover:bg-gray-100 transition-colors transform hover:scale-105">
-                  {t("articlesSection.newsletter.button")}
+                <button 
+                  onClick={handleSubscribe}
+                  disabled={subscribing}
+                  className="px-8 py-3 bg-white text-nutty-blue rounded-full font-semibold text-lg hover:bg-gray-100 transition-colors transform hover:scale-105 disabled:opacity-50"
+                >
+                  {subscribing ? (i18n.language === 'ar' ? 'جاري...' : '...') : t("articlesSection.newsletter.button")}
                 </button>
               </div>
+              {subscribeMsg && (
+                <p className="text-white font-medium mb-4">{subscribeMsg}</p>
+              )}
               <p className="text-sm text-blue-200 mt-4">
                 {t("articlesSection.newsletter.note")}
               </p>

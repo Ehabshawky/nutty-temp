@@ -16,10 +16,6 @@ import {
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
-// Import blog posts from shared data
-// @ts-ignore
-import { blogPosts as originalBlogPosts } from '@/data/blogs';
-
 interface BlogPost {
   id: string | number;
   title: string;
@@ -40,27 +36,79 @@ const Blogs = () => {
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState('');
   const [activeCategory, setActiveCategory] = useState('all');
+  const [blogsData, setBlogsData] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [subscribeEmail, setSubscribeEmail] = useState('');
+  const [subscribing, setSubscribing] = useState(false);
+  const [subscribeMsg, setSubscribeMsg] = useState('');
+  
   const dir = i18n.language === 'ar' ? 'rtl' : 'ltr';
 
-  const blogPosts: BlogPost[] = originalBlogPosts.map((post: any) => ({
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!subscribeEmail) return;
+    
+    setSubscribing(true);
+    setSubscribeMsg('');
+    try {
+      const res = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: subscribeEmail })
+      });
+      
+      const data = await res.json();
+      
+      if (res.ok) {
+        setSubscribeMsg(i18n.language === 'ar' ? 'تم الاشتراك بنجاح!' : 'Subscribed successfully!');
+        setSubscribeEmail('');
+      } else {
+        setSubscribeMsg(data.message || data.error || 'Error subscribing');
+      }
+    } catch (err) {
+      setSubscribeMsg('Error connecting to server');
+    } finally {
+      setSubscribing(false);
+    }
+  };
+
+  React.useEffect(() => {
+    fetch('/api/blogs')
+        .then(res => res.json())
+        .then(data => {
+            if (Array.isArray(data)) setBlogsData(data);
+            setLoading(false);
+        })
+        .catch(err => {
+            console.error(err);
+            setLoading(false);
+        });
+  }, []);
+
+  const blogPosts: BlogPost[] = blogsData.map((post: any) => ({
     ...post,
     title: i18n.language === 'ar' ? post.title_ar : post.title_en,
     excerpt: i18n.language === 'ar' ? post.excerpt_ar : post.excerpt_en,
     author: i18n.language === 'ar' ? post.author_ar : post.author_en,
-    date: i18n.language === 'ar' ? post.date_ar : post.date_en,
-    readTime: i18n.language === 'ar' ? post.readTime_ar : post.readTime_en,
+    date: new Date(post.created_at).toLocaleDateString(), 
+    readTime: i18n.language === 'ar' ? post.read_time_ar : post.read_time_en,
     tags: i18n.language === 'ar' ? post.tags_ar : post.tags_en,
+    comments: post.comments_count || 0
   }));
+
+  // Calculate category counts
+  const categoryCounts = blogPosts.reduce((acc: any, blog: BlogPost) => {
+    acc[blog.category] = (acc[blog.category] || 0) + 1;
+    return acc;
+  }, {});
 
   const categories = [
     { id: 'all', label: t('blogsSection.categories.all'), count: blogPosts.length },
-    { id: 'parenting', label: t('blogsSection.categories.parenting'), count: 1 },
-    { id: 'neuroscience', label: t('blogsSection.categories.neuroscience'), count: 1 },
-    { id: 'sustainability', label: t('blogsSection.categories.sustainability'), count: 1 },
-    { id: 'technology', label: t('blogsSection.categories.technology'), count: 2 },
-    { id: 'chemistry', label: t('blogsSection.categories.chemistry'), count: 1 },
-    { id: 'psychology', label: t('blogsSection.categories.psychology'), count: 1 },
-    { id: 'astronomy', label: t('blogsSection.categories.astronomy'), count: 1 }
+    ...Object.keys(categoryCounts).map(cat => ({
+      id: cat,
+      label: t(`blogsSection.categories.${cat}`) || cat,
+      count: categoryCounts[cat]
+    }))
   ];
 
   const popularTags = i18n.language === 'ar' 
@@ -71,7 +119,7 @@ const Blogs = () => {
     const matchesCategory = activeCategory === 'all' || blog.category === activeCategory;
     const matchesSearch = blog.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          blog.excerpt.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         blog.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
+                         blog.tags.some((tag: string) => tag.toLowerCase().includes(searchTerm.toLowerCase()));
     return matchesCategory && matchesSearch;
   });
 
@@ -236,7 +284,7 @@ const Blogs = () => {
 
                   {/* Tags */}
                   <div className="flex flex-wrap gap-2">
-                    {blog.tags.map((tag, i) => (
+                    {blog.tags.map((tag: string, i: number) => (
                       <span
                         key={i}
                         className="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-sm"
@@ -250,73 +298,7 @@ const Blogs = () => {
             </motion.article>
           ))}
         </div>
-
-        {/* Recent Posts */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          className="mb-16"
-        >
-          <div className="flex items-center justify-between mb-8">
-            <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
-              {t("blogsSection.recentPosts")}
-            </h3>
-            <TrendingUp className="w-6 h-6 text-nutty-yellow" />
-          </div>
-          
-          <div className="grid md:grid-cols-3 gap-6">
-            {recentPosts.map((post, index) => (
-              <motion.article
-                key={post.id}
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                onClick={() => router.push(`/blog/${post.id}`)}
-                className="group cursor-pointer"
-              >
-                <div className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 h-full">
-                  {/* Image */}
-                  <div className="relative h-48 overflow-hidden">
-                    <img
-                      src={post.image}
-                      alt={post.title}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-                  </div>
-
-                  {/* Content */}
-                  <div className="p-6">
-                    <h4 className="text-lg font-bold text-gray-900 dark:text-white mb-3 group-hover:text-nutty-blue transition-colors line-clamp-2">
-                      {post.title}
-                    </h4>
-                    
-                    <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
-                      <span>{post.author}</span>
-                      <span>{post.date}</span>
-                    </div>
-                    
-                    <p className="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-2">
-                      {post.excerpt}
-                    </p>
-                    
-                    <div className="flex items-center justify-between">
-                      <span className="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-sm capitalize">
-                        {t(`blogsSection.categories.${post.category}`)}
-                      </span>
-                      <span className="text-nutty-blue text-sm font-semibold flex items-center">
-                        {t("articlesSection.read")} <span className="mx-1 rtl:rotate-180">→</span>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </motion.article>
-            ))}
-          </div>
-        </motion.div>
-
+        
         {/* All Blog Posts Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
           {filteredBlogs
@@ -397,16 +379,29 @@ const Blogs = () => {
               {t("blogsSection.newsletter.desc")}
             </p>
             <div className="max-w-md mx-auto">
-              <div className="flex flex-col sm:flex-row gap-4">
+              <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-4">
                 <input
                   type="email"
                   placeholder={t("articlesSection.newsletter.placeholder")}
                   className="flex-1 px-6 py-3 rounded-full bg-white/20 backdrop-blur-sm text-white placeholder-blue-200 border border-white/30 focus:outline-none focus:ring-2 focus:ring-white"
+                  value={subscribeEmail}
+                  onChange={(e) => setSubscribeEmail(e.target.value)}
+                  required
+                  disabled={subscribing}
                 />
-                <button className="px-8 py-3 bg-white text-nutty-blue rounded-full font-semibold text-lg hover:bg-gray-100 transition-colors transform hover:scale-105">
-                  {t("articlesSection.newsletter.button")}
+                <button 
+                  type="submit" 
+                  disabled={subscribing}
+                  className="px-8 py-3 bg-white text-nutty-blue rounded-full font-semibold text-lg hover:bg-gray-100 transition-colors transform hover:scale-105 disabled:opacity-75"
+                >
+                  {subscribing ? "..." : t("articlesSection.newsletter.button")}
                 </button>
-              </div>
+              </form>
+              {subscribeMsg && (
+                <p className={`text-sm mt-4 font-semibold ${subscribeMsg.includes('Error') ? 'text-red-200' : 'text-green-200'}`}>
+                  {subscribeMsg}
+                </p>
+              )}
               <p className="text-sm text-blue-200 mt-4">
                 {t("blogsSection.newsletter.note")}
               </p>

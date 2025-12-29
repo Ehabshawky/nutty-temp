@@ -1,46 +1,50 @@
 import { NextResponse } from "next/server";
-import fs from "fs";
-import path from "path";
+import { supabase, supabaseAdmin } from "@/lib/supabase";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/auth";
 
-const DATA_PATH = path.join(process.cwd(), "data", "site-content.json");
-
-function readData() {
-  try {
-    const raw = fs.readFileSync(DATA_PATH, "utf8");
-    return JSON.parse(raw);
-  } catch (err) {
-    return null;
-  }
-}
-
-function writeData(data: any) {
-  fs.writeFileSync(DATA_PATH, JSON.stringify(data, null, 2), "utf8");
-}
-
-export const dynamic = 'force-static';
+export const dynamic = 'force-dynamic';
 
 export async function GET() {
-  const data = readData();
-  if (!data) {
-    return NextResponse.json(
-      { error: "Unable to read content" },
-      { status: 500 }
-    );
+  const { data, error } = await supabase
+    .from('site_configs')
+    .select('key, value');
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
-  return NextResponse.json(data);
+
+  // Convert array of {key, value} to a single object like the old JSON
+  const configObject = data.reduce((acc: any, curr) => {
+    acc[curr.key] = curr.value;
+    return acc;
+  }, {});
+
+  return NextResponse.json(configObject);
 }
 
 export async function PUT(request: Request) {
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   try {
     const payload = await request.json();
-    // payload expected: { section: 'hero'|'footer'|..., data: { ... } }
     const { section, data } = payload;
+    
     if (!section) {
       return NextResponse.json({ error: "Missing section" }, { status: 400 });
     }
-    const current = readData() || {};
-    current[section] = data;
-    writeData(current);
+
+    const { error } = await supabaseAdmin
+      .from('site_configs')
+      .upsert({ key: section, value: data, updated_at: new Date().toISOString() });
+
+    if (error) {
+       return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
     return NextResponse.json({ success: true, section, data });
   } catch (err) {
     return NextResponse.json({ error: String(err) }, { status: 500 });

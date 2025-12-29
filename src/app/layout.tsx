@@ -151,7 +151,6 @@ export default function RootLayout({
             <Footer />
           </div>
           
-          {/* العناصر التفاعلية في مكون عميل منفصل */}
           <ClientComponents language={language} />
         </Providers>
       </body>

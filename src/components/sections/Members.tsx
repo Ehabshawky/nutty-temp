@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import Link from 'next/link';
 import { 
   Mail, 
   Linkedin, 
@@ -17,142 +18,39 @@ import {
 const Members = () => {
   const { t, i18n } = useTranslation();
   const [activeFilter, setActiveFilter] = useState('all');
+  const [teamMembers, setTeamMembers] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [expandedBios, setExpandedBios] = useState<Record<string, boolean>>({});
+  const [selectedMember, setSelectedMember] = useState<any>(null);
 
-  const teamMembers = [
-    {
-      id: 1,
-      name: 'Ahmed Habib',
-      position: {
-        en: 'Chief Executive Officer',
-        ar: 'المدير التنفيذي'
-      },
-      bio: {
-        en: 'Ahmed Habib is recognized as the Board Member and CEO of Edrak, President and CEO of Harvest Holdings, and a founding member of EO Cairo.',
-        ar: 'أحمد حبيب معترف به كعضو مجلس إدارة والمدير التنفيذي لشركة إدراك، والرئيس والمدير التنفيذي لشركة Harvest Holdings، وعضو مؤسس في EO Cairo.'
-      },
-      image: 'ahmed habib.jpg',
-      department: 'ceo',
-      email: 'ahmed@nuttyscientists.com',
-      social: {
-        linkedin: '#',
-        twitter: '#',
-        github: '#'
-      },
-      skills: ['Biology', 'Curriculum Development', 'Public Speaking'],
-      education: {
-        en: 'PhD Molecular Biology, Harvard University',
-        ar: 'دكتوراه في البيولوجيا الجزيئية، جامعة هارفارد'
-      },
-      featured: true
-    },
-    {
-      id: 2,
-      name: 'Akram Farid',
-      position: {
-        en: 'Chief Executive Officer',
-        ar: 'المدير التنفيذي'
-      },
-      bio: {
-        en: 'Akram Farid is the CEO of Nutty Scientists Egypt.',
-        ar: 'أكرم فريد هو المدير التنفيذي لشركة Nutty Scientists مصر.'
-      },
-      image: '/akram farid.jpeg',
-      department: 'ceo',
-      email: 'akram@nuttyscientists.com',
-      social: {
-        linkedin: '#',
-        twitter: '#',
-        github: '#'
-      },
-      skills: ['Leadership', 'Business Strategy', 'Education'],
-      education: {
-        en: 'MSc Computer Science, MIT',
-        ar: 'ماجستير في علوم الحاسوب، معهد ماساتشوستس للتكنولوجيا'
-      },
-      featured: true
-    },
-    {
-      id: 4,
-      name: 'Sherif Bassiouny',
-      position: {
-        en: 'Chief Marketing Officer',
-        ar: 'مدير التسويق'
-      },
-      bio: {
-        en: 'Sherif Bassiouny is the Chief Marketing Officer (CMO) at Edrak.',
-        ar: 'شريف بسيوني هو مدير التسويق في شركة إدراك.'
-      },
-      image: 'sherif bassiouny.jpeg',
-      department: 'marketing',
-      email: 'sherif@nuttyscientists.com',
-      social: {
-        linkedin: '#',
-        github: '#'
-      },
-      skills: ['Marketing', 'Digital Strategy', 'Brand Management'],
-      education: {
-        en: 'MBA Marketing, AUC',
-        ar: 'ماجستير في إدارة الأعمال - تخصص تسويق، الجامعة الأمريكية بالقاهرة'
-      },
-      featured: false
-    },
-    {
-      id: 5,
-      name: 'Farah Amin',
-      position: {
-        en: 'Science Communicator',
-        ar: 'متواصل علمي'
-      },
-      bio: {
-        en: 'Makes physics fun and understandable through hands-on experiments and real-world applications.',
-        ar: 'تجعل الفيزياء ممتعة ومفهومة من خلال التجارب العملية والتطبيقات الواقعية.'
-      },
-      image: 'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f',
-      department: 'operations',
-      email: 'farah@nuttyscientists.com',
-      social: {
-        linkedin: '#',
-        twitter: '#'
-      },
-      skills: ['Physics', 'Astronomy', 'Science Communication'],
-      education: {
-        en: 'MSc Physics, University of Cambridge',
-        ar: 'ماجستير في الفيزياء، جامعة كامبريدج'
-      },
-      featured: false
-    },
-    {
-      id: 6,
-      name: 'John Awad',
-      position: {
-        en: 'Science Communicator',
-        ar: 'متواصل علمي'
-      },
-      bio: {
-        en: 'Organizes workshops and camps, ensuring every child has an unforgettable science experience.',
-        ar: 'ينظم ورش العمل والمخيمات، ويضمن حصول كل طفل على تجربة علمية لا تُنسى.'
-      },
-      image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e',
-      department: 'technology',
-      email: 'john@nuttyscientists.com',
-      social: {
-        linkedin: '#'
-      },
-      skills: ['Event Planning', 'Logistics', 'Community Outreach'],
-      education: {
-        en: 'BA Education, University of Toronto',
-        ar: 'بكالوريوس في التربية، جامعة تورونتو'
-      },
-      featured: false
+  // Load team members
+  useEffect(() => {
+    async function loadTeam() {
+      try {
+        const res = await fetch(`/api/team?t=${Date.now()}`);
+        if (res.ok) {
+          const data = await res.json();
+          setTeamMembers(data);
+        }
+      } catch (error) {
+        console.error("Error loading team members:", error);
+      } finally {
+        setLoading(false);
+      }
     }
-  ];
+    loadTeam();
+  }, []);
+
+  const toggleBio = (id: string) => {
+    setExpandedBios(prev => ({ ...prev, [id]: !prev[id] }));
+  };
 
   const departments = [
     { id: 'all', label: { en: 'All Team', ar: 'الفريق كامل' }, count: teamMembers.length },
-    { id: 'ceo', label: { en: 'CEO', ar: 'الإدارة' }, count: 2 },
-    { id: 'marketing', label: { en: 'Marketing', ar: 'التسويق' }, count: 1 },
-    { id: 'technology', label: { en: 'Technology', ar: 'التكنولوجيا' }, count: 1 },
-    { id: 'operations', label: { en: 'Operations', ar: 'العمليات' }, count: 1 }
+    { id: 'ceo', label: { en: 'CEO', ar: 'الإدارة' }, count: teamMembers.filter(m => m.department === 'ceo').length },
+    { id: 'marketing', label: { en: 'Marketing', ar: 'التسويق' }, count: teamMembers.filter(m => m.department === 'marketing').length },
+    { id: 'technology', label: { en: 'Technology', ar: 'التكنولوجيا' }, count: teamMembers.filter(m => m.department === 'technology').length },
+    { id: 'operations', label: { en: 'Operations', ar: 'العمليات' }, count: teamMembers.filter(m => m.department === 'operations').length }
   ];
 
   const filteredMembers = activeFilter === 'all' 
@@ -161,6 +59,15 @@ const Members = () => {
 
   // Get current language
   const currentLanguage = (i18n.language || 'en') as 'en' | 'ar';
+  const isRTL = i18n.language === 'ar';
+
+  if (loading) {
+     return (
+       <div className="py-20 flex items-center justify-center min-h-[400px]">
+         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-nutty-orange"></div>
+       </div>
+     );
+  }
 
   return (
     <section id="members" className="py-20 bg-white dark:bg-gray-900">
@@ -196,12 +103,12 @@ const Members = () => {
               onClick={() => setActiveFilter(dept.id)}
               className={`px-6 py-3 rounded-full transition-all flex items-center space-x-2 rtl:space-x-reverse ${
                 activeFilter === dept.id
-                  ? 'bg-nutty-blue text-white'
+                  ? 'bg-nutty-blue text-white shadow-md'
                   : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
               }`}
             >
-              <span>{dept.label[currentLanguage]}</span>
-              <span className="px-2 py-1 text-xs bg-white/20 rounded-full">
+              <span className="font-semibold">{dept.label[currentLanguage]}</span>
+              <span className="px-2 py-0.5 text-xs bg-black/10 dark:bg-white/10 rounded-full">
                 {dept.count}
               </span>
             </button>
@@ -222,14 +129,14 @@ const Members = () => {
                 whileHover={{ y: -5 }}
                 className="group"
               >
-                <div className="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-800 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 h-full">
+                <div className="bg-gradient-to-br from-blue-50/50 to-purple-50/50 dark:from-gray-800/50 dark:to-gray-800/50 rounded-2xl p-8 shadow-sm border border-gray-100 dark:border-gray-700 h-full">
                   <div className="flex flex-col md:flex-row gap-8">
                     {/* Member Image */}
-                    <div className="flex-shrink-0">
+                    <div className="flex-shrink-0 cursor-pointer" onClick={() => setSelectedMember(member)}>
                       <div className="relative w-48 h-48 mx-auto md:mx-0">
                         <div className="absolute inset-0 bg-gradient-to-br from-nutty-blue to-purple-600 rounded-2xl transform rotate-3 group-hover:rotate-6 transition-transform"></div>
                         <img
-                          src={member.image}
+                          src={member.image || '/default-avatar.avif'}
                           alt={member.name}
                           className="relative w-full h-full object-cover rounded-2xl shadow-lg"
                         />
@@ -237,41 +144,51 @@ const Members = () => {
                     </div>
 
                     {/* Member Info */}
-                    <div className="flex-1">
+                    <div className="flex-1 min-w-0">
                       <div className="mb-4">
-                        <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
+                        <h3 className="text-2xl font-bold text-gray-900 dark:text-white cursor-pointer hover:text-nutty-blue transition-colors" onClick={() => setSelectedMember(member)}>
                           {member.name}
                         </h3>
-                        <p className="text-nutty-blue dark:text-nutty-yellow font-semibold">
+                        <p className="text-nutty-blue dark:text-nutty-yellow font-bold uppercase tracking-wider text-sm">
                           {member.position[currentLanguage]}
                         </p>
                       </div>
 
-                      <p className="text-gray-600 dark:text-gray-400 mb-6">
-                        {member.bio[currentLanguage]}
-                      </p>
+                      <div className="mb-6">
+                        <p className={`text-gray-600 dark:text-gray-400 leading-relaxed ${expandedBios[member.id] ? '' : 'line-clamp-4'}`}>
+                          {member.bio[currentLanguage]}
+                        </p>
+                        {member.bio[currentLanguage]?.length > 180 && (
+                          <button 
+                            onClick={() => toggleBio(member.id)}
+                            className="text-nutty-orange font-bold text-sm mt-2 hover:underline"
+                          >
+                            {expandedBios[member.id] ? (isRTL ? 'عرض أقل' : 'Show Less') : (isRTL ? 'إقرأ المزيد...' : 'Read More...')}
+                          </button>
+                        )}
+                      </div>
 
                       {/* Education */}
-                      <div className="flex items-start mb-4">
-                        <GraduationCap className="w-5 h-5 text-gray-500 mt-1 mr-3 flex-shrink-0" />
-                        <p className="text-gray-700 dark:text-gray-300">
+                      <div className="flex items-start mb-4 bg-white/50 dark:bg-black/20 p-3 rounded-lg border border-gray-100 dark:border-gray-700">
+                        <GraduationCap className="w-5 h-5 text-nutty-orange mt-0.5 mr-3 rtl:ml-3 flex-shrink-0" />
+                        <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">
                           {member.education[currentLanguage]}
                         </p>
                       </div>
 
-                      {/* Skills */}
+                      {/* Expertise */}
                       <div className="mb-6">
                         <div className="flex items-center mb-2">
-                          <Award className="w-5 h-5 text-gray-500 mr-2" />
-                          <span className="font-semibold text-gray-700 dark:text-gray-300">
-                            {currentLanguage === 'ar' ? 'التخصصات:' : 'Expertise:'}
+                          <Award className="w-4 h-4 text-gray-500 mr-2 rtl:ml-2" />
+                          <span className="text-xs font-black text-gray-500 uppercase tracking-widest">
+                            {currentLanguage === 'ar' ? 'الخبرات والتخصص' : 'Expertise'}
                           </span>
                         </div>
                         <div className="flex flex-wrap gap-2">
-                          {member.skills.map((skill, i) => (
+                          {member.skills.map((skill: string, i: number) => (
                             <span
                               key={i}
-                              className="px-3 py-1 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-sm shadow-sm"
+                              className="px-3 py-1 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg text-xs font-bold border border-gray-100 dark:border-gray-600 shadow-sm"
                             >
                               {skill}
                             </span>
@@ -280,41 +197,38 @@ const Members = () => {
                       </div>
 
                       {/* Social Links */}
-                      <div className="flex space-x-4 rtl:space-x-reverse">
+                      <div className="flex space-x-4 rtl:space-x-reverse pt-4 border-t border-gray-100 dark:border-gray-700">
                         <a
                           href={`mailto:${member.email}`}
-                          className="p-2 bg-gray-100 dark:bg-gray-700 rounded-full hover:bg-nutty-blue hover:text-white transition-colors"
+                          className="w-10 h-10 flex items-center justify-center bg-gray-100 dark:bg-gray-700 rounded-xl hover:bg-nutty-blue hover:text-white transition-all transform hover:-translate-y-1 shadow-sm"
                           title="Email"
                         >
                           <Mail className="w-5 h-5" />
                         </a>
-                        {member.social.linkedin && (
+                        {member.social?.linkedin && (
                           <a
                             href={member.social.linkedin}
-                            className="p-2 bg-gray-100 dark:bg-gray-700 rounded-full hover:bg-blue-600 hover:text-white transition-colors"
+                            className="w-10 h-10 flex items-center justify-center bg-gray-100 dark:bg-gray-700 rounded-xl hover:bg-blue-600 hover:text-white transition-all transform hover:-translate-y-1 shadow-sm"
                             title="LinkedIn"
                           >
                             <Linkedin className="w-5 h-5" />
                           </a>
                         )}
-                        {member.social.twitter && (
+                        {member.social?.twitter && (
                           <a
                             href={member.social.twitter}
-                            className="p-2 bg-gray-100 dark:bg-gray-700 rounded-full hover:bg-sky-500 hover:text-white transition-colors"
+                            className="w-10 h-10 flex items-center justify-center bg-gray-100 dark:bg-gray-700 rounded-xl hover:bg-sky-500 hover:text-white transition-all transform hover:-translate-y-1 shadow-sm"
                             title="Twitter"
                           >
                             <Twitter className="w-5 h-5" />
                           </a>
                         )}
-                        {member.social.github && (
-                          <a
-                            href={member.social.github}
-                            className="p-2 bg-gray-100 dark:bg-gray-700 rounded-full hover:bg-gray-900 hover:text-white transition-colors"
-                            title="GitHub"
-                          >
-                            <Github className="w-5 h-5" />
-                          </a>
-                        )}
+                        <button 
+                          onClick={() => setSelectedMember(member)}
+                          className="px-6 py-2 bg-nutty-blue text-white rounded-xl font-bold text-xs hover:bg-nutty-blue/90 transition-all transform hover:-translate-y-1 shadow-md shadow-nutty-blue/20 uppercase tracking-wider h-10 ml-auto rtl:ml-0 rtl:mr-auto"
+                        >
+                          {currentLanguage === 'ar' ? 'عرض الملف' : 'Profile'}
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -323,7 +237,7 @@ const Members = () => {
             ))}
         </div>
 
-        {/* All Members Grid */}
+        {/* Regular Members Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
           {filteredMembers
             .filter(member => !member.featured)
@@ -335,49 +249,62 @@ const Members = () => {
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.05 }}
                 whileHover={{ y: -5 }}
-                className="group"
+                className="group h-full"
               >
-                <div className="bg-gray-50 dark:bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 h-full">
+                <div className="bg-gray-50 dark:bg-gray-800 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 dark:border-gray-700 flex flex-col h-full">
                   {/* Image */}
-                  <div className="relative h-48 overflow-hidden">
+                  <div className="relative h-48 overflow-hidden cursor-pointer" onClick={() => setSelectedMember(member)}>
                     <img
-                      src={member.image}
+                      src={member.image || '/default-avatar.avif'}
                       alt={member.name}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
-                    <div className="absolute bottom-4 left-4">
-                      <span className="px-3 py-1 bg-nutty-blue/90 text-white rounded-full text-sm">
+                    <div className="absolute bottom-4 left-4 rtl:left-auto rtl:right-4">
+                      <span className="px-3 py-1 bg-nutty-blue/90 text-white rounded-full text-xs font-bold uppercase tracking-wider">
                         {departments.find(d => d.id === member.department)?.label[currentLanguage] || member.department}
                       </span>
                     </div>
                   </div>
 
                   {/* Content */}
-                  <div className="p-6">
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-1">
-                      {member.name}
-                    </h3>
-                    <p className="text-nutty-blue dark:text-nutty-yellow text-sm font-semibold mb-4">
-                      {member.position[currentLanguage]}
-                    </p>
-                    <p className="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-3">
-                      {member.bio[currentLanguage]}
-                    </p>
+                  <div className="p-6 flex flex-col flex-1">
+                    <div className="mb-4">
+                      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-1 cursor-pointer hover:text-nutty-blue transition-colors" onClick={() => setSelectedMember(member)}>
+                        {member.name}
+                      </h3>
+                      <p className="text-nutty-blue dark:text-nutty-yellow text-sm font-bold uppercase tracking-wide">
+                        {member.position[currentLanguage]}
+                      </p>
+                    </div>
+
+                    <div className="flex-1">
+                      <p className={`text-gray-600 dark:text-gray-400 text-sm leading-relaxed mb-4 ${expandedBios[member.id] ? '' : 'line-clamp-3'}`}>
+                        {member.bio[currentLanguage]}
+                      </p>
+                      {member.bio[currentLanguage]?.length > 100 && (
+                        <button 
+                          onClick={() => toggleBio(member.id)}
+                          className="text-nutty-orange font-bold text-xs mb-4 hover:underline block"
+                        >
+                          {expandedBios[member.id] ? (isRTL ? 'إخفاء' : 'Show Less') : (isRTL ? 'اقرأ المزيد' : 'Read More')}
+                        </button>
+                      )}
+                    </div>
                     
-                    {/* Skills */}
-                    <div className="mb-6">
-                      <div className="flex flex-wrap gap-1">
-                        {member.skills.slice(0, 3).map((skill, i) => (
+                    {/* Expertise */}
+                    <div className="mb-6 pt-4 border-t border-gray-100 dark:border-gray-700">
+                      <div className="flex flex-wrap gap-1.5">
+                        {member.skills.slice(0, 3).map((skill: string, i: number) => (
                           <span
                             key={i}
-                            className="px-2 py-1 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded text-xs"
+                            className="px-2 py-1 bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded text-[10px] font-bold border border-gray-100 dark:border-gray-600 shadow-sm"
                           >
                             {skill}
                           </span>
                         ))}
                         {member.skills.length > 3 && (
-                          <span className="px-2 py-1 text-gray-500 text-xs">
+                          <span className="px-2 py-1 text-gray-500 text-[10px] font-bold">
                             +{member.skills.length - 3}
                           </span>
                         )}
@@ -385,27 +312,30 @@ const Members = () => {
                     </div>
 
                     {/* Social Links */}
-                    <div className="flex items-center justify-between">
-                      <div className="flex space-x-2 rtl:space-x-reverse">
+                    <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-100 dark:border-gray-700">
+                      <div className="flex space-x-3 rtl:space-x-reverse">
                         <a
                           href={`mailto:${member.email}`}
-                          className="p-1.5 text-gray-500 hover:text-nutty-blue transition-colors"
+                          className="text-gray-400 hover:text-nutty-blue transition-colors"
                           title="Email"
                         >
-                          <Mail className="w-4 h-4" />
+                          <Mail className="w-5 h-5" />
                         </a>
-                        {member.social.linkedin && (
+                        {member.social?.linkedin && (
                           <a
                             href={member.social.linkedin}
-                            className="p-1.5 text-gray-500 hover:text-blue-600 transition-colors"
+                            className="text-gray-400 hover:text-blue-600 transition-colors"
                             title="LinkedIn"
                           >
-                            <Linkedin className="w-4 h-4" />
+                            <Linkedin className="w-5 h-5" />
                           </a>
                         )}
                       </div>
-                      <button className="text-sm text-nutty-blue hover:text-blue-700 transition-colors">
-                        {currentLanguage === 'ar' ? 'عرض الملف' : 'View Profile'}
+                      <button 
+                        onClick={() => setSelectedMember(member)}
+                        className="text-xs font-bold text-nutty-blue hover:text-blue-700 transition-colors uppercase tracking-wider"
+                      >
+                        {currentLanguage === 'ar' ? 'عرض الملف' : 'Profile'}
                       </button>
                     </div>
                   </div>
@@ -421,27 +351,150 @@ const Members = () => {
           viewport={{ once: true }}
           className="text-center"
         >
-          <div className="bg-gradient-to-r from-nutty-yellow to-orange-500 rounded-2xl p-8 md:p-12">
+          <div className="bg-gradient-to-r from-nutty-yellow to-nutty-orange rounded-[2.5rem] p-8 md:p-12 shadow-xl shadow-nutty-orange/20">
             <Briefcase className="w-16 h-16 mx-auto mb-6 text-white" />
-            <h3 className="text-3xl font-bold text-gray-900 mb-4">
+            <h3 className="text-3xl font-bold text-white mb-4">
               {currentLanguage === 'ar' ? 'هل تريد الانضمام إلى فريقنا؟' : 'Want to Join Our Team?'}
             </h3>
-            <p className="text-xl text-gray-800 mb-8 max-w-2xl mx-auto">
+            <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto font-medium">
               {currentLanguage === 'ar' 
                 ? 'نحن نبحث دائمًا عن أفراد شغوفين يريدون إحداث فرق في التعليم العلمي.'
                 : "We're always looking for passionate individuals who want to make a difference in science education."
               }
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <button className="px-8 py-3 bg-gray-900 text-white rounded-full font-semibold text-lg hover:bg-gray-800 transition-colors transform hover:scale-105">
+              <Link 
+                href="/careers" 
+                className="px-8 py-4 bg-gray-900 text-white rounded-2xl font-bold text-lg hover:bg-black transition-all transform hover:-translate-y-1 shadow-lg shadow-black/20 flex items-center justify-center gap-2"
+              >
                 {currentLanguage === 'ar' ? 'عرض الوظائف المتاحة' : 'View Open Positions'}
-              </button>
-              <button className="px-8 py-3 border-2 border-gray-900 text-gray-900 rounded-full font-semibold text-lg hover:bg-gray-900/10 transition-colors">
+              </Link>
+              <Link 
+                href="/#contact" 
+                className="px-8 py-4 border-2 border-white text-white rounded-2xl font-bold text-lg hover:bg-white/10 transition-colors flex items-center justify-center gap-2"
+              >
                 {currentLanguage === 'ar' ? 'تقديم السيرة الذاتية' : 'Submit Your CV'}
-              </button>
+              </Link>
             </div>
           </div>
         </motion.div>
+
+        {/* Member Modal */}
+        {selectedMember && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={() => setSelectedMember(null)}>
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="bg-white dark:bg-gray-800 rounded-3xl overflow-hidden max-w-4xl w-full max-h-[90vh] shadow-2xl relative"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Close Button */}
+              <button 
+                onClick={() => setSelectedMember(null)}
+                className="absolute top-4 right-4 z-10 w-10 h-10 bg-black/10 dark:bg-white/10 rounded-full flex items-center justify-center hover:bg-black/20 dark:hover:bg-white/20 transition-colors text-gray-900 dark:text-white"
+              >
+                <span className="text-2xl">&times;</span>
+              </button>
+
+              <div className="flex flex-col md:flex-row h-full overflow-y-auto">
+                {/* Left Side - Image */}
+                <div className="md:w-2/5 relative h-80 md:h-auto">
+                  <img 
+                    src={selectedMember.image || '/default-avatar.avif'} 
+                    alt={selectedMember.name} 
+                    className="absolute inset-0 w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent md:bg-gradient-to-r md:from-transparent md:to-black/20"></div>
+                  <div className="absolute bottom-6 left-6 md:hidden">
+                    <h2 className="text-3xl font-black text-white mb-1">{selectedMember.name}</h2>
+                    <p className="text-nutty-yellow font-bold uppercase tracking-widest text-sm">{selectedMember.position[currentLanguage]}</p>
+                  </div>
+                </div>
+
+                {/* Right Side - Content */}
+                <div className="md:w-3/5 p-8 md:p-12">
+                  <div className="hidden md:block mb-8">
+                    <h2 className="text-4xl font-black text-gray-900 dark:text-white mb-2">{selectedMember.name}</h2>
+                    <p className="text-nutty-blue dark:text-nutty-yellow font-black uppercase tracking-[0.2em] text-sm">
+                      {selectedMember.position[currentLanguage]}
+                    </p>
+                  </div>
+
+                  <div className="mb-8 p-6 bg-gray-50 dark:bg-gray-700/50 rounded-2xl border border-gray-100 dark:border-gray-700">
+                    <p className="text-gray-700 dark:text-gray-300 leading-relaxed italic text-lg">
+                      "{selectedMember.bio[currentLanguage]}"
+                    </p>
+                  </div>
+
+                  {/* Details Grid */}
+                  <div className="grid grid-cols-1 gap-6 mb-8">
+                    {/* Education */}
+                    <div className="flex items-start gap-4">
+                      <div className="w-10 h-10 bg-nutty-orange/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <GraduationCap className="w-5 h-5 text-nutty-orange" />
+                      </div>
+                      <div>
+                        <h4 className="text-xs font-black text-gray-400 uppercase tracking-widest mb-1">{isRTL ? 'التعليم' : 'Education'}</h4>
+                        <p className="text-gray-800 dark:text-white font-bold">{selectedMember.education[currentLanguage]}</p>
+                      </div>
+                    </div>
+
+                    {/* Department */}
+                    <div className="flex items-start gap-4">
+                      <div className="w-10 h-10 bg-nutty-blue/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <Briefcase className="w-5 h-5 text-nutty-blue" />
+                      </div>
+                      <div>
+                        <h4 className="text-xs font-black text-gray-400 uppercase tracking-widest mb-1">{isRTL ? 'القسم' : 'Department'}</h4>
+                        <p className="text-gray-800 dark:text-white font-bold">
+                          {departments.find(d => d.id === selectedMember.department)?.label[currentLanguage] || selectedMember.department}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Skills */}
+                  <div className="mb-10">
+                    <h4 className="text-xs font-black text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                      <Award className="w-4 h-4" />
+                      {isRTL ? 'التخصصات والمهارات' : 'Expertise & Skills'}
+                    </h4>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedMember.skills.map((skill: string, i: number) => (
+                        <span 
+                          key={i}
+                          className="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-600 rounded-xl text-sm font-bold text-gray-700 dark:text-gray-300 shadow-sm"
+                        >
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Social & Contact */}
+                  <div className="flex items-center gap-4 pt-8 border-t border-gray-100 dark:border-gray-700">
+                    <a 
+                      href={`mailto:${selectedMember.email}`}
+                      className="flex items-center gap-2 px-6 py-3 bg-nutty-blue text-white rounded-xl font-bold hover:bg-nutty-blue/90 transition-all transform hover:-translate-y-1 shadow-lg shadow-nutty-blue/20"
+                    >
+                      <Mail className="w-4 h-4" />
+                      {isRTL ? 'تواصل' : 'Contact'}
+                    </a>
+                    {selectedMember.social?.linkedin && (
+                      <a 
+                        href={selectedMember.social.linkedin}
+                        className="w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-xl flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all transform hover:-translate-y-1"
+                      >
+                        <Linkedin className="w-5 h-5" />
+                      </a>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
       </div>
     </section>
   );

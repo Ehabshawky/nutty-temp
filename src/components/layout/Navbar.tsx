@@ -15,14 +15,30 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
+  const [logoUrl, setLogoUrl] = useState("/Nutt Logo.png");
 
   useEffect(() => {
+    async function fetchSettings() {
+      try {
+        const res = await fetch("/api/site-content?t=" + Date.now());
+        if (res.ok) {
+          const data = await res.json();
+          if (data.settings?.logo_url) {
+            setLogoUrl(data.settings.logo_url);
+          }
+        }
+      } catch (e) {
+        console.error("Error fetching logo:", e);
+      }
+    }
+    fetchSettings();
+
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
 
       // Scroll Spy Logic
       const sections = ['home', 'services', 'about', 'projects', 'members', 'articles', 'testimonials', 'blogs', 'contact'];
-      const scrollPosition = window.scrollY + 150; // Offset for navbar and some buffer
+      const scrollPosition = window.scrollY + 150;
 
       for (const section of sections) {
         const element = document.getElementById(section);
@@ -41,7 +57,7 @@ const Navbar = () => {
   }, []);
 
   const navItems = [
-    { name: t("home"), href: "#home" },
+    { name: t("home"), href: "#home"},
     { name: t("servicesNav"), href: "#services" },
     { name: t("aboutNav"), href: "#about" },
     { name: t("projectsNav"), href: "#projects" },
@@ -52,15 +68,51 @@ const Navbar = () => {
     { name: t("contact"), href: "#contact" },
   ];
 
-  const handleScroll = useCallback((href: string) => {
-    const element = document.querySelector(href);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
+  // ✅ دالة موحدة تتعامل مع النوعين
+  const handleNavClick = useCallback((item: typeof navItems[0]) => {
+    const currentPath = window.location.pathname;
+    const targetId = item.href.substring(1);
+
+    if (currentPath === "/" || currentPath === "") {
+      const element = document.getElementById(targetId);
+      if (element) {
+        const offset = 80; // Navbar height offset
+        const elementPosition = element.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - offset;
+        
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: "smooth"
+        });
+        setActiveSection(targetId);
+        window.history.pushState(null, "", `#${targetId}`);
+      }
+    } else {
+      router.push("/" + item.href);
     }
-    // update active section so underline appears on the clicked item
-    setActiveSection(href.startsWith("#") ? href.substring(1) : href);
     setIsOpen(false);
-  }, []);
+  }, [router]);
+
+  // Handle hash scroll on page load or navigation
+  useEffect(() => {
+    if (window.location.hash) {
+      const targetId = window.location.hash.substring(1);
+      setTimeout(() => {
+        const element = document.getElementById(targetId);
+        if (element) {
+          const offset = 80;
+          const elementPosition = element.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.pageYOffset - offset;
+          
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: "smooth"
+          });
+          setActiveSection(targetId);
+        }
+      }, 500); // Slight delay to ensure content is loaded
+    }
+  }, [router]);
 
   return (
     <motion.nav
@@ -82,7 +134,7 @@ const Navbar = () => {
           >
             <div className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center overflow-hidden">
               <Image
-                src="/Nutt Logo.png"
+                src={logoUrl}
                 alt="Nutty Scientists Logo"
                 fill
                 sizes="64px"
@@ -101,7 +153,7 @@ const Navbar = () => {
                 transition={{ delay: index * 0.1 }}
               >
                 <button
-                  onClick={() => handleScroll(item.href)}
+                  onClick={() => handleNavClick(item)} 
                   className={`group relative px-1 py-2 transition-colors ${
                     activeSection === item.href.substring(1)
                       ? "text-nutty-blue dark:text-nutty-yellow font-semibold"
@@ -150,7 +202,7 @@ const Navbar = () => {
                 <div className="w-14 h-14 bg-gradient-to-br from-nutty-blue/10 to-nutty-purple/10 rounded-xl flex items-center justify-center">
                   <div className="relative w-12 h-12">
                     <Image
-                      src="/Nutt Logo.png"
+                      src={logoUrl}
                       alt="Nutty Scientists Logo"
                       fill
                       sizes="48px"
@@ -165,7 +217,7 @@ const Navbar = () => {
                   <motion.button
                     key={item.name}
                     whileTap={{ scale: 0.98 }}
-                    onClick={() => handleScroll(item.href)}
+                    onClick={() => handleNavClick(item)} 
                     className={`block w-full text-left px-4 py-3 rounded-xl transition-colors ${
                       activeSection === item.href.substring(1)
                         ? "bg-nutty-blue/10 text-nutty-blue dark:text-nutty-yellow"

@@ -25,31 +25,60 @@ const Contact = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [settings, setSettings] = useState<any>({
+    contact_email: 'info@nuttyscientists-egypt.com',
+    phone: '01222668543',
+    address_en: 'Garden 8 mall, New Cairo, 1st Settlement',
+    address_ar: 'مول جاردن 8، القاهرة الجديدة، الحي الأول',
+    working_hours_en: 'Mon-Sun: 9:00 AM - 9:00 PM',
+    working_hours_ar: 'نعمل يومياً على مدار الأسبوع',
+    dept_general_email: 'info@nuttyscientists-egypt.com',
+    dept_general_phone: '01222668543',
+    dept_school_email: 'info@nuttyscientists-egypt.com',
+    dept_school_phone: '01123239999',
+    dept_corporate_email: 'info@nuttyscientists-egypt.com',
+    dept_corporate_phone: '01222668543',
+  });
   const dir = i18n.language === 'ar' ? 'rtl' : 'ltr';
+
+  React.useEffect(() => {
+    async function fetchSettings() {
+      try {
+        const res = await fetch("/api/site-content?t=" + Date.now());
+        if (res.ok) {
+          const data = await res.json();
+          if (data.settings) setSettings(data.settings);
+        }
+      } catch (e) {
+        console.error("Error fetching settings:", e);
+      }
+    }
+    fetchSettings();
+  }, []);
 
   const contactInfo = [
     {
       icon: Mail,
       title: t('contactSection.cards.emailUs'),
-      details: ['info@nuttyscientists-egypt.com'],
+      details: [settings.contact_email],
       color: 'from-blue-400 to-cyan-500'
     },
     {
       icon: Phone,
       title: t('contactSection.cards.callUs'),
-      details: [t('contactSection.cards.phone1'), t('contactSection.cards.phone2')],
+      details: [settings.phone],
       color: 'from-green-400 to-emerald-500'
     },
     {
       icon: MapPin,
       title: t('contactSection.cards.visitUs'),
-      details: [t('contactSection.location.address')],
+      details: [i18n.language === 'ar' ? settings.address_ar : settings.address_en],
       color: 'from-purple-400 to-pink-500'
     },
     {
       icon: Clock,
       title: t('contactSection.cards.workingHours'),
-      details: [t('contactSection.cards.workingDaily')],
+      details: [i18n.language === 'ar' ? settings.working_hours_ar : settings.working_hours_en],
       color: 'from-orange-400 to-red-500'
     }
   ];
@@ -57,23 +86,25 @@ const Contact = () => {
   const departments = [
     {
       name: t('contactSection.departments.general'),
-      email: 'info@nuttyscientists-egypt.com',
-      phone: t('contactSection.cards.phone1'),
+      email: settings.dept_general_email,
+      phone: settings.dept_general_phone,
       icon: MessageSquare
     },
     {
       name: t('contactSection.departments.school'),
-      email: 'info@nuttyscientists-egypt.com',
-      phone: t('contactSection.cards.phone2'),
+      email: settings.dept_school_email,
+      phone: settings.dept_school_phone,
       icon: Users
     },
     {
       name: t('contactSection.departments.corporate'),
-      email: 'info@nuttyscientists-egypt.com',
-      phone: t('contactSection.cards.phone1'),
+      email: settings.dept_corporate_email,
+      phone: settings.dept_corporate_phone,
       icon: Globe
     }
   ];
+
+  const [submitMessage, setSubmitMessage] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({
@@ -85,24 +116,36 @@ const Contact = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setSubmitMessage('');
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    setIsSubmitting(false);
-    setIsSubmitted(true);
-    
-    // Reset form after 3 seconds
-    setTimeout(() => {
-      setIsSubmitted(false);
-      setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        subject: '',
-        message: ''
-      });
-    }, 3000);
+    try {
+        const res = await fetch('/api/contact', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData)
+        });
+
+        if (res.ok) {
+            setIsSubmitted(true);
+            setTimeout(() => {
+                setIsSubmitted(false);
+                setFormData({
+                    name: '',
+                    email: '',
+                    phone: '',
+                    subject: '',
+                    message: ''
+                });
+            }, 3000);
+        } else {
+            setSubmitMessage(i18n.language === 'ar' ? 'فشل الإرسال' : 'Failed to send');
+        }
+    } catch (e) {
+        console.error(e);
+        setSubmitMessage(i18n.language === 'ar' ? 'حدث خطأ' : 'Error occurred');
+    } finally {
+        setIsSubmitting(false);
+    }
   };
 
   return (
@@ -298,28 +341,28 @@ const Contact = () => {
                       />
                     </div>
 
-                    <div className="flex items-center justify-between">
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
-                        {t('contactSection.form.required')}
-                      </p>
-                      <button
-                        type="submit"
-                        disabled={isSubmitting}
-                        className="flex items-center px-8 py-3 bg-nutty-blue text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        {isSubmitting ? (
-                          <>
-                            <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white mr-2 rtl:ml-2 rtl:mr-0"></div>
-                            {t('contactSection.form.sending')}
-                          </>
-                        ) : (
-                          <>
-                            <Send className="w-5 h-5 mr-2 rtl:ml-2 rtl:mr-0" />
-                            {t('send')}
-                          </>
+                      <div className="flex flex-col items-end">
+                        <button
+                          type="submit"
+                          disabled={isSubmitting}
+                          className="flex items-center px-8 py-3 bg-nutty-blue text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {isSubmitting ? (
+                            <>
+                              <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white mr-2 rtl:ml-2 rtl:mr-0"></div>
+                              {t('contactSection.form.sending')}
+                            </>
+                          ) : (
+                            <>
+                              <Send className="w-5 h-5 mr-2 rtl:ml-2 rtl:mr-0" />
+                              {t('send')}
+                            </>
+                          )}
+                        </button>
+                        {submitMessage && (
+                          <p className="mt-2 text-sm text-red-500 font-medium">{submitMessage}</p>
                         )}
-                      </button>
-                    </div>
+                      </div>
                   </form>
                 </>
               )}
@@ -390,13 +433,15 @@ const Contact = () => {
                   <div className="flex items-center">
                     <MapPin className="w-5 h-5 text-gray-900 mr-3 rtl:ml-3 rtl:mr-0" />
                     <span className="text-gray-800">
-                      {t('contactSection.location.address')}
+                      {i18n.language === 'ar' ? settings.address_ar : settings.address_en}
                     </span>
                   </div>
 
                   <div className="flex items-center">
                     <Clock className="w-5 h-5 text-gray-900 mr-3 rtl:ml-3 rtl:mr-0" />
-                    <span className="text-gray-800">{t('contactSection.location.hours')}</span>
+                    <span className="text-gray-800">
+                      {i18n.language === 'ar' ? settings.working_hours_ar : settings.working_hours_en}
+                    </span>
                   </div>
 
                   {/* Get Directions Button */}

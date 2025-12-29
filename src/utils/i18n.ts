@@ -230,6 +230,8 @@ const resources = {
         },
         categories: {
           all: "All Posts",
+          science: "Science",
+          education: "Education",
           parenting: "Parenting",
           neuroscience: "Neuroscience",
           sustainability: "Sustainability",
@@ -343,7 +345,7 @@ const resources = {
       projectsNav: "المشاريع",
       members: "فريقنا",
       articles: "المقالات",
-      testimonials: "التوصيات",
+      testimonials: "شهادات العملاء",
       blogs: "المدونة",
       admin: "لوحة التحكم",
       searchPlaceholder: "ابحث في المقالات، المشاريع، العلماء...",
@@ -546,6 +548,8 @@ const resources = {
         },
         categories: {
           all: "كل المنشورات",
+          science: "العلوم",
+          education: "التعليم",
           parenting: "الأبوة والأمومة",
           neuroscience: "علم الأعصاب",
           sustainability: "الاستدامة",
