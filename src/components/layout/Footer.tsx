@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import {
@@ -14,11 +14,12 @@ import {
   MapPin,
   Send,
 } from "lucide-react";
+import Link from "next/link";
 
 const Footer = () => {
   const { t, i18n } = useTranslation();
-  const [editableFooter, setEditableFooter] = React.useState<any>(null);
-  const [settings, setSettings] = React.useState<any>({
+  const [editableFooter, setEditableFooter] = useState<any>(null);
+  const [settings, setSettings] = useState<any>({
     logo_url: "/Nutt Logo.png",
     contact_email: "info@nuttyscientists-egypt.com",
     career_email: "careers@nuttyscientists.com",
@@ -26,11 +27,15 @@ const Footer = () => {
     address_en: "Garden 8 mall, New Cairo, 1st Settlement",
     address_ar: "مول جاردن 8، القاهرة الجديدة، الحي الأول"
   });
+  const [services, setServices] = useState<any[]>([]);
+  const [loadingServices, setLoadingServices] = useState(true);
 
-  React.useEffect(() => {
+  useEffect(() => {
     let mounted = true;
+    
     async function load() {
       try {
+        // تحميل إعدادات الموقع
         const res = await fetch("/api/site-content?t=" + Date.now());
         if (!res.ok) return;
         const data = await res.json();
@@ -38,10 +43,42 @@ const Footer = () => {
         if (data?.footer) setEditableFooter(data.footer);
         if (data?.settings) setSettings(data.settings);
       } catch (e) {
-        // ignore
+        console.error("Error loading site content:", e);
       }
     }
+    
     load();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    let mounted = true;
+    
+    async function loadServices() {
+      try {
+        setLoadingServices(true);
+        const res = await fetch("/api/services?limit=8");
+        if (!res.ok) {
+          console.error("Failed to fetch services");
+          return;
+        }
+        
+        const data = await res.json();
+        if (!mounted) return;
+        
+        if (Array.isArray(data) && data.length > 0) {
+          setServices(data);
+        }
+      } catch (e) {
+        console.error("Error loading services:", e);
+      } finally {
+        if (mounted) setLoadingServices(false);
+      }
+    }
+    
+    loadServices();
     return () => {
       mounted = false;
     };
@@ -54,7 +91,6 @@ const Footer = () => {
     { label: t("home"), href: "#home" },
     { label: t("servicesNav"), href: "#services" },
     { label: t("aboutNav"), href: "#about" },
-    // { label: t("projectsNav"), href: "#projects" },
     { label: t("members"), href: "#members" },
     { label: t("articles"), href: "#articles" },
     { label: t("testimonials"), href: "#testimonials" },
@@ -62,7 +98,46 @@ const Footer = () => {
     { label: t("contact"), href: "#contact" },
   ];
 
-  const services = {
+  // دالة لتصفية الخدمات وحذف التكرارات
+  const getUniqueServices = (servicesArray: any[]) => {
+    const seenTitles = new Set();
+    return servicesArray.filter(service => {
+      const title = isArabic ? service.title_ar : service.title_en;
+      if (!title || seenTitles.has(title)) return false;
+      seenTitles.add(title);
+      return true;
+    });
+  };
+
+  const socialLinks = [
+    { icon: Facebook, href: "https://www.facebook.com/NS.Egypt", label: "Facebook" },
+    // { icon: Twitter, href: "https://x.com/NuttyWexford", label: "Twitter" },
+    { icon: Instagram, href: "https://www.instagram.com/nuttyscientistsegy", label: "Instagram" },
+    { icon: Youtube, href: "https://www.youtube.com/@nuttyscientistsegypt30", label: "YouTube" },
+    { icon: Linkedin, href: "https://www.linkedin.com/company/nutty-scientists/", label: "LinkedIn" },
+    
+  ];
+
+  const footerTexts = {
+    quickLinks: isArabic ? "روابط سريعة" : "Quick Links",
+    ourServices: isArabic ? "خدماتنا" : "Our Services",
+    contactInfo: isArabic ? "معلومات الاتصال" : "Contact Info",
+    newsletterTitle: isArabic ? "اشترك في النشرة البريدية" : "Subscribe to Newsletter",
+    newsletterPlaceholder: isArabic ? "بريدك الإلكتروني" : "Your email",
+    privacyPolicy: isArabic ? "سياسة الخصوصية" : "Privacy Policy",
+    termsOfService: isArabic ? "شروط الخدمة" : "Terms of Service",
+    cookiePolicy: isArabic ? "سياسة الكوكيز" : "Cookie Policy",
+    careers: isArabic ? "الوظائف" : "Careers",
+    backToTop: isArabic ? "العودة للأعلى" : "Back to top",
+    addressLine1: isArabic ? "مول جاردن 8" : "Garden 8 mall",
+    addressLine2: isArabic ? "القاهرة الجديدة، الحي الأول" : "New Cairo , 1st Settlement",
+    loadingServices: isArabic ? "جاري تحميل الخدمات..." : "Loading services...",
+    noServices: isArabic ? "لا توجد خدمات متاحة حالياً" : "No services available",
+    viewAllServices: isArabic ? "عرض جميع الخدمات" : "View All Services",
+  };
+
+  // خدمات افتراضية للنسخة الاحتياطية إذا فشل تحميل البيانات
+  const fallbackServices = {
     en: [
       "Interactive Workshops",
       "Science Camps",
@@ -84,32 +159,9 @@ const Footer = () => {
       "تطوير المناهج",
     ]
   };
-
-  const socialLinks = [
-    { icon: Facebook, href: "#", label: "Facebook" },
-    { icon: Twitter, href: "#", label: "Twitter" },
-    { icon: Instagram, href: "#", label: "Instagram" },
-    { icon: Linkedin, href: "#", label: "LinkedIn" },
-    { icon: Youtube, href: "#", label: "YouTube" },
-  ];
-
-  const footerTexts = {
-    quickLinks: isArabic ? "روابط سريعة" : "Quick Links",
-    ourServices: isArabic ? "خدماتنا" : "Our Services",
-    contactInfo: isArabic ? "معلومات الاتصال" : "Contact Info",
-    newsletterTitle: isArabic ? "اشترك في النشرة البريدية" : "Subscribe to Newsletter",
-    newsletterPlaceholder: isArabic ? "بريدك الإلكتروني" : "Your email",
-    privacyPolicy: isArabic ? "سياسة الخصوصية" : "Privacy Policy",
-    termsOfService: isArabic ? "شروط الخدمة" : "Terms of Service",
-    cookiePolicy: isArabic ? "سياسة الكوكيز" : "Cookie Policy",
-    careers: isArabic ? "الوظائف" : "Careers",
-    backToTop: isArabic ? "العودة للأعلى" : "Back to top",
-    addressLine1: isArabic ? "مول جاردن 8" : "Garden 8 mall",
-    addressLine2: isArabic ? "القاهرة الجديدة، الحي الأول" : "New Cairo , 1st Settlement",
-  };
-
+  
   return (
-       <footer className="bg-white dark:bg-gray-900 text-gray-900 dark:text-white pt-16 pb-8">
+    <footer className="bg-white dark:bg-gray-900 text-gray-900 dark:text-white pt-16 pb-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12 ${isArabic ? 'rtl-container text-right' : 'text-left'}`}>
           {/* Brand Column */}
@@ -160,7 +212,7 @@ const Footer = () => {
                 <li key={index}>
                   <a
                     href={link.href}
-                  className="text-gray-600 dark:text-gray-400 hover:text-nutty-yellow transition-colors block py-1"
+                    className="text-gray-600 dark:text-gray-400 hover:text-nutty-yellow transition-colors block py-1"
                   >
                     {link.label}
                   </a>
@@ -169,7 +221,7 @@ const Footer = () => {
             </ul>
           </motion.div>
 
-          {/* Services */}
+          {/* Services - Dynamic from Database */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -177,19 +229,52 @@ const Footer = () => {
             transition={{ delay: 0.2 }}
             className={isArabic ? "arabic-text" : ""}
           >
-            <h3 className="text-xl font-bold mb-6">{footerTexts.ourServices}</h3>
-            <ul className="space-y-3">
-              {services[currentLanguage].map((service, index) => (
-                <li key={index}>
-                  <a
-                    href="#services"
-                    className="text-gray-400 hover:text-nutty-yellow transition-colors block py-1"
-                  >
-                    {service}
-                  </a>
-                </li>
-              ))}
-            </ul>
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-bold">{footerTexts.ourServices}</h3>
+              <Link 
+                href="/services" 
+                className="text-sm text-nutty-yellow hover:text-yellow-400 transition-colors font-medium"
+              >
+              </Link>
+            </div>
+            
+            {loadingServices ? (
+              <div className="py-4">
+                <div className="flex items-center gap-2">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-nutty-yellow"></div>
+                  <span className="text-gray-400 text-sm">{footerTexts.loadingServices}</span>
+                </div>
+              </div>
+            ) : services.length > 0 ? (
+              <ul className="space-y-3">
+                {getUniqueServices(services).slice(0, 8).map((service, index) => (
+                  <li key={service.id || index}>
+                    <Link
+                      href={`/services/${service.id}`}
+                      className="text-gray-400 hover:text-nutty-yellow transition-colors block py-1 hover:translate-x-2 transition-transform duration-300"
+                    >
+                      {isArabic ? service.title_ar || service.title_en : service.title_en || service.title_ar}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <>
+                <p className="text-gray-400 mb-3">{footerTexts.noServices}</p>
+                <ul className="space-y-3">
+                  {fallbackServices[currentLanguage].slice(0, 8).map((service, index) => (
+                    <li key={index}>
+                      <a
+                        href="#services"
+                        className="text-gray-400 hover:text-nutty-yellow transition-colors block py-1"
+                      >
+                        {service}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
           </motion.div>
 
           {/* Contact Info */}
@@ -230,13 +315,13 @@ const Footer = () => {
             </ul>
 
             {/* Newsletter */}
-            <div className="mt-8 ">
+            <div className="mt-8">
               <h4 className="font-semibold mb-4">{footerTexts.newsletterTitle}</h4>
               <div className={`flex ${isArabic ? 'flex-row-reverse' : ''}`}>
                 <input
                   type="email"
                   placeholder={footerTexts.newsletterPlaceholder}
-                  className={`flex-1 px-4 py-2 bg-gray-100 dark:bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-nutty-yellow ${
+                  className={`flex-1 px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-nutty-yellow ${
                     isArabic ? 'rounded-r-lg' : 'rounded-l-lg'
                   }`}
                 />
@@ -259,30 +344,30 @@ const Footer = () => {
             </div>
 
             <div className={`flex flex-wrap ${isArabic ? 'space-x-reverse' : ''} gap-6 text-sm`}>
-              <a
-                href="#"
+              <Link
+                href="/privacy-policy"
                 className="text-gray-400 hover:text-nutty-yellow transition-colors"
               >
                 {footerTexts.privacyPolicy}
-              </a>
-              <a
-                href="#"
+              </Link>
+              <Link
+                href="/terms"
                 className="text-gray-400 hover:text-nutty-yellow transition-colors"
               >
                 {footerTexts.termsOfService}
-              </a>
-              <a
-                href="#"
+              </Link>
+              <Link
+                href="/cookie-policy"
                 className="text-gray-400 hover:text-nutty-yellow transition-colors"
               >
                 {footerTexts.cookiePolicy}
-              </a>
-              <a
-                href="#"
+              </Link>
+              <Link
+                href="/careers"
                 className="text-gray-400 hover:text-nutty-yellow transition-colors"
               >
                 {footerTexts.careers}
-              </a>
+              </Link>
             </div>
           </div>
         </div>

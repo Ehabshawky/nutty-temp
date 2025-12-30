@@ -26,6 +26,7 @@ const resources = {
       testimonials: "Testimonials",
       blogs: "Blog",
       admin: "Admin",
+      careers: "Careers",
       searchPlaceholder: "Search articles, projects, scientists...",
 
       // Hero Section
@@ -187,6 +188,7 @@ const resources = {
         noServices: "No Services Found",
         corporateServices: "Corporate services",
         services: "Services",
+        filter: "Filter",
 
         stats: {
           satisfactionRate: "Satisfaction Rate",
@@ -368,10 +370,11 @@ const resources = {
       testimonials: "شهادات العملاء",
       blogs: "المدونة",
       admin: "لوحة التحكم",
+      careers: "الوظائف",
       searchPlaceholder: "ابحث في المقالات، المشاريع، العلماء...",
 
       // Hero Section
-      heroTitle: "ناتي ساينتستس",
+      heroTitle: "ناتى ساينتست",
       heroSubtitle: "حيث يلتقي العلم بالمرح!",
       heroDescription:
         "نحول عقول الشباب من خلال التعليم العلمي المبتكر والتجارب التفاعلية.",
@@ -397,7 +400,7 @@ const resources = {
 
 
       // About
-      aboutTitle: "عن ناتي ساينتستس",
+      aboutTitle: "عنناتى ساينتست",
       mission: "مهمتنا",
       missionText:
         "إلهام الفضول وتعزيز حب العلوم من خلال تجارب التعلم التفاعلية. ندمج التجارب العملية مع أحدث التقنيات لخلق لحظات تعلم لا تُنسى تثير الفضول وتعزز مهارات التفكير النقدي.",
@@ -516,6 +519,15 @@ const resources = {
         onlineDesc: "تجارب تعلم علمية افتراضية",
         competitionsTitle: "مسابقات علمية",
         competitionsDesc: "معارض ومسابقات علمية سنوية",
+        showingAll: "عرض جميع الخدمات",
+        showingCategory: "عرض",
+        showingCategoryServices: "خدمات",
+        tryDifferentCategory: "حاول فئة مختلفة",
+        noServices: "لا يوجد خدمات",
+        corporateServices: "خدمات الشركات",
+        services: "خدمات",
+        filter: "تصفية",
+
         stats: {
           satisfactionRate: "معدل الرضا",
           happyStudents: "طلاب سعداء",
@@ -529,8 +541,6 @@ const resources = {
           corporate: "الشركات",
           organizations: "المنظمات",
         },
-        noServices: "لا يوجد خدمات",
-        tryDifferentCategory: "حاول فئة مختلفة",
         cta: {
           title: "هل أنت جاهز لبدء رحلة علومك؟",
           desc: "احجز ورشة عمل أو استشارة مع علماءنا الخبراء اليوم!",
@@ -604,7 +614,7 @@ const resources = {
         happyStudents: "طلاب سعداء",
         wouldRecommend: "يوصون بنا",
         cta: {
-          title: "هل أنت مستعد لتجربة ناتي ساينتستس؟",
+          title: "هل أنت مستعد لتجربةناتى ساينتست؟",
           desc: "انضم إلى الآلاف من الآباء والمدارس والمنظمات الراضين الذين غيروا نهجهم في تعليم العلوم.",
           bookBtn: "احجز ورشة عمل",
           contactBtn: "تواصل مع المبيعات"
