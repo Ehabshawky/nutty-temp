@@ -1,10 +1,9 @@
-// src/app/admin/services/page.tsx
 "use client";
 
 import React, { useState, useEffect, ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
-import { Save, Trash2, Upload, Image as ImageIcon, Tag } from "lucide-react";
+import { Save, Trash2, Upload, Image as ImageIcon, Tag, Clock, Users, MapPin, Calendar } from "lucide-react";
 import Image from "next/image";
 import AdminLayout from "@/components/admin/AdminLayout";
 
@@ -20,24 +19,24 @@ export default function AdminServicesPage() {
   const [message, setMessage] = useState("");
   const [editId, setEditId] = useState<string | null>(null);
   const [newService, setNewService] = useState({
-  title_en: "",
-  title_ar: "",
-  description_en: "",
-  description_ar: "",
-  long_description_en: "",
-  long_description_ar: "",
-  image: "",
-  icon: "Beaker",
-  category: "families",
-  duration: "2-3 hours",
-  participants_min: 10,
-  participants_max: 30,
-  schedule_type: "flexible",
-  location_type: "on-site,online",
-  age_group: "",
-  price_range: "",
-  features: "[]",
-});
+    title_en: "",
+    title_ar: "",
+    description_en: "",
+    description_ar: "",
+    long_description_en: "",
+    long_description_ar: "",
+    image: "",
+    icon: "Beaker",
+    category: "families",
+    duration: "2-3 hours",
+    participants_min: 10,
+    participants_max: 30,
+    schedule_type: "flexible",
+    location_type: "on-site,online",
+    age_group: "",
+    price_range: "",
+    features: [],
+  });
 
   // Load existing services
   useEffect(() => {
@@ -59,7 +58,8 @@ export default function AdminServicesPage() {
     load();
   }, []);
 
-  const handleFieldChange = (field: string, value: string) => {
+  // تحسين handleFieldChange للتعامل مع أنواع مختلفة
+  const handleFieldChange = (field: string, value: string | number | any[]) => {
     setNewService((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -113,9 +113,11 @@ export default function AdminServicesPage() {
         }
         handleCancel();
       } else {
-        setMessage(isRTL ? "فشل الحفظ" : "Failed to save");
+        const errorData = await res.json().catch(() => ({}));
+        setMessage(errorData.error || (isRTL ? "فشل الحفظ" : "Failed to save"));
       }
     } catch (e) {
+      console.error("Save error:", e);
       setMessage(isRTL ? "خطأ في الحفظ" : "Error saving");
     } finally {
       setSaving(false);
@@ -125,13 +127,13 @@ export default function AdminServicesPage() {
   const handleEdit = (svc: any) => {
     setEditId(svc.id);
     setNewService({
-      title_en: svc.title_en,
-      title_ar: svc.title_ar,
-      description_en: svc.description_en,
-      description_ar: svc.description_ar,
+      title_en: svc.title_en || "",
+      title_ar: svc.title_ar || "",
+      description_en: svc.description_en || "",
+      description_ar: svc.description_ar || "",
       long_description_en: svc.long_description_en || "",
       long_description_ar: svc.long_description_ar || "",
-      image: svc.image,
+      image: svc.image || "",
       icon: svc.icon || "Beaker",
       category: svc.category || "families",
       duration: svc.duration || "2-3 hours",
@@ -141,7 +143,7 @@ export default function AdminServicesPage() {
       location_type: svc.location_type || "on-site,online",
       age_group: svc.age_group || "",
       price_range: svc.price_range || "",
-      features: svc.features || "[]",
+      features: Array.isArray(svc.features) ? svc.features : [],
     });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -165,7 +167,7 @@ export default function AdminServicesPage() {
       location_type: "on-site,online",
       age_group: "",
       price_range: "",
-      features: "[]",
+      features: [],
     });
   };
 
@@ -204,11 +206,32 @@ export default function AdminServicesPage() {
     return colors[category as keyof typeof colors] || "bg-gray-100 text-gray-800";
   };
 
+  // دالة للتعامل مع checkbox location_type
+  const handleLocationTypeChange = (type: string, checked: boolean) => {
+    const types = newService.location_type.split(',').filter(t => t.trim());
+    
+    if (checked) {
+      if (!types.includes(type)) {
+        types.push(type);
+      }
+    } else {
+      const index = types.indexOf(type);
+      if (index > -1) {
+        types.splice(index, 1);
+      }
+    }
+    
+    handleFieldChange("location_type", types.join(','));
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-        <div className="text-xl text-gray-900 dark:text-white">
-          {isRTL ? "جاري التحميل..." : "Loading..."}
+        <div className="flex flex-col items-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-nutty-blue"></div>
+          <div className="mt-4 text-xl text-gray-900 dark:text-white">
+            {isRTL ? "جاري التحميل..." : "Loading..."}
+          </div>
         </div>
       </div>
     );
@@ -277,6 +300,7 @@ export default function AdminServicesPage() {
                               alt="Service" 
                               fill
                               className="object-cover" 
+                              sizes="100px"
                             />
                           </div>
                         )}
@@ -302,6 +326,12 @@ export default function AdminServicesPage() {
                           <p className="text-gray-600 dark:text-gray-400 line-clamp-2 text-sm">{svc.description_en}</p>
                           <div className="flex items-center gap-2 mt-3 text-sm text-gray-500 dark:text-gray-500">
                             <span>ID: {svc.id?.substring(0, 8)}...</span>
+                            {svc.duration && (
+                              <span className="flex items-center gap-1">
+                                <Clock className="w-3 h-3" />
+                                {svc.duration}
+                              </span>
+                            )}
                           </div>
                         </div>
                       </div>
@@ -487,126 +517,120 @@ export default function AdminServicesPage() {
                 </div>
               </div>
 
+              {/* Additional Fields Grid */}
               <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {/* Duration */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  {isRTL ? "المدة" : "Duration"}
-                </label>
-                <input
-                  type="text"
-                  placeholder={isRTL ? "مثال: ٢-٣ ساعات" : "e.g., 2-3 hours"}
-                  value={newService.duration}
-                  onChange={(e) => handleFieldChange("duration", e.target.value)}
-                  className="w-full p-3 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600"
-                />
-              </div>
-
-              {/* Participants Range */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  {isRTL ? "عدد المشاركين" : "Participants"}
-                </label>
-                <div className="flex gap-2">
+                {/* Duration */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    {isRTL ? "المدة" : "Duration"}
+                  </label>
                   <input
-                    type="number"
-                    placeholder={isRTL ? "أدنى" : "Min"}
-                    value={newService.participants_min}
-                    onChange={(e) => handleFieldChange("participants_min", e.target.value)}
-                    className="w-full p-3 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600"
-                  />
-                  <input
-                    type="number"
-                    placeholder={isRTL ? "أقصى" : "Max"}
-                    value={newService.participants_max}
-                    onChange={(e) => handleFieldChange("participants_max", e.target.value)}
-                    className="w-full p-3 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600"
+                    type="text"
+                    placeholder={isRTL ? "مثال: ٢-٣ ساعات" : "e.g., 2-3 hours"}
+                    value={newService.duration}
+                    onChange={(e) => handleFieldChange("duration", e.target.value)}
+                    className="w-full p-3 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-nutty-orange focus:border-transparent outline-none transition"
                   />
                 </div>
-              </div>
 
-              {/* Schedule Type */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  {isRTL ? "نوع الجدول" : "Schedule Type"}
-                </label>
-                <select
-                  value={newService.schedule_type}
-                  onChange={(e) => handleFieldChange("schedule_type", e.target.value)}
-                  className="w-full p-3 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600"
-                >
-                  <option value="flexible">{isRTL ? "مرنة" : "Flexible"}</option>
-                  <option value="fixed">{isRTL ? "ثابت" : "Fixed"}</option>
-                  <option value="customizable">{isRTL ? "قابلة للتخصيص" : "Customizable"}</option>
-                  <option value="weekdays">{isRTL ? "أيام الأسبوع" : "Weekdays"}</option>
-                  <option value="weekends">{isRTL ? "عطلات نهاية الأسبوع" : "Weekends"}</option>
-                </select>
-              </div>
+                {/* Participants Range */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    {isRTL ? "عدد المشاركين" : "Participants"}
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      type="number"
+                      min="1"
+                      placeholder={isRTL ? "أدنى" : "Min"}
+                      value={newService.participants_min}
+                      onChange={(e) => handleFieldChange("participants_min", parseInt(e.target.value) || 1)}
+                      className="w-full p-3 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-nutty-orange focus:border-transparent outline-none transition"
+                    />
+                    <input
+                      type="number"
+                      min={newService.participants_min || 1}
+                      placeholder={isRTL ? "أقصى" : "Max"}
+                      value={newService.participants_max}
+                      onChange={(e) => handleFieldChange("participants_max", parseInt(e.target.value) || newService.participants_min)}
+                      className="w-full p-3 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-nutty-orange focus:border-transparent outline-none transition"
+                    />
+                  </div>
+                </div>
 
-              {/* Location Type */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  {isRTL ? "نوع الموقع" : "Location Type"}
-                </label>
-                <div className="space-y-2">
-                  {['on-site', 'online', 'hybrid', 'mobile'].map((type) => (
-                    <label key={type} className="flex items-center gap-2">
-                      <input
-                        type="checkbox"
-                        checked={newService.location_type.includes(type)}
-                        onChange={(e) => {
-                          const types = newService.location_type.split(',').filter(t => t);
-                          if (e.target.checked) {
-                            types.push(type);
-                          } else {
-                            const index = types.indexOf(type);
-                            if (index > -1) types.splice(index, 1);
+                {/* Schedule Type */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    {isRTL ? "نوع الجدول" : "Schedule Type"}
+                  </label>
+                  <select
+                    value={newService.schedule_type}
+                    onChange={(e) => handleFieldChange("schedule_type", e.target.value)}
+                    className="w-full p-3 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-nutty-orange focus:border-transparent outline-none transition"
+                  >
+                    <option value="flexible">{isRTL ? "مرنة" : "Flexible"}</option>
+                    <option value="fixed">{isRTL ? "ثابت" : "Fixed"}</option>
+                    <option value="customizable">{isRTL ? "قابلة للتخصيص" : "Customizable"}</option>
+                    <option value="weekdays">{isRTL ? "أيام الأسبوع" : "Weekdays"}</option>
+                    <option value="weekends">{isRTL ? "عطلات نهاية الأسبوع" : "Weekends"}</option>
+                  </select>
+                </div>
+
+                {/* Location Type */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    {isRTL ? "نوع الموقع" : "Location Type"}
+                  </label>
+                  <div className="space-y-2">
+                    {['on-site', 'online', 'hybrid', 'mobile'].map((type) => (
+                      <label key={type} className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          checked={newService.location_type.includes(type)}
+                          onChange={(e) => handleLocationTypeChange(type, e.target.checked)}
+                          className="rounded border-gray-300 text-nutty-blue focus:ring-nutty-blue"
+                        />
+                        <span className="text-sm text-gray-700 dark:text-gray-300">
+                          {isRTL ? 
+                            (type === 'on-site' ? 'في الموقع' : 
+                            type === 'online' ? 'أونلاين' : 
+                            type === 'hybrid' ? 'مختلط' : 'متنقل') :
+                            type.charAt(0).toUpperCase() + type.slice(1)
                           }
-                          handleFieldChange("location_type", types.join(','));
-                        }}
-                        className="rounded border-gray-300"
-                      />
-                      <span className="text-sm text-gray-700 dark:text-gray-300">
-                        {isRTL ? 
-                          (type === 'on-site' ? 'في الموقع' : 
-                          type === 'online' ? 'أونلاين' : 
-                          type === 'hybrid' ? 'مختلط' : 'متنقل') :
-                          type.charAt(0).toUpperCase() + type.slice(1)
-                        }
-                      </span>
-                    </label>
-                  ))}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {/* Age Group and Price Range */}
-            <div className="grid md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  {isRTL ? "الفئة العمرية" : "Age Group"}
-                </label>
-                <input
-                  type="text"
-                  placeholder={isRTL ? "مثال: ٨-١٦ سنة" : "e.g., 8-16 years"}
-                  value={newService.age_group}
-                  onChange={(e) => handleFieldChange("age_group", e.target.value)}
-                  className="w-full p-3 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600"
-                />
+              {/* Age Group and Price Range */}
+              <div className="grid md:grid-cols-2 gap-4 md:col-span-2">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    {isRTL ? "الفئة العمرية" : "Age Group"}
+                  </label>
+                  <input
+                    type="text"
+                    placeholder={isRTL ? "مثال: ٨-١٦ سنة" : "e.g., 8-16 years"}
+                    value={newService.age_group}
+                    onChange={(e) => handleFieldChange("age_group", e.target.value)}
+                    className="w-full p-3 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-nutty-orange focus:border-transparent outline-none transition"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    {isRTL ? "نطاق السعر" : "Price Range"}
+                  </label>
+                  <input
+                    type="text"
+                    placeholder={isRTL ? "مثال: ١٠٠-٣٠٠ جنيه" : "e.g., 100-300 EGP"}
+                    value={newService.price_range}
+                    onChange={(e) => handleFieldChange("price_range", e.target.value)}
+                    className="w-full p-3 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-nutty-orange focus:border-transparent outline-none transition"
+                  />
+                </div>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  {isRTL ? "نطاق السعر" : "Price Range"}
-                </label>
-                <input
-                  type="text"
-                  placeholder={isRTL ? "مثال: ١٠٠-٣٠٠ جنيه  " : "e.g., 100-300 EGP"}
-                  value={newService.price_range}
-                  onChange={(e) => handleFieldChange("price_range", e.target.value)}
-                  className="w-full p-3 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600"
-                />
-              </div>
-            </div>
 
               {/* Image Upload */}
               <div className="md:col-span-2">
@@ -651,13 +675,13 @@ export default function AdminServicesPage() {
                           alt="Service Preview"
                           fill
                           className="object-cover"
+                          sizes="256px"
                         />
                       </div>
                     </div>
                   )}
                 </div>
               </div>
-              
             </div>
 
             {/* Action Buttons */}
@@ -666,7 +690,7 @@ export default function AdminServicesPage() {
                 {editId ? (
                   <span>
                     {isRTL ? "جاري تعديل خدمة ID: " : "Editing service ID: "}
-                    <code className="bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">{editId.substring(0, 8)}...</code>
+                    <code className="bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">{editId?.substring(0, 8)}...</code>
                   </span>
                 ) : (
                   <span>{isRTL ? "إضافة خدمة جديدة" : "Adding new service"}</span>
@@ -708,7 +732,8 @@ export default function AdminServicesPage() {
               <li>{isRTL ? "اختر الفئة المناسبة لكل خدمة لتظهر في الفلتر في الصفحة العامة" : "Choose the appropriate category for each service to appear in the filter on the public page"}</li>
               <li>{isRTL ? "العنوان والوصف المختصر مطلوبين باللغتين الإنجليزية والعربية" : "Title and short description are required in both English and Arabic"}</li>
               <li>{isRTL ? "الفئات المتاحة: عائلات، مدارس، شركات" : "Available categories: Families, Schools, Corporate"}</li>
-              <li>{isRTL ? "الأيقونة والوصف التفصيلي اختياريان" : "Icon and detailed description are optional"}</li>
+              <li>{isRTL ? "يمكنك اختيار أكثر من نوع موقع للخدمة الواحدة" : "You can select multiple location types for a single service"}</li>
+              <li>{isRTL ? "حقل عدد المشاركين: أدخل الحد الأدنى ثم الحد الأقصى" : "Participants field: Enter minimum then maximum number"}</li>
             </ul>
           </div>
         </div>
