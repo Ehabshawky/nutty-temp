@@ -10,6 +10,8 @@ import Articles from '@/components/sections/Articles'
 import Testimonials from '@/components/sections/Testimonials'
 import Blogs from '@/components/sections/Blogs'
 import Contact from '@/components/sections/Contact'
+import CSR from '@/components/sections/CSR'
+import Partners from '@/components/sections/Partners'
 
 
 export default function Home() {
@@ -24,10 +26,12 @@ export default function Home() {
       <About />
       {/* <Projects /> */}
       <Members />
-      <Articles />
+      {/* <Articles /> */}
       <Testimonials />
       <Blogs />
+      <CSR />
       <Contact />
+      <Partners />
     </motion.div>
   )
 }

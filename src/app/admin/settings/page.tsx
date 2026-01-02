@@ -4,6 +4,8 @@ import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Save, Globe, Mail, Image as ImageIcon, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
 import AdminLayout from "@/components/admin/AdminLayout";
+import { AdminFormSkeleton } from "@/components/skeletons/AdminFormSkeleton";
+
 import { supabase } from "@/lib/supabase";
 
 export default function AdminSettingsPage() {
@@ -13,6 +15,7 @@ export default function AdminSettingsPage() {
   const [settings, setSettings] = useState({
     career_email: "",
     contact_email: "",
+    whatsapp_number: "",
     logo_url: "",
     phone: "",
     address_en: "",
@@ -25,6 +28,9 @@ export default function AdminSettingsPage() {
     dept_school_phone: "",
     dept_corporate_email: "",
     dept_corporate_phone: "",
+    notification_emails: [] as string[],
+    working_hour_start: 10,
+    working_hour_end: 22,
   });
 
   const [loading, setLoading] = useState(true);
@@ -39,7 +45,12 @@ export default function AdminSettingsPage() {
         if (res.ok) {
           const data = await res.json();
           if (data.settings) {
-            setSettings(data.settings);
+            setSettings({
+              ...data.settings,
+              notification_emails: data.settings.notification_emails || [],
+              working_hour_start: data.settings.working_hour_start ?? 10,
+              working_hour_end: data.settings.working_hour_end ?? 22,
+            });
           }
         }
       } catch (e) {
@@ -113,13 +124,15 @@ export default function AdminSettingsPage() {
     }
   };
 
-  if (loading) return (
-    <AdminLayout>
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="w-12 h-12 text-nutty-blue animate-spin" />
-      </div>
-    </AdminLayout>
-  );
+  if (loading) {
+    return (
+      <AdminLayout>
+        <div className="max-w-4xl mx-auto p-4 md:p-8 py-20">
+          <AdminFormSkeleton sections={3} />
+        </div>
+      </AdminLayout>
+    );
+  }
 
   return (
     <AdminLayout>
@@ -236,6 +249,81 @@ export default function AdminSettingsPage() {
                   className="w-full p-4 bg-gray-50 dark:bg-gray-700 border-none rounded-2xl focus:ring-2 focus:ring-nutty-blue transition-all"
                 />
               </div>
+              <div className="space-y-4">
+                <label className="block text-sm font-black text-gray-400 uppercase tracking-widest">
+                  {isRTL ? "رقم الواتساب" : "WhatsApp Number"}
+                </label>
+                <input
+                  type="text"
+                  value={settings.whatsapp_number}
+                  onChange={(e) => setSettings(prev => ({ ...prev, whatsapp_number: e.target.value }))}
+                  placeholder="201234567890"
+                  className="w-full p-4 bg-gray-50 dark:bg-gray-700 border-none rounded-2xl focus:ring-2 focus:ring-nutty-blue transition-all"
+                />
+                <p className="text-xs text-gray-400 mt-1">
+                  {isRTL ? "أدخل الرقم كما هو (مثال: 201000000000) بدون علامة +" : "Enter number in international format (e.g., 201000000000) without + sign"}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Notification Emails Section */}
+          <div className="bg-white dark:bg-gray-800 rounded-3xl p-8 border border-gray-100 dark:border-gray-700 shadow-xl">
+            <h3 className="text-lg font-black text-gray-400 uppercase tracking-widest mb-6 flex items-center gap-2">
+              <Mail className="w-5 h-5" />
+              {isRTL ? "إشعارات البريد الإلكتروني" : "Email Notifications"}
+            </h3>
+            <p className="text-sm text-gray-500 mb-4">
+              {isRTL 
+                ? "أضف رسائل البريد الإلكتروني التي ستتلقى إشعارات عند تلقي رسائل أو محتوى جديد." 
+                : "Add emails that will receive notifications when new messages or content are submitted."}
+            </p>
+
+            <div className="space-y-4">
+               {settings.notification_emails.map((email, i) => (
+                 <div key={i} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl">
+                    <span className="font-medium text-gray-700 dark:text-gray-300">{email}</span>
+                    <button 
+                      onClick={() => setSettings(prev => ({
+                        ...prev,
+                        notification_emails: prev.notification_emails.filter((_, idx) => idx !== i)
+                      }))}
+                      className="text-red-500 hover:text-red-700 p-2"
+                    >
+                      <AlertCircle className="w-5 h-5" />
+                    </button>
+                 </div>
+               ))}
+               
+               <div className="flex gap-2">
+                 <input 
+                   type="email" 
+                   placeholder={isRTL ? "أدخل البريد الإلكتروني..." : "Enter email address..."}
+                   className="flex-1 p-3 bg-gray-50 dark:bg-gray-700 border-none rounded-xl focus:ring-2 focus:ring-nutty-blue"
+                   onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        const val = e.currentTarget.value.trim();
+                        if (val && !settings.notification_emails.includes(val)) {
+                           setSettings(prev => ({ ...prev, notification_emails: [...prev.notification_emails, val] }));
+                           e.currentTarget.value = '';
+                        }
+                      }
+                   }}
+                 />
+                 <button 
+                   onClick={(e) => {
+                      const input = e.currentTarget.previousElementSibling as HTMLInputElement;
+                      const val = input.value.trim();
+                      if (val && !settings.notification_emails.includes(val)) {
+                         setSettings(prev => ({ ...prev, notification_emails: [...prev.notification_emails, val] }));
+                         input.value = '';
+                      }
+                   }}
+                   className="px-6 py-3 bg-nutty-blue text-white rounded-xl font-bold"
+                 >
+                   {isRTL ? "إضافة" : "Add"}
+                 </button>
+               </div>
             </div>
           </div>
 
@@ -305,6 +393,33 @@ export default function AdminSettingsPage() {
                     onChange={(e) => setSettings(prev => ({ ...prev, working_hours_ar: e.target.value }))}
                     className="w-full p-4 bg-gray-50 dark:bg-gray-700 border-none rounded-2xl focus:ring-2 focus:ring-nutty-blue"
                     placeholder="نعمل يومياً على مدار الأسبوع"
+                  />
+                </div>
+                {/* Structured Working Hours for Bot */}
+                <div className="space-y-4">
+                  <label className="block text-sm font-black text-gray-400 uppercase tracking-widest">
+                    {isRTL ? "بداية وقت العمل (0-23)" : "Work Hour Start (0-23)"}
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="23"
+                    value={settings.working_hour_start}
+                    onChange={(e) => setSettings(prev => ({ ...prev, working_hour_start: parseInt(e.target.value) || 0 }))}
+                    className="w-full p-4 bg-gray-50 dark:bg-gray-700 border-none rounded-2xl focus:ring-2 focus:ring-nutty-blue"
+                  />
+                </div>
+                <div className="space-y-4">
+                  <label className="block text-sm font-black text-gray-400 uppercase tracking-widest">
+                    {isRTL ? "نهاية وقت العمل (0-23)" : "Work Hour End (0-23)"}
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="23"
+                    value={settings.working_hour_end}
+                    onChange={(e) => setSettings(prev => ({ ...prev, working_hour_end: parseInt(e.target.value) || 0 }))}
+                    className="w-full p-4 bg-gray-50 dark:bg-gray-700 border-none rounded-2xl focus:ring-2 focus:ring-nutty-blue"
                   />
                 </div>
               </div>

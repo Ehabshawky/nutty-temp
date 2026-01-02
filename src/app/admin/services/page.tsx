@@ -6,17 +6,20 @@ import { useTranslation } from "react-i18next";
 import { Save, Trash2, Upload, Image as ImageIcon, Tag, Clock, Users, MapPin, Calendar } from "lucide-react";
 import Image from "next/image";
 import AdminLayout from "@/components/admin/AdminLayout";
+import { AdminGridSkeleton } from "@/components/skeletons/AdminGridSkeleton";
 
 export default function AdminServicesPage() {
   const { i18n } = useTranslation();
   const isRTL = i18n.language === "ar";
   const router = useRouter();
+  const formRef = React.useRef<HTMLDivElement>(null);
 
   const [services, setServices] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [message, setMessage] = useState("");
+  const [showForm, setShowForm] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
   const [newService, setNewService] = useState({
     title_en: "",
@@ -145,7 +148,15 @@ export default function AdminServicesPage() {
       price_range: svc.price_range || "",
       features: Array.isArray(svc.features) ? svc.features : [],
     });
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setShowForm(true);
+    setTimeout(() => {
+        formRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
+  };
+
+  const scrollToForm = () => {
+    handleCancel(); // Reset form
+    formRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   const handleCancel = () => {
@@ -169,6 +180,15 @@ export default function AdminServicesPage() {
       price_range: "",
       features: [],
     });
+    setShowForm(false);
+  };
+
+  const handleAddNew = () => {
+    handleCancel(); // Reset form first
+    setShowForm(true);
+    setTimeout(() => {
+        formRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
   };
 
   const handleDelete = async (id: string) => {
@@ -224,16 +244,37 @@ export default function AdminServicesPage() {
     handleFieldChange("location_type", types.join(','));
   };
 
+  // دالة للتعامل مع checkbox category
+  const handleCategoryChange = (cat: string, checked: boolean) => {
+    // التعامل مع الحالة القديمة (قيمة واحدة) أو الجديدة (مفصولة بفاصلة)
+    const currentCats = newService.category ? newService.category.split(',').map(c => c.trim()) : [];
+    
+    if (checked) {
+      if (!currentCats.includes(cat)) {
+        currentCats.push(cat);
+      }
+    } else {
+      const index = currentCats.indexOf(cat);
+      if (index > -1) {
+        currentCats.splice(index, 1);
+      }
+    }
+    
+    // إذا لم يتم اختيار أي فئة، نعود للفئة الافتراضية
+    if (currentCats.length === 0) {
+        handleFieldChange("category", "families");
+    } else {
+        handleFieldChange("category", currentCats.join(','));
+    }
+  };
+
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-        <div className="flex flex-col items-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-nutty-blue"></div>
-          <div className="mt-4 text-xl text-gray-900 dark:text-white">
-            {isRTL ? "جاري التحميل..." : "Loading..."}
-          </div>
+      <AdminLayout>
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+          <AdminGridSkeleton count={6} cardsPerRow={3} />
         </div>
-      </div>
+      </AdminLayout>
     );
   }
 
@@ -245,10 +286,10 @@ export default function AdminServicesPage() {
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
             <div>
               <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
-                {isRTL ? "إدارة الخدمات" : "Manage Services"}
+                {isRTL ? "إدارة البرامج" : "Manage Programs"}
               </h2>
               <p className="text-gray-600 dark:text-gray-400 mt-2">
-                {isRTL ? "أضف وعدل خدماتك المصنفة حسب الفئات" : "Add and manage your services categorized by type"}
+                {isRTL ? "أضف وعدل برامجك المصنفة حسب الفئات" : "Add and manage your programs categorized by type"}
               </p>
             </div>
             <button
@@ -256,6 +297,15 @@ export default function AdminServicesPage() {
               className="px-4 py-2 bg-nutty-blue text-white rounded-lg hover:bg-nutty-blue/90 transition-colors"
             >
               {isRTL ? "معاينة الصفحة العامة" : "Preview Public Page"}
+            </button>
+            <button
+              onClick={handleAddNew}
+              className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors flex items-center gap-2 shadow-sm"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              </svg>
+              {isRTL ? "إضافة برنامج جديد" : "Add New Program"}
             </button>
           </div>
 
@@ -270,10 +320,10 @@ export default function AdminServicesPage() {
           <div className="mb-10">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
-                {isRTL ? "الخدمات الحالية" : "Current Services"}
+                {isRTL ? "البرامج الحالية" : "Current Programs"}
               </h3>
               <div className="text-sm text-gray-500 dark:text-gray-400">
-                {services.length} {isRTL ? "خدمة" : "services"}
+                {services.length} {isRTL ? "برنامج" : "programs"}
               </div>
             </div>
             
@@ -281,64 +331,77 @@ export default function AdminServicesPage() {
               <div className="bg-white dark:bg-gray-800 rounded-xl shadow p-8 text-center text-gray-500 dark:text-gray-400">
                 <div className="text-5xl mb-4">📋</div>
                 <p className="text-lg mb-2">
-                  {isRTL ? "لا توجد خدمات مضافة بعد" : "No services added yet"}
+                  {isRTL ? "لا توجد برامج مضافة بعد" : "No programs added yet"}
                 </p>
                 <p className="text-sm">
-                  {isRTL ? "ابدأ بإضافة خدمتك الأولى أدناه" : "Start by adding your first service below"}
+                  {isRTL ? "ابدأ بإضافة برنامجك الأول أدناه" : "Start by adding your first program below"}
                 </p>
               </div>
             ) : (
-              <div className="grid gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {services.map((svc) => (
-                  <div key={svc.id} className="bg-white dark:bg-gray-800 rounded-xl shadow p-5 hover:shadow-lg transition-shadow">
-                    <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-                      <div className="flex items-start gap-4 flex-1">
-                        {svc.image && (
-                          <div className="relative w-24 h-24 flex-shrink-0 rounded-lg overflow-hidden">
-                            <Image 
-                              src={svc.image} 
-                              alt="Service" 
-                              fill
-                              className="object-cover" 
-                              sizes="100px"
-                            />
-                          </div>
-                        )}
-                        <div className="flex-1">
-                          <div className="flex flex-wrap items-center gap-2 mb-2">
-                            <h4 className="font-bold text-lg text-gray-900 dark:text-white">{svc.title_en}</h4>
-                            <span className={`px-2 py-1 text-xs font-medium rounded-full ${getCategoryColor(svc.category)}`}>
-                              {getCategoryLabel(svc.category)}
-                            </span>
-                            {svc.icon && (
-                              <span className="text-gray-400 dark:text-gray-500 text-sm">
-                                {svc.icon === "Beaker" && "🧪"}
-                                {svc.icon === "FlaskRound" && "⚗️"}
-                                {svc.icon === "Atom" && "⚛️"}
-                                {svc.icon === "Rocket" && "🚀"}
-                                {svc.icon === "Brain" && "🧠"}
-                                {svc.icon === "Microscope" && "🔬"}
-                                {svc.icon === "Target" && "🎯"}
-                                {svc.icon === "Eye" && "👁️"}
-                              </span>
-                            )}
-                          </div>
-                          <p className="text-gray-600 dark:text-gray-400 line-clamp-2 text-sm">{svc.description_en}</p>
-                          <div className="flex items-center gap-2 mt-3 text-sm text-gray-500 dark:text-gray-500">
-                            <span>ID: {svc.id?.substring(0, 8)}...</span>
-                            {svc.duration && (
-                              <span className="flex items-center gap-1">
-                                <Clock className="w-3 h-3" />
-                                {svc.duration}
-                              </span>
-                            )}
-                          </div>
+                  <div key={svc.id} className="bg-white dark:bg-gray-800 rounded-xl shadow hover:shadow-xl transition-shadow overflow-hidden flex flex-col h-full border border-gray-100 dark:border-gray-700">
+                    
+                    {/* Card Image */}
+                    <div className="relative w-full h-48 bg-gray-100 dark:bg-gray-700">
+                      {svc.image ? (
+                        <Image 
+                          src={svc.image} 
+                          alt="Service" 
+                          fill
+                          className="object-cover" 
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-4xl">
+                           {svc.icon === "Beaker" && "🧪"}
+                           {svc.icon === "FlaskRound" && "⚗️"}
+                           {svc.icon === "Atom" && "⚛️"}
+                           {svc.icon === "Rocket" && "🚀"}
+                           {svc.icon === "Brain" && "🧠"}
+                           {svc.icon === "Microscope" && "🔬"}
+                           {svc.icon === "Target" && "🎯"}
+                           {svc.icon === "Eye" && "👁️"}
+                           {!svc.icon && "🧪"}
                         </div>
+                      )}
+                      <div className="absolute top-3 right-3 flex gap-2">
+                        <span className={`px-2 py-1 text-xs font-bold rounded-full shadow-sm ${getCategoryColor(svc.category)}`}>
+                          {getCategoryLabel(svc.category)}
+                        </span>
                       </div>
-                      <div className="flex items-center gap-2 self-stretch md:self-center">
+                    </div>
+
+                    {/* Card Content */}
+                    <div className="p-5 flex flex-col flex-1">
+                      <div className="flex items-start justify-between gap-2 mb-2">
+                        <h4 className="font-bold text-lg text-gray-900 dark:text-white line-clamp-1" title={svc.title_en}>
+                          {svc.title_en}
+                        </h4>
+                      </div>
+                      
+                      <p className="text-gray-600 dark:text-gray-400 line-clamp-3 text-sm mb-4 flex-1">
+                        {svc.description_en}
+                      </p>
+                      
+                      {/* Meta Info */}
+                      <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400 mb-4 pt-4 border-t border-gray-100 dark:border-gray-700">
+                        <span title="ID" className="bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">
+                          #{svc.id?.substring(0, 6)}
+                        </span>
+                        {svc.duration && (
+                          <span className="flex items-center gap-1">
+                            <Clock className="w-3 h-3" />
+                            {svc.duration}
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Actions */}
+                      <div className="flex items-center gap-2 mt-auto">
                         <button
                           onClick={() => handleEdit(svc)}
-                          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition flex items-center gap-2"
+                          className="flex-1 py-2 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-300 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/40 transition flex items-center justify-center gap-2 text-sm font-medium"
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -347,10 +410,10 @@ export default function AdminServicesPage() {
                         </button>
                         <button
                           onClick={() => handleDelete(svc.id)}
-                          className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition flex items-center gap-2"
+                          className="px-3 py-2 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-300 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/40 transition flex items-center justify-center"
+                          title={isRTL ? "حذف" : "Delete"}
                         >
                           <Trash2 className="w-4 h-4" />
-                          {isRTL ? "حذف" : "Delete"}
                         </button>
                       </div>
                     </div>
@@ -361,15 +424,16 @@ export default function AdminServicesPage() {
           </div>
 
           {/* New/Edit Service Form */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 md:p-8">
+          {showForm && (
+            <div ref={formRef} className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 md:p-8 animate-in fade-in slide-in-from-bottom-4 duration-300">
             <div className="flex items-center gap-3 mb-6">
               <div className="p-2 bg-nutty-orange/10 rounded-lg">
                 <Tag className="w-6 h-6 text-nutty-orange" />
               </div>
               <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
                 {editId 
-                  ? (isRTL ? "تعديل الخدمة" : "Edit Service") 
-                  : (isRTL ? "إضافة خدمة جديدة" : "Add New Service")}
+                  ? (isRTL ? "تعديل البرنامج" : "Edit Program") 
+                  : (isRTL ? "إضافة برنامج جديد" : "Add New Program")}
               </h3>
             </div>
 
@@ -407,34 +471,41 @@ export default function AdminServicesPage() {
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    {isRTL ? "فئة الخدمة" : "Service Category"} *
+                    {isRTL ? "فئة البرنامج" : "Program Category"} *
                   </label>
                   <div className="grid grid-cols-3 gap-2">
-                    {["families", "schools", "corporate"].map((cat) => (
-                      <button
-                        key={cat}
-                        type="button"
-                        onClick={() => handleFieldChange("category", cat)}
-                        className={`p-3 rounded-lg border transition-all ${
-                          newService.category === cat
-                            ? cat === "families"
-                              ? "border-purple-500 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300"
-                              : cat === "schools"
-                              ? "border-green-500 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300"
-                              : "border-blue-500 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300"
-                            : "border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600"
-                        }`}
-                      >
-                        <div className="text-sm font-medium capitalize">
-                          {getCategoryLabel(cat)}
-                        </div>
-                      </button>
-                    ))}
+                    {["families", "schools", "corporate"].map((cat) => {
+                      const isSelected = newService.category.split(',').map(c => c.trim()).includes(cat);
+                      return (
+                        <label
+                          key={cat}
+                          className={`p-3 rounded-lg border transition-all cursor-pointer flex items-center justify-center gap-2 ${
+                            isSelected
+                              ? cat === "families"
+                                ? "border-purple-500 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300"
+                                : cat === "schools"
+                                ? "border-green-500 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300"
+                                : "border-blue-500 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300"
+                              : "border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600"
+                          }`}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={isSelected}
+                            onChange={(e) => handleCategoryChange(cat, e.target.checked)}
+                            className="w-4 h-4 rounded border-gray-300 text-nutty-blue focus:ring-nutty-blue"
+                          />
+                          <span className="text-sm font-medium capitalize">
+                            {getCategoryLabel(cat)}
+                          </span>
+                        </label>
+                      );
+                    })}
                   </div>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    {isRTL ? "أيقونة الخدمة" : "Service Icon"}
+                    {isRTL ? "أيقونة البرنامج" : "Program Icon"}
                   </label>
                   <select
                     value={newService.icon}
@@ -635,7 +706,7 @@ export default function AdminServicesPage() {
               {/* Image Upload */}
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  {isRTL ? "صورة الخدمة" : "Service Image"}
+                  {isRTL ? "صورة البرنامج" : "Program Image"}
                 </label>
                 <div className="flex flex-col lg:flex-row items-start lg:items-center gap-6">
                   <div className="flex-1">
@@ -657,7 +728,7 @@ export default function AdminServicesPage() {
                       <span className="text-gray-700 dark:text-gray-300 font-medium mb-2">
                         {uploading 
                           ? (isRTL ? "جاري رفع الصورة..." : "Uploading image...") 
-                          : (isRTL ? "انقر لرفع صورة الخدمة" : "Click to upload service image")}
+                          : (isRTL ? "انقر لرفع صورة البرنامج" : "Click to upload program image")}
                       </span>
                       <span className="text-sm text-gray-500 dark:text-gray-400">
                         {isRTL ? "JPG, PNG أو WebP (حتى 5MB)" : "JPG, PNG or WebP (up to 5MB)"}
@@ -716,12 +787,20 @@ export default function AdminServicesPage() {
                   {saving 
                     ? (isRTL ? "جاري الحفظ..." : "Saving...")
                     : (editId 
-                      ? (isRTL ? "تحديث الخدمة" : "Update Service") 
-                      : (isRTL ? "إضافة الخدمة" : "Add Service"))}
+                      ? (isRTL ? "تحديث البرنامج" : "Update Program") 
+                      : (isRTL ? "إضافة البرنامج" : "Add Program"))}
+                </button>
+                <button
+                  onClick={handleCancel}
+                  disabled={saving}
+                  className="px-6 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors font-semibold"
+                >
+                  {isRTL ? "إلغاء" : "Cancel"}
                 </button>
               </div>
             </div>
           </div>
+          )}
 
           {/* Help Section */}
           <div className="mt-8 bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-xl p-6">

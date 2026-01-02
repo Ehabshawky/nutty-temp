@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { supabaseAdmin } from '@/lib/supabase';
+import { deleteFileFromStorage } from '@/lib/storage';
 
 export const dynamic = 'force-dynamic';
 
@@ -65,6 +66,19 @@ export async function PUT(req: Request) {
     return NextResponse.json({ error: 'Missing id' }, { status: 400 });
   }
 
+  // If image is updated, delete the old one
+  if (rest.image) {
+    const { data: oldProject } = await supabaseAdmin
+      .from('projects')
+      .select('image')
+      .eq('id', id)
+      .single();
+
+    if (oldProject && oldProject.image && oldProject.image !== rest.image) {
+      await deleteFileFromStorage(oldProject.image);
+    }
+  }
+
   const { error } = await supabaseAdmin
     .from('projects')
     .update(rest)
@@ -90,6 +104,13 @@ export async function DELETE(req: Request) {
     return NextResponse.json({ error: 'Missing id' }, { status: 400 });
   }
 
+  // Get the project to delete its image
+  const { data: project } = await supabaseAdmin
+    .from('projects')
+    .select('image')
+    .eq('id', id)
+    .single();
+
   const { error } = await supabaseAdmin
     .from('projects')
     .delete()
@@ -97,6 +118,11 @@ export async function DELETE(req: Request) {
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  // Delete the image from storage if it exists
+  if (project?.image) {
+    await deleteFileFromStorage(project.image);
   }
 
   return NextResponse.json({ success: true });

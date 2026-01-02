@@ -17,7 +17,7 @@ const resources = {
     translation: {
       // Navigation
       home: "Home",
-      servicesNav: "Services",
+      servicesNav: "Our Programs",
       aboutNav: "About Us",
       contact: "Contact Us",
       projectsNav: "Projects",
@@ -47,7 +47,7 @@ const resources = {
       satisfactionRate: "Satisfaction",
 
       // Services
-      servicesTitle: "Our Services",
+      servicesTitle: "Our Programs",
       workshopsDesc: "Hands-on science experiments for all ages",
       camps: "Science Camps",
       campsDesc: "Summer and winter science adventure programs",
@@ -172,7 +172,7 @@ const resources = {
 
       // Services Extra
       services: {
-        lead: "Explore our comprehensive range of science education services designed to inspire and educate",
+        lead: "Explore our comprehensive range of science education programs designed to inspire and educate",
         schoolProgramsTitle: "School Programs",
         schoolProgramsDesc: "Curriculum-aligned science programs for schools",
         stemTitle: "STEM Education",
@@ -181,15 +181,15 @@ const resources = {
         onlineDesc: "Virtual science learning experiences",
         competitionsTitle: "Science Competitions",
         competitionsDesc: "Annual science fairs and hackathons",
-        viewAll: "View All Services",
-        related: "Related Services",
-        showingAll: "Showing all services",
+        viewAll: "View All Programs",
+        related: "Related Programs",
+        showingAll: "Showing all programs",
         showingCategory: "Showing category",
-        showingCategoryServices: "services",
+        showingCategoryServices: "programs",
         tryDifferentCategory: "Try a different category",
-        noServices: "No Services Found",
+        noServices: "No Programs Found",
         corporateServices: "Corporate services",
-        services: "Services",
+        services: "Programs",
         filter: "Filter",
 
         stats: {
@@ -199,7 +199,7 @@ const resources = {
           supportAvailable: "Support Available",
         },
         categories: {
-          all: "All Services",
+          all: "All Programs",
           families: "Families",
           schools: "Schools",
           corporate: "Corporate",
@@ -209,6 +209,21 @@ const resources = {
           title: "Ready to Start Your Science Journey?",
           desc: "Book a workshop or consultation with our expert scientists today!",
         },
+      },
+      // CSR Section
+      csr: {
+        title: "Corporate Social Responsibility (CSR)",
+        subtitle: "Making Science Accessible to Every Child",
+        lead: "Nutty Scientists Egypt is committed to creating a positive impact on society by empowering the next generation of thinkers and innovators.",
+        initiative1Title: "Science for All",
+        initiative1Desc: "Providing free scientific workshops to children in underprivileged areas and rural communities.",
+        initiative2Title: "Eco-Curiosity",
+        initiative2Desc: "Raising environmental awareness through hands-on experiments about sustainability and renewable energy.",
+        initiative3Title: "Inclusion in STEM",
+        initiative3Desc: "Tailored programs for children with special needs, ensuring that science is a fun experience for everyone.",
+        partnershipTitle: "Partner for Impact",
+        partnershipDesc: "We collaborate with companies and NGOs to sponsor educational programs that reach thousands of students across Egypt.",
+        cta: "Partner with Us"
       },
       // Articles
       articlesSection: {
@@ -363,7 +378,7 @@ const resources = {
     translation: {
       // Navigation
       home: "الرئيسية",
-      servicesNav: "الخدمات",
+      servicesNav: "برامجنا",
       aboutNav: "من نحن",
       contact: "اتصل بنا",
       projectsNav: "المشاريع",
@@ -393,7 +408,7 @@ const resources = {
       satisfactionRate: "رضا العملاء",
 
       // Services
-      servicesTitle: "خدماتنا",
+      servicesTitle: "برامجنا",
       workshopsDesc: "تجارب علمية عملية لجميع الأعمار",
       camps: "معسكرات علمية",
       campsDesc: "برامج مغامرات علمية صيفية وشتوية",
@@ -477,8 +492,8 @@ const resources = {
       buttons: {
         learnMore: "تعرف أكثر",
         back: "العودة",
-        viewAll: "عرض جميع الخدمات",
-        related: "خدمات ذات صلة"
+        viewAll: "عرض جميع البرامج",
+        related: "برامج ذات صلة"
       },
       // Sections
       latestArticles: "أحدث المقالات",
@@ -514,7 +529,7 @@ const resources = {
 
       // Services extra (Arabic)
       services: {
-        lead: "اكتشف مجموعتنا الشاملة من خدمات التعليم العلمي المصممة لإلهام وتثقيف",
+        lead: "اكتشف مجموعتنا الشاملة من برامج التعليم العلمي المصممة لإلهام وتثقيف",
         schoolProgramsTitle: "برامج مدرسية",
         schoolProgramsDesc: "برامج علمية مناهجية للمدارس",
         stemTitle: "تعليم STEM",
@@ -523,13 +538,13 @@ const resources = {
         onlineDesc: "تجارب تعلم علمية افتراضية",
         competitionsTitle: "مسابقات علمية",
         competitionsDesc: "معارض ومسابقات علمية سنوية",
-        showingAll: "عرض جميع الخدمات",
+        showingAll: "عرض جميع البرامج",
         showingCategory: "عرض",
-        showingCategoryServices: "خدمات",
+        showingCategoryServices: "برامج",
         tryDifferentCategory: "حاول فئة مختلفة",
-        noServices: "لا يوجد خدمات",
+        noServices: "لا يوجد برامج",
         corporateServices: "خدمات الشركات",
-        services: "خدمات",
+        services: "برامج",
         filter: "تصفية",
 
         stats: {
@@ -549,10 +564,24 @@ const resources = {
           title: "هل أنت جاهز لبدء رحلة علومك؟",
           desc: "احجز ورشة عمل أو استشارة مع علماءنا الخبراء اليوم!",
         },
-        viewAll: "عرض جميع الخدمات",
-        related: "خدمات ذات صلة"
+        viewAll: "عرض جميع البرامج",
+        related: "برامج ذات صلة"
       },
-
+      // CSR Section (Arabic)
+      csr: {
+        title: "المسؤولية المجتمعية للشركات (CSR)",
+        subtitle: "جعل العلوم في متناول كل طفل",
+        lead: "يلتزم ناتي ساينتستس مصر بخلق أثر إيجابي في المجتمع من خلال تمكين الجيل القادم من المفكرين والمبتكرين.",
+        initiative1Title: "العلوم للجميع",
+        initiative1Desc: "تقديم ورش عمل علمية مجانية للأطفال في المناطق الأقل حظاً والمجتمعات الريفية.",
+        initiative2Title: "الفضول البيئي",
+        initiative2Desc: "رفع الوعي البيئي من خلال تجارب عملية حول الاستدامة والطاقة المتجددة.",
+        initiative3Title: "الدمج في STEM",
+        initiative3Desc: "برامج مخصصة للأطفال من ذوي الاحتياجات الخاصة، لضمان أن يكون العلم تجربة ممتعة للجميع.",
+        partnershipTitle: "شراكة من أجل الأثر",
+        partnershipDesc: "نتعاون مع الشركات والمنظمات غير الحكومية لرعاية البرامج التعليمية التي تصل إلى آلاف الطلاب في جميع أنحاء مصر.",
+        cta: "شاركنا الأثر"
+      },
       // Articles (Arabic)
       articlesSection: {
         title: "المقالات العلمية والرؤى",

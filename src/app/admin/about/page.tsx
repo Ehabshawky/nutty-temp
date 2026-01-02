@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "next/navigation";
 import AdminLayout from "@/components/admin/AdminLayout";
+import { AdminFormSkeleton } from "@/components/skeletons/AdminFormSkeleton";
+
 import { Save, Globe, FileText, Upload, Image as ImageIcon, Trash } from "lucide-react";
 import Image from "next/image";
 
@@ -234,11 +236,11 @@ const handleVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-        <div className="text-xl text-gray-900 dark:text-white">
-          {isRTL ? "جاري التحميل..." : "Loading..."}
+      <AdminLayout>
+        <div className="max-w-5xl mx-auto py-20">
+          <AdminFormSkeleton sections={4} />
         </div>
-      </div>
+      </AdminLayout>
     );
   }
 

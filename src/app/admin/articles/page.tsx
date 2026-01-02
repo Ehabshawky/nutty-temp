@@ -13,6 +13,8 @@ import {
   Upload
 } from 'lucide-react';
 import AdminLayout from '@/components/admin/AdminLayout';
+import { AdminTableSkeleton } from "@/components/skeletons/AdminTableSkeleton";
+
 
 export default function AdminArticles() {
   const [articles, setArticles] = useState<any[]>([]);
@@ -207,9 +209,7 @@ export default function AdminArticles() {
       </div>
 
       {loading ? (
-        <div className="flex justify-center py-12">
-          <Loader2 className="w-8 h-8 animate-spin text-nutty-blue" />
-        </div>
+        <AdminTableSkeleton rows={5} />
       ) : (
         <div className="grid gap-4">
           {filteredArticles.map((article) => (

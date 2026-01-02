@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { Briefcase, MapPin, Clock, ChevronRight, ChevronLeft, ArrowRight, ArrowLeft, Mail, AlertCircle, Search, Filter, CheckCircle } from 'lucide-react';
+import { JobCardSkeleton } from "@/components/skeletons/JobCardSkeleton";
 import Link from 'next/link';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
@@ -126,9 +127,10 @@ const CareersPage = () => {
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {loading ? (
-            <div className="flex flex-col items-center justify-center py-20">
-              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-nutty-orange mb-4"></div>
-              <p className="text-gray-500 font-bold">{isRTL ? 'جاري البحث عن الفرص...' : 'Searching for opportunities...'}</p>
+            <div className="space-y-8">
+               <JobCardSkeleton />
+               <JobCardSkeleton />
+               <JobCardSkeleton />
             </div>
           ) : filteredJobs.length > 0 ? (
             <div className="grid grid-cols-1 gap-8">

@@ -4,6 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Mail, AlertCircle, Calendar } from 'lucide-react';
 import AdminLayout from '@/components/admin/AdminLayout';
+import { AdminTableSkeleton } from "@/components/skeletons/AdminTableSkeleton";
+
 
 export default function AdminSubscribers() {
   const { t, i18n } = useTranslation();
@@ -32,7 +34,15 @@ export default function AdminSubscribers() {
     fetchSubscribers();
   }, []);
 
-  if (loading) return <AdminLayout><div className="p-8">Loading...</div></AdminLayout>;
+  if (loading) {
+    return (
+      <AdminLayout>
+        <div className="p-8">
+          <AdminTableSkeleton rows={8} />
+        </div>
+      </AdminLayout>
+    );
+  }
 
   return (
     <AdminLayout>

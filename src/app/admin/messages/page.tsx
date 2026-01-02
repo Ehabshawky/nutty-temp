@@ -77,7 +77,18 @@ export default function AdminMessages() {
                 </div>
                 <div className="flex-1 overflow-y-auto">
                     {loading ? (
-                        <div className="p-8 text-center text-gray-500">Loading...</div>
+                        <div className="flex-1 space-y-4 p-4">
+                            {[1, 2, 3, 4, 5, 6].map(i => (
+                                <div key={i} className="p-4 border-b dark:border-gray-700 animate-pulse">
+                                    <div className="flex justify-between mb-2">
+                                        <div className="h-4 w-24 bg-gray-200 dark:bg-gray-700 rounded" />
+                                        <div className="h-3 w-16 bg-gray-200 dark:bg-gray-700 rounded" />
+                                    </div>
+                                    <div className="h-4 w-3/4 bg-gray-200 dark:bg-gray-700 rounded mb-2" />
+                                    <div className="h-3 w-full bg-gray-200 dark:bg-gray-700 rounded" />
+                                </div>
+                            ))}
+                        </div>
                     ) : filteredMessages.length === 0 ? (
                         <div className="p-8 text-center text-gray-500">No messages found</div>
                     ) : (

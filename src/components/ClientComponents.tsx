@@ -2,6 +2,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
+import Chatbot from "./ui/Chatbot";
+
 
 interface ClientComponentsProps {
   language: string;
@@ -9,6 +12,9 @@ interface ClientComponentsProps {
 
 export default function ClientComponents({ language }: ClientComponentsProps) {
   const [isVisible, setIsVisible] = useState(false);
+  const pathname = usePathname();
+  const isAdmin = pathname?.startsWith('/admin');
+
 
   // التحكم في زر العودة للأعلى
   useEffect(() => {
@@ -55,6 +61,9 @@ export default function ClientComponents({ language }: ClientComponentsProps) {
           />
         </svg>
       </button>
+
+      {/* Chatbot - Only on public pages */}
+      {!isAdmin && <Chatbot />}
     </>
   );
 }

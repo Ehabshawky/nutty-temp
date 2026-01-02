@@ -10,11 +10,23 @@ import {
   Target,
   Users,
   MessageSquare,
-  Briefcase
+  Briefcase,
+  HelpCircle,
+  Handshake
 } from 'lucide-react';
 import AdminLayout from '@/components/admin/AdminLayout';
+import { AdminGridSkeleton } from "@/components/skeletons/AdminGridSkeleton";
+import { useState, useEffect } from "react";
+
 
 export default function AdminContent() {
+  const [loading, setLoading] = useState(true);
+  
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 500);
+    return () => clearTimeout(timer);
+  }, []);
+
   const { i18n } = useTranslation();
   const isRTL = i18n.language === 'ar';
 
@@ -74,8 +86,39 @@ export default function AdminContent() {
       icon: MessageSquare,
       href: '/admin/testimonials',
       color: 'bg-yellow-500'
+    },
+    { 
+      title: isRTL ? 'الأسئلة الشائعة' : 'FAQ', 
+      desc: isRTL ? 'إدارة الأسئلة الشائعة للموقع' : 'Manage site frequently asked questions',
+      icon: HelpCircle,
+      href: '/admin/faq',
+      color: 'bg-blue-400'
+    },
+    { 
+      title: isRTL ? 'الشركاء والعملاء' : 'Partners & Clients', 
+      desc: isRTL ? 'إدارة شركاء النجاح وعملاء المدارس' : 'Manage success partners and school clients',
+      icon: Handshake,
+      href: '/admin/partners',
+      color: 'bg-nutty-orange'
+    },
+    { 
+      title: isRTL ? 'الرد الآلي' : 'Chatbot', 
+      desc: isRTL ? 'إدارة الأسئلة والردود الآلية' : 'Manage automated questions and responses',
+      icon: MessageSquare,
+      href: '/admin/chatbot',
+      color: 'bg-nutty-blue'
     }
   ];
+
+  if (loading) {
+    return (
+      <AdminLayout>
+        <div className="p-8 py-20">
+          <AdminGridSkeleton count={6} cardsPerRow={3} />
+        </div>
+      </AdminLayout>
+    );
+  }
 
   return (
     <AdminLayout>

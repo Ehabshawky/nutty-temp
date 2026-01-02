@@ -4,6 +4,8 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import AdminLayout from "@/components/admin/AdminLayout";
+import { AdminGridSkeleton } from "@/components/skeletons/AdminGridSkeleton";
+
 import { Upload, Save, Image as ImageIcon, Globe, Plus, Trash2, Edit } from "lucide-react";
 
 interface HeroSlide {
@@ -174,11 +176,11 @@ export default function HeroMultipleAdminPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-        <div className="text-xl text-gray-900 dark:text-white">
-          {isRTL ? "جاري التحميل..." : "Loading..."}
+      <AdminLayout>
+        <div className="max-w-7xl mx-auto py-20">
+          <AdminGridSkeleton count={3} cardsPerRow={3} />
         </div>
-      </div>
+      </AdminLayout>
     );
   }
 

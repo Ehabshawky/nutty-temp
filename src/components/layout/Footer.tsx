@@ -92,8 +92,8 @@ const Footer = () => {
     { label: t("servicesNav"), href: "#services" },
     { label: t("aboutNav"), href: "#about" },
     { label: t("members"), href: "#members" },
-    { label: t("articles"), href: "#articles" },
-    { label: t("testimonials"), href: "#testimonials" },
+    // { label: t("articles"), href: "#articles" },
+    // { label: t("testimonials"), href: "#testimonials" },
     { label: t("blogs"), href: "#blogs" },
     { label: t("contact"), href: "#contact" },
   ];
@@ -120,7 +120,7 @@ const Footer = () => {
 
   const footerTexts = {
     quickLinks: isArabic ? "روابط سريعة" : "Quick Links",
-    ourServices: isArabic ? "خدماتنا" : "Our Services",
+    ourServices: isArabic ? "برامجنا" : "Our Programs",
     contactInfo: isArabic ? "معلومات الاتصال" : "Contact Info",
     newsletterTitle: isArabic ? "اشترك في النشرة البريدية" : "Subscribe to Newsletter",
     newsletterPlaceholder: isArabic ? "بريدك الإلكتروني" : "Your email",
@@ -131,9 +131,9 @@ const Footer = () => {
     backToTop: isArabic ? "العودة للأعلى" : "Back to top",
     addressLine1: isArabic ? "مول جاردن 8" : "Garden 8 mall",
     addressLine2: isArabic ? "القاهرة الجديدة، الحي الأول" : "New Cairo , 1st Settlement",
-    loadingServices: isArabic ? "جاري تحميل الخدمات..." : "Loading services...",
-    noServices: isArabic ? "لا توجد خدمات متاحة حالياً" : "No services available",
-    viewAllServices: isArabic ? "عرض جميع الخدمات" : "View All Services",
+    loadingServices: isArabic ? "جاري تحميل البرامج..." : "Loading programs...",
+    noServices: isArabic ? "لا توجد برامج متاحة حالياً" : "No programs available",
+    viewAllServices: isArabic ? "عرض جميع البرامج" : "View All Programs",
   };
 
   // خدمات افتراضية للنسخة الاحتياطية إذا فشل تحميل البيانات
@@ -161,8 +161,42 @@ const Footer = () => {
   };
   
   return (
-    <footer className="bg-white dark:bg-gray-900 text-gray-900 dark:text-white pt-16 pb-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <footer className="bg-white dark:bg-gray-900 text-gray-900 dark:text-white pt-16 pb-8 relative overflow-hidden">
+      {/* SVG Wave Decoration - Top */}
+      <div className="absolute top-0 left-0 w-[100%] h-[100%] pointer-events-none overflow-hidden z-0">
+        <svg viewBox="0 0 1440 120" className="w-full h-full" preserveAspectRatio="none">
+           {/* Cyan Wave */}
+           <path
+            d="M0,0 L1440,0 L1440,120 L0,120 Z"
+             fill="#00BCD4" // Nutty Cyan
+             opacity="0.6"
+           />
+           {/* Lime Strip at top edge to inverse the navbar? No, let's keep it consistent pattern */}
+           {/* Actually image 3 shows Cyan curve then white. The bottom bar is Lime. */}
+           {/* Let's try: Top of footer is the Cyan curve coming down? */}
+           {/* If we want to match Image 3 'Bottom' style: Blue Curve then Green Bar. */}
+           {/* Since this is the footer TOP, maybe we just do the decoration. */}
+           
+           <path
+             d="M0,0 L1440,0 L1440,20 Q720,60 0,20 Z"
+             fill="#C4D600"
+             opacity="0.6"
+           />
+        </svg>
+      </div>
+      
+      {/* SVG Wave Decoration - Bottom Right */}
+      <div className="absolute bottom-0 right-0 w-[100%] h-[100%] opacity-10 pointer-events-none">
+        <svg viewBox="0 0 1440 120" className="w-full h-full" preserveAspectRatio="none">
+          <path
+            d="M300,200 L300,100 Q200,80 100,100 T0,100 L0,200 Z"
+            fill="#00BCD4"
+            opacity="0.6"
+          />
+        </svg>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12 ${isArabic ? 'rtl-container text-right' : 'text-left'}`}>
           {/* Brand Column */}
           <motion.div
@@ -178,7 +212,7 @@ const Footer = () => {
                 className="w-40 h-auto md:w-48 lg:w-56 object-contain"
               />
             </div>
-            <p className="text-gray-400 mb-6">
+            <p className="text-gray-900 dark:text-gray-300 mb-6">
               {editableFooter?.description_ar || t("heroDescription")}
             </p>
             <div className={`flex ${isArabic ? 'space-x-reverse' : ''} space-x-4`}>
@@ -188,7 +222,7 @@ const Footer = () => {
                   <a
                     key={index}
                     href={social.href}
-                    className="w-10 h-10 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center hover:bg-nutty-blue transition-colors"
+                    className="w-10 h-10 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center hover:bg-nutty-yellow hover:text-white transition-colors"
                     aria-label={social.label}
                   >
                     <Icon className="w-5 h-5" />
@@ -212,7 +246,7 @@ const Footer = () => {
                 <li key={index}>
                   <a
                     href={link.href}
-                    className="text-gray-600 dark:text-gray-400 hover:text-nutty-yellow transition-colors block py-1"
+                    className="text-gray-900 dark:text-gray-300 hover:text-nutty-yellow transition-colors block py-1"
                   >
                     {link.label}
                   </a>
@@ -251,7 +285,7 @@ const Footer = () => {
                   <li key={service.id || index}>
                     <Link
                       href={`/services/${service.id}`}
-                      className="text-gray-400 hover:text-nutty-yellow transition-colors block py-1 hover:translate-x-2 transition-transform duration-300"
+                      className="text-gray-900 dark:text-gray-300 hover:text-nutty-yellow transition-colors block py-1 hover:translate-x-2 transition-transform duration-300"
                     >
                       {isArabic ? service.title_ar || service.title_en : service.title_en || service.title_ar}
                     </Link>
@@ -260,13 +294,13 @@ const Footer = () => {
               </ul>
             ) : (
               <>
-                <p className="text-gray-400 mb-3">{footerTexts.noServices}</p>
+                <p className="text-gray-900 dark:text-gray-200 mb-3">{footerTexts.noServices}</p>
                 <ul className="space-y-3">
                   {fallbackServices[currentLanguage].slice(0, 8).map((service, index) => (
                     <li key={index}>
                       <a
                         href="#services"
-                        className="text-gray-400 hover:text-nutty-yellow transition-colors block py-1"
+                        className="text-gray-900 dark:text-gray-300 hover:text-nutty-yellow transition-colors block py-1"
                       >
                         {service}
                       </a>
@@ -289,7 +323,7 @@ const Footer = () => {
             <ul className="space-y-4">
               <li className="flex items-start">
                 <MapPin className={`w-5 h-5 text-nutty-yellow ${isArabic ? 'ml-3 mr-0' : 'mr-3'} mt-1 flex-shrink-0`} />
-                <span className="text-gray-400">
+                <span className="text-gray-900 dark:text-gray-300 hover:text-nutty-yellow">
                   {isArabic ? settings.address_ar : settings.address_en}
                 </span>
               </li>
@@ -297,7 +331,7 @@ const Footer = () => {
                 <Phone className={`w-5 h-5 text-nutty-yellow ${isArabic ? 'ml-3 mr-0' : 'mr-3'} flex-shrink-0`} />
                 <a
                   href={`tel:${settings.phone}`}
-                  className="text-gray-400 hover:text-nutty-yellow font-sans"
+                  className="text-gray-900 dark:text-gray-300 hover:text-nutty-yellow"
                   dir="ltr"
                 >
                   {settings.phone}
@@ -307,7 +341,7 @@ const Footer = () => {
                 <Mail className={`w-5 h-5 text-nutty-yellow ${isArabic ? 'ml-3 mr-0' : 'mr-3'} flex-shrink-0`} />
                 <a
                   href={`mailto:${settings.contact_email}`}
-                  className="text-gray-400 hover:text-nutty-yellow"
+                  className="text-gray-900 dark:text-gray-300 hover:text-nutty-yellow"
                 >
                   {settings.contact_email}
                 </a>
@@ -319,13 +353,14 @@ const Footer = () => {
               <h4 className="font-semibold mb-4">{footerTexts.newsletterTitle}</h4>
               <div className={`flex ${isArabic ? 'flex-row-reverse' : ''}`}>
                 <input
+                  suppressHydrationWarning
                   type="email"
                   placeholder={footerTexts.newsletterPlaceholder}
                   className={`flex-1 px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-nutty-yellow ${
                     isArabic ? 'rounded-r-lg' : 'rounded-l-lg'
                   }`}
                 />
-                <button className={`px-4 py-2 bg-nutty-yellow text-gray-900 hover:bg-yellow-400 transition-colors ${
+                <button className={`px-4 py-2 bg-nutty-lime text-white hover:bg-nutty-lime-dark transition-colors font-bold ${
                   isArabic ? 'rounded-l-lg' : 'rounded-r-lg'
                 }`}>
                   <Send className="w-5 h-5" />
@@ -338,7 +373,7 @@ const Footer = () => {
         {/* Divider */}
         <div className="border-t border-gray-800 pt-8">
           <div className={`flex flex-col md:flex-row justify-between items-center ${isArabic ? 'rtl-container' : ''}`}>
-            <div className="text-gray-400 text-sm mb-4 md:mb-0">
+            <div className="text-gray-900 dark:text-gray-200 text-sm mb-4 md:mb-0">
               © {new Date().getFullYear()} {isArabic ? "ناتي ساينتستس" : "Nutty Scientists"}.{" "}
               {editableFooter?.rights_ar || t("rights")}
             </div>
@@ -346,25 +381,25 @@ const Footer = () => {
             <div className={`flex flex-wrap ${isArabic ? 'space-x-reverse' : ''} gap-6 text-sm`}>
               <Link
                 href="/privacy-policy"
-                className="text-gray-400 hover:text-nutty-yellow transition-colors"
+                className="text-gray-900 dark:text-gray-200 hover:text-nutty-yellow transition-colors"
               >
                 {footerTexts.privacyPolicy}
               </Link>
               <Link
                 href="/terms"
-                className="text-gray-400 hover:text-nutty-yellow transition-colors"
+                className="text-gray-900 dark:text-gray-200 hover:text-nutty-yellow transition-colors"
               >
                 {footerTexts.termsOfService}
               </Link>
               <Link
                 href="/cookie-policy"
-                className="text-gray-400 hover:text-nutty-yellow transition-colors"
+                className="text-gray-900 dark:text-gray-200 hover:text-nutty-yellow transition-colors"
               >
                 {footerTexts.cookiePolicy}
               </Link>
               <Link
                 href="/careers"
-                className="text-gray-400 hover:text-nutty-yellow transition-colors"
+                className="text-gray-900 dark:text-gray-200 hover:text-nutty-yellow transition-colors"
               >
                 {footerTexts.careers}
               </Link>
@@ -373,10 +408,10 @@ const Footer = () => {
         </div>
 
         {/* Back to Top */}
-        <motion.button
+        {/* <motion.button
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
           whileHover={{ y: -5 }}
-          className="fixed bottom-8 right-8 w-12 h-12 bg-nutty-blue rounded-full shadow-lg flex items-center justify-center hover:bg-blue-700 transition-colors z-40"
+          className="fixed bottom-24 md:bottom-24 right-6 md:right-8 w-12 h-12 bg-nutty-cyan/80 hover:bg-nutty-cyan text-white rounded-full shadow-lg flex items-center justify-center transition-colors z-40 backdrop-blur-sm"
           aria-label={footerTexts.backToTop}
           title={footerTexts.backToTop}
         >
@@ -393,7 +428,7 @@ const Footer = () => {
               d="M5 10l7-7m0 0l7 7m-7-7v18"
             />
           </svg>
-        </motion.button>
+        </motion.button> */}
       </div>
     </footer>
   );

@@ -2,8 +2,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { MessageSquare, AlertCircle, Plus, Trash2, Check, Upload, Star, Eye, X } from 'lucide-react';
+import { MessageSquare, AlertCircle, Plus, Trash2, Check, Upload, Star, Eye, X, Quote } from 'lucide-react';
 import AdminLayout from '@/components/admin/AdminLayout';
+import { AdminGridSkeleton } from "@/components/skeletons/AdminGridSkeleton";
+
 import Image from 'next/image';
 
 export default function AdminTestimonials() {
@@ -12,21 +14,24 @@ export default function AdminTestimonials() {
   
   const [testimonials, setTestimonials] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [showModal, setShowModal] = useState(false); // For Add/Edit
-  const [showViewModal, setShowViewModal] = useState(false); // For Viewing Details
-  const [selectedTestimonial, setSelectedTestimonial] = useState<any>(null);
+  const [showForm, setShowForm] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [imagePreview, setImagePreview] = useState('');
+  const [scanPreview, setScanPreview] = useState('');
   const [uploading, setUploading] = useState(false);
+  const [editId, setEditId] = useState<number | null>(null);
+  
+  const formRef = React.useRef<HTMLDivElement>(null);
 
   const [formData, setFormData] = useState({
+      id: null,
       name: '',
       role: '',
       content: '',
       image: '',
       screenshot_url: '',
-      rating: 5
+      rating: 5,
+      is_approved: false
   });
 
   const fetchData = async () => {
@@ -37,7 +42,7 @@ export default function AdminTestimonials() {
         setTestimonials(data);
       }
     } catch (err) {
-      setError('Error loading data');
+      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -47,21 +52,21 @@ export default function AdminTestimonials() {
     fetchData();
   }, []);
 
-  // ... (keep existing handlers) ...
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, field: 'image' | 'screenshot_url') => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     setUploading(true);
-    const formData = new FormData();
-    formData.append("file", file);
+    const data = new FormData();
+    data.append("file", file);
 
     try {
-      const res = await fetch("/api/upload-image", { method: "POST", body: formData });
+      const res = await fetch("/api/upload-image", { method: "POST", body: data });
       if (res.ok) {
-        const data = await res.json();
-        setFormData(prev => ({ ...prev, image: data.url }));
-        setImagePreview(data.url);
+        const result = await res.json();
+        setFormData(prev => ({ ...prev, [field]: result.url }));
+        if (field === 'image') setImagePreview(result.url);
+        if (field === 'screenshot_url') setScanPreview(result.url);
       }
     } catch (error) {
        alert(isRTL ? "فشل رفع الصورة" : "Image upload failed");
@@ -74,16 +79,17 @@ export default function AdminTestimonials() {
       e.preventDefault();
       setSubmitting(true);
       try {
+          const method = editId ? 'PUT' : 'POST';
+          const body = editId ? { ...formData, id: editId } : formData;
+          
           const res = await fetch('/api/admin/testimonials', {
-              method: 'POST',
+              method,
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(formData) 
+              body: JSON.stringify(body) 
           });
           
           if (res.ok) {
-              setShowModal(false);
-              setFormData({ name: '', role: '', content: '', image: '', screenshot_url: '', rating: 5 });
-              setImagePreview('');
+              handleCancel();
               fetchData();
           }
       } catch (e) {
@@ -100,227 +106,217 @@ export default function AdminTestimonials() {
           body: JSON.stringify({ id, is_approved: true })
       });
       fetchData();
-      if (showViewModal) setShowViewModal(false);
   };
 
   const handleDelete = async (id: number) => {
-      if (!confirm('Area you sure?')) return;
+      if (!confirm('Are you sure?')) return;
       await fetch(`/api/admin/testimonials?id=${id}`, { method: 'DELETE' });
       fetchData();
-      if (showViewModal) setShowViewModal(false);
   };
 
-  if (loading) return <AdminLayout>Loading...</AdminLayout>;
+  const handleEdit = (item: any) => {
+     setEditId(item.id);
+     setFormData(item);
+     setImagePreview(item.image || '');
+     setScanPreview(item.screenshot_url || '');
+     setShowForm(true);
+     setTimeout(() => {
+        formRef.current?.scrollIntoView({ behavior: 'smooth' });
+     }, 100);
+  };
+
+  const handleAddNew = () => {
+    handleCancel();
+    setShowForm(true);
+    setTimeout(() => {
+        formRef.current?.scrollIntoView({ behavior: 'smooth' });
+     }, 100);
+  };
+
+  const handleCancel = () => {
+     setShowForm(false);
+     setEditId(null);
+     setFormData({ id: null, name: '', role: '', content: '', image: '', screenshot_url: '', rating: 5, is_approved: false });
+     setImagePreview('');
+     setScanPreview('');
+  };
+
+  if (loading) {
+    return (
+      <AdminLayout>
+        <div className="max-w-7xl mx-auto p-4 md:p-8 py-20">
+          <AdminGridSkeleton count={4} cardsPerRow={2} />
+        </div>
+      </AdminLayout>
+    );
+  }
 
   return (
     <AdminLayout>
-      <div className="p-8" dir={isRTL ? 'rtl' : 'ltr'}>
-        <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
+      <div className="max-w-7xl mx-auto p-4 md:p-8" dir={isRTL ? 'rtl' : 'ltr'}>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
+          <h1 className="text-3xl font-black text-gray-900 dark:text-white flex items-center gap-3">
             <MessageSquare className="w-8 h-8 text-nutty-orange" />
             {isRTL ? 'إدارة التقييمات' : 'Testimonials Management'}
           </h1>
           <button
-              onClick={() => { setShowModal(true); setFormData({ name: '', role: '', content: '', image: '', screenshot_url: '', rating: 5 }); }}
-              className="px-4 py-2 bg-nutty-green text-white rounded-lg flex items-center gap-2 hover:bg-green-600"
+              onClick={handleAddNew}
+              className="px-6 py-3 bg-nutty-lime text-white rounded-xl flex items-center gap-2 hover:bg-green-600 font-bold shadow-sm transition-all"
           >
-              <Plus className="w-4 h-4" />
-              {isRTL ? 'إضافة تقييم' : 'Add Testimonial'}
+              <Plus className="w-5 h-5" />
+              {isRTL ? 'إضافة تقييم جديد' : 'Add New Testimonial'}
           </button>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden border border-gray-100 dark:border-gray-700">
-             <table className="w-full text-left rtl:text-right">
-                <thead className="bg-gray-50 dark:bg-gray-700/50">
-                    <tr>
-                         <th className="px-6 py-4">{isRTL ? 'الاسم' : 'Name'}</th>
-                         <th className="px-6 py-4">{isRTL ? 'المحتوى' : 'Content'}</th>
-                         <th className="px-6 py-4">{isRTL ? 'التقييم' : 'Rating'}</th>
-                         <th className="px-6 py-4">{isRTL ? 'الحالة' : 'Status'}</th>
-                         <th className="px-6 py-4">{isRTL ? 'إجراءات' : 'Actions'}</th>
-                    </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
-                    {testimonials.map(t => (
-                        <tr key={t.id}>
-                            <td className="px-6 py-4">
-                                <div className="flex items-center gap-3">
-                                    {t.image ? (
-                                        <img src={t.image} className="w-10 h-10 rounded-full object-cover" />
-                                    ) : (
-                                        <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 font-bold">{t.name[0]}</div>
-                                    )}
-                                    <div>
-                                        <div className="font-bold">{t.name}</div>
-                                        <div className="text-xs text-gray-500">{t.role}</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td className="px-6 py-4 max-w-xs truncate text-gray-600 cursor-pointer hover:bg-gray-50" onClick={() => { setSelectedTestimonial(t); setShowViewModal(true); }}>
-                                {t.content}
-                            </td>
-                            <td className="px-6 py-4 flex gap-1">
-                                <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" /> {t.rating}
-                            </td>
-                            <td className="px-6 py-4">
-                                {t.is_approved 
-                                    ? <span className="text-green-600 text-sm bg-green-100 px-2 py-1 rounded">Approved</span>
-                                    : <span className="text-yellow-600 text-sm bg-yellow-100 px-2 py-1 rounded">Pending</span>
-                                }
-                            </td>
-                            <td className="px-6 py-4 flex gap-2">
-                                <button onClick={() => { setSelectedTestimonial(t); setShowViewModal(true); }} className="p-2 text-blue-600 hover:bg-blue-50 rounded" title="View">
-                                    <Eye className="w-4 h-4" />
-                                </button>
-                                {!t.is_approved && (
-                                    <button onClick={() => handleApprove(t.id)} className="p-2 text-green-600 hover:bg-green-50 rounded" title="Approve"><Check className="w-4 h-4" /></button>
-                                )}
-                                <button onClick={() => handleDelete(t.id)} className="p-2 text-red-600 hover:bg-red-50 rounded" title="Delete"><Trash2 className="w-4 h-4" /></button>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-             </table>
-        </div>
-
-        {/* View Details Modal */}
-        {showViewModal && selectedTestimonial && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-                <div className="bg-white dark:bg-gray-800 rounded-2xl w-full max-w-2xl p-6 relative max-h-[90vh] overflow-y-auto">
-                    <button 
-                        onClick={() => setShowViewModal(false)}
-                        className="absolute top-4 right-4 rtl:left-4 rtl:right-auto p-2 hover:bg-gray-100 rounded-full"
-                    >
-                        <X className="w-5 h-5" />
-                    </button>
-                    
-                    <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
-                        <MessageSquare className="w-5 h-5 text-nutty-blue" />
-                        {isRTL ? 'تفاصيل التقييم' : 'Testimonial Details'}
+        {/* Form */}
+        {showForm && (
+            <div ref={formRef} className="bg-white dark:bg-gray-800 rounded-3xl p-8 border border-gray-100 dark:border-gray-700 shadow-xl mb-12 animate-in fade-in slide-in-from-bottom-4 duration-300">
+                 <div className="flex justify-between mb-8 border-b border-gray-100 dark:border-gray-700 pb-4">
+                    <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200 uppercase tracking-widest">
+                        {editId ? (isRTL ? 'تعديل التقييم' : 'Edit Testimonial') : (isRTL ? 'إضافة تقييم جديد' : 'Add New Testimonial')}
                     </h3>
+                    <button onClick={handleCancel}><X className="w-6 h-6 text-gray-400 hover:text-gray-600" /></button>
+                </div>
+                
+                <form onSubmit={handleSubmit} className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                       <div className="space-y-4">
+                           <label className="block text-sm font-black text-gray-500 uppercase tracking-wider">{isRTL ? 'الاسم' : 'Name'}</label>
+                           <input className="w-full px-4 py-3 border-none bg-gray-50 dark:bg-gray-900/50 rounded-xl focus:ring-2 focus:ring-nutty-blue transition-all" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} required />
+                       </div>
+                       <div className="space-y-4">
+                           <label className="block text-sm font-black text-gray-500 uppercase tracking-wider">{isRTL ? 'الصفة' : 'Role'}</label>
+                           <input className="w-full px-4 py-3 border-none bg-gray-50 dark:bg-gray-900/50 rounded-xl focus:ring-2 focus:ring-nutty-blue transition-all" value={formData.role} onChange={e => setFormData({...formData, role: e.target.value})} />
+                       </div>
+                    </div>
+                    
+                    <div className="space-y-4">
+                         <label className="block text-sm font-black text-gray-500 uppercase tracking-wider">{isRTL ? 'المحتوى' : 'Content'}</label>
+                         <textarea className="w-full px-4 py-3 border-none bg-gray-50 dark:bg-gray-900/50 rounded-xl focus:ring-2 focus:ring-nutty-blue transition-all" rows={4} value={formData.content} onChange={e => setFormData({...formData, content: e.target.value})} />
+                    </div>
 
-                    <div className="space-y-6">
-                        <div className="flex items-center gap-4">
-                             {selectedTestimonial.image ? (
-                                <img src={selectedTestimonial.image} className="w-20 h-20 rounded-full object-cover border-2 border-gray-100" />
-                             ) : (
-                                <div className="w-20 h-20 rounded-full bg-gray-200 flex items-center justify-center text-2xl font-bold text-gray-500">
-                                    {selectedTestimonial.name[0]}
-                                </div>
-                             )}
-                             <div>
-                                <div className="text-2xl font-bold">{selectedTestimonial.name}</div>
-                                <div className="text-gray-500">{selectedTestimonial.role}</div>
-                                <div className="flex items-center mt-1">
-                                    {[...Array(5)].map((_, i) => (
-                                        <Star 
-                                            key={i} 
-                                            className={`w-4 h-4 ${i < selectedTestimonial.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} 
-                                        />
-                                    ))}
-                                </div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div>
+                             <label className="block text-sm font-black text-gray-500 uppercase tracking-wider mb-2">{isRTL ? 'التقييم' : 'Rating'}</label>
+                             <div className="flex items-center gap-1 bg-gray-50 dark:bg-gray-900/50 p-3 rounded-xl w-fit">
+                                {[1, 2, 3, 4, 5].map(star => (
+                                    <button type="button" key={star} onClick={() => setFormData({...formData, rating: star})}>
+                                        <Star className={`w-6 h-6 ${formData.rating >= star ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'} transition-all hover:scale-110`} />
+                                    </button>
+                                ))}
                              </div>
                         </div>
-
-                        <div className="bg-gray-50 dark:bg-gray-700/50 p-6 rounded-xl text-lg leading-relaxed text-gray-700 dark:text-gray-300">
-                            "{selectedTestimonial.content}"
-                        </div>
                         
-                        <div className="flex items-center justify-between text-sm text-gray-500 border-t pt-4">
-                            <span>ID: {selectedTestimonial.id}</span>
-                            <span>Source: {selectedTestimonial.source}</span>
-                            <span>Date: {new Date(selectedTestimonial.created_at).toLocaleDateString()}</span>
-                        </div>
-
-                        <div className="flex justify-end gap-3 pt-4">
-                             {!selectedTestimonial.is_approved && (
-                                <button 
-                                    onClick={() => handleApprove(selectedTestimonial.id)}
-                                    className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-2"
-                                >
-                                    <Check className="w-4 h-4" /> {isRTL ? 'موافقة' : 'Approve'}
-                                </button>
-                             )}
-                             <button 
-                                onClick={() => handleDelete(selectedTestimonial.id)}
-                                className="px-6 py-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 flex items-center gap-2"
-                            >
-                                <Trash2 className="w-4 h-4" /> {isRTL ? 'حذف' : 'Delete'}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        )}
-
-        {/* Modal */}
-        {showModal && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-                <div className="bg-white dark:bg-gray-800 rounded-2xl w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto">
-                    <h3 className="text-xl font-bold mb-4">{isRTL ? 'إضافة تقييم جديد' : 'Add New Testimonial'}</h3>
-                    <form onSubmit={handleSubmit} className="space-y-4">
-                         <div>
-                             <label className="block text-sm font-medium mb-1">{isRTL ? 'الاسم' : 'Name'}</label>
-                             <input className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} required />
-                        </div>
-                        <div>
-                             <label className="block text-sm font-medium mb-1">{isRTL ? 'الصفة' : 'Role'}</label>
-                             <input className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700" value={formData.role} onChange={e => setFormData({...formData, role: e.target.value})} />
-                        </div>
-                        <div>
-                             <label className="block text-sm font-medium mb-1">{isRTL ? 'المحتوى' : 'Content'}</label>
-                             <textarea className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700" rows={3} value={formData.content} onChange={e => setFormData({...formData, content: e.target.value})} />
-                        </div>
-                         
-                         <div className="grid grid-cols-2 gap-4">
-                            <div>
-                                <label className="block text-sm font-medium mb-1">{isRTL ? 'صورة الشخص' : 'Profile Image'}</label>
-                                <div className="flex items-center gap-2">
-                                    {imagePreview && <img src={imagePreview} className="w-10 h-10 rounded-full object-cover" />}
-                                    <label className="cursor-pointer px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg flex items-center gap-2 text-sm">
-                                        <Upload className="w-4 h-4" /> {uploading ? '...' : (isRTL ? 'رفع' : 'Upload')}
-                                        <input type="file" hidden accept="image/*" onChange={handleImageUpload} />
+                         <div className="md:col-span-2 flex flex-col sm:flex-row gap-6">
+                            <div className="flex-1">
+                                <label className="block text-sm font-black text-gray-500 uppercase tracking-wider mb-2">{isRTL ? 'صورة الشخص' : 'Profile Image'}</label>
+                                <div className="flex items-center gap-3 bg-gray-50 dark:bg-gray-900/50 p-3 rounded-xl">
+                                    {imagePreview ? <img src={imagePreview} className="w-10 h-10 rounded-full object-cover" /> : <div className="w-10 h-10 rounded-full bg-gray-200" />}
+                                    <label className="cursor-pointer px-3 py-1.5 bg-white dark:bg-gray-800 rounded-lg text-sm font-bold shadow-sm hover:bg-gray-50 transition-colors flex items-center gap-2">
+                                        <Upload className="w-3 h-3" /> {uploading ? '...' : (isRTL ? 'رفع' : 'Upload')}
+                                        <input type="file" hidden accept="image/*" onChange={e => handleImageUpload(e, 'image')} />
                                     </label>
                                 </div>
                             </div>
-                            <div>
-                                <label className="block text-sm font-medium mb-1">{isRTL ? 'صورة التعليق (سكرين شوت)' : 'Review Screenshot'}</label>
-                                <div className="flex items-center gap-2">
-                                    {formData.screenshot_url && <img src={formData.screenshot_url} className="w-10 h-10 rounded object-cover border" />}
-                                    <label className="cursor-pointer px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg flex items-center gap-2 text-sm">
-                                        <Upload className="w-4 h-4" /> {isRTL ? 'رفع' : 'Upload'}
-                                        <input 
-                                            type="file" 
-                                            hidden 
-                                            accept="image/*" 
-                                            onChange={async (e) => {
-                                                const file = e.target.files?.[0];
-                                                if (!file) return;
-                                                setUploading(true);
-                                                const uploadData = new FormData();
-                                                uploadData.append("file", file);
-                                                try {
-                                                    const res = await fetch("/api/upload-image", { method: "POST", body: uploadData });
-                                                    if (res.ok) {
-                                                        const data = await res.json();
-                                                        setFormData(prev => ({ ...prev, screenshot_url: data.url }));
-                                                    }
-                                                } catch (e) { alert('Upload failed'); }
-                                                finally { setUploading(false); }
-                                            }} 
-                                        />
+                            
+                            <div className="flex-1">
+                                <label className="block text-sm font-black text-gray-500 uppercase tracking-wider mb-2">{isRTL ? 'صورة (سكرين شوت)' : 'Screenshot (Optional)'}</label>
+                                <div className="flex items-center gap-3 bg-gray-50 dark:bg-gray-900/50 p-3 rounded-xl">
+                                    {scanPreview ? <img src={scanPreview} className="w-10 h-10 rounded object-cover" /> : <div className="w-10 h-10 rounded bg-gray-200" />}
+                                    <label className="cursor-pointer px-3 py-1.5 bg-white dark:bg-gray-800 rounded-lg text-sm font-bold shadow-sm hover:bg-gray-50 transition-colors flex items-center gap-2">
+                                        <Upload className="w-3 h-3" /> {uploading ? '...' : (isRTL ? 'رفع' : 'Upload')}
+                                        <input type="file" hidden accept="image/*" onChange={e => handleImageUpload(e, 'screenshot_url')} />
                                     </label>
                                 </div>
                             </div>
                          </div>
-                        <div className="flex justify-end gap-2 mt-6">
-                            <button type="button" onClick={() => setShowModal(false)} className="px-4 py-2 text-gray-500 hover:bg-gray-100 rounded-lg">{isRTL ? 'إلغاء' : 'Cancel'}</button>
-                            <button type="submit" disabled={submitting} className="px-4 py-2 bg-nutty-orange text-white rounded-lg hover:bg-orange-600">{submitting ? '...' : (isRTL ? 'حفظ' : 'Save')}</button>
-                        </div>
-                    </form>
-                </div>
+                    </div>
+
+                    <div className="flex items-center gap-3 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-100 dark:border-blue-900/30">
+                          <input 
+                              type="checkbox"
+                              checked={formData.is_approved}
+                              onChange={e => setFormData({...formData, is_approved: e.target.checked})}
+                              className="w-5 h-5 text-nutty-blue rounded border-gray-300 focus:ring-nutty-blue"
+                              id="approved-check"
+                          />
+                          <label htmlFor="approved-check" className="font-bold text-gray-700 dark:text-gray-200 cursor-pointer select-none">
+                              {isRTL ? 'الموافقة على النشر (Approved)' : 'Approve for Publication'}
+                          </label>
+                      </div>
+
+                    <div className="flex justify-end gap-3 pt-6 border-t border-gray-100 dark:border-gray-700">
+                        <button type="button" onClick={handleCancel} className="px-6 py-2 text-gray-500 hover:bg-gray-100 rounded-xl font-bold">{isRTL ? 'إلغاء' : 'Cancel'}</button>
+                        <button type="submit" disabled={submitting} className="px-8 py-3 bg-nutty-orange text-white rounded-xl hover:bg-orange-600 font-bold shadow-lg shadow-orange-500/20 transition-all">
+                            {submitting ? '...' : (isRTL ? 'حفظ' : 'Save')}
+                        </button>
+                    </div>
+                </form>
             </div>
         )}
+
+        {/* Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {testimonials.map(t => (
+                <div key={t.id} className="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md transition-all relative group flex flex-col">
+                    <div className="flex justify-between items-start mb-4">
+                         <div className="flex items-center gap-4">
+                            {t.image ? (
+                                <div className="relative w-14 h-14 rounded-full overflow-hidden border-2 border-white shadow-sm">
+                                    <Image src={t.image} alt={t.name} fill className="object-cover" />
+                                </div>
+                            ) : (
+                                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-nutty-blue to-nutty-blue/50 flex items-center justify-center text-white font-bold text-xl shadow-sm">
+                                    {t.name[0]}
+                                </div>
+                            )}
+                            <div>
+                                <h3 className="font-bold text-lg text-gray-900 dark:text-white leading-tight">{t.name}</h3>
+                                <p className="text-sm text-gray-500 dark:text-gray-400">{t.role}</p>
+                                <div className="flex items-center gap-0.5 mt-1">
+                                    {[...Array(5)].map((_, i) => (
+                                        <Star key={i} className={`w-3 h-3 ${i < t.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} />
+                                    ))}
+                                </div>
+                            </div>
+                         </div>
+                         <div className={`px-2 py-1 rounded-lg text-xs font-bold uppercase tracking-wider ${t.is_approved ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
+                             {t.is_approved ? 'Approved' : 'Pending'}
+                         </div>
+                    </div>
+
+                    <div className="bg-gray-50 dark:bg-gray-900/30 p-4 rounded-xl relative mb-6 flex-1">
+                        <Quote className="w-8 h-8 text-gray-300 dark:text-gray-600 absolute -top-3 -right-2 rtl:-right-auto rtl:-left-2 opacity-50 rotate-180 rtl:rotate-0" />
+                        <p className="text-gray-600 dark:text-gray-300 italic text-sm leading-relaxed relative z-10">"{t.content}"</p>
+                    </div>
+
+                    <div className="flex items-center gap-2 mt-auto pt-4 border-t border-gray-100 dark:border-gray-700">
+                        <button onClick={() => handleEdit(t)} className="flex-1 py-2 rounded-lg bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-300 font-bold text-sm hover:bg-blue-100 transition-colors">
+                            {isRTL ? 'تعديل' : 'Edit'}
+                        </button>
+                        {!t.is_approved && (
+                             <button onClick={() => handleApprove(t.id)} className="px-4 py-2 rounded-lg bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-300 font-bold text-sm hover:bg-green-100 transition-colors" title="Approve">
+                                <Check className="w-5 h-5" />
+                             </button>
+                        )}
+                        <button onClick={() => handleDelete(t.id)} className="px-4 py-2 rounded-lg bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-300 hover:bg-red-100 transition-colors">
+                            <Trash2 className="w-5 h-5" />
+                        </button>
+                    </div>
+                </div>
+            ))}
+             {!showForm && (
+             <button 
+                onClick={handleAddNew}
+                className="min-h-[250px] rounded-2xl border-2 border-dashed border-gray-300 dark:border-gray-700 flex flex-col items-center justify-center text-gray-400 hover:text-nutty-blue hover:border-nutty-blue hover:bg-blue-50 dark:hover:bg-blue-900/10 transition-all gap-4 group"
+             >
+                <div className="w-14 h-14 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center group-hover:bg-blue-100 dark:group-hover:bg-blue-900/30 transition-colors">
+                  <Plus className="w-6 h-6" />
+                </div>
+                <span className="font-bold text-lg">{isRTL ? 'إضافة تقييم جديد' : 'Add New Testimonial'}</span>
+             </button>
+           )}
+        </div>
       </div>
     </AdminLayout>
   );

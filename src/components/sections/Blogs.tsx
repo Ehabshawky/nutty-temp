@@ -15,6 +15,9 @@ import {
   BookOpen
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { Skeleton } from "@/components/ui/Skeleton";
+import { BlogCardSkeleton } from "@/components/skeletons/BlogCardSkeleton";
+import { FeaturedBlogSkeleton } from "@/components/skeletons/FeaturedBlogSkeleton";
 
 interface BlogPost {
   id: string | number;
@@ -126,6 +129,38 @@ const Blogs = () => {
   const featuredBlogs = blogPosts.filter(blog => blog.featured);
   const recentPosts = [...blogPosts].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0, 3);
 
+  if (loading) {
+    return (
+      <section id="blogs" className="py-20 bg-gray-50 dark:bg-gray-900" dir={dir}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Header Skeleton */}
+          <div className="text-center mb-16 space-y-4">
+            <Skeleton className="h-10 w-48 mx-auto rounded-lg" />
+            <Skeleton className="h-6 w-96 mx-auto rounded-lg" />
+          </div>
+
+          {/* Search Skeleton */}
+          <div className="max-w-2xl mx-auto mb-16">
+            <Skeleton className="h-14 w-full rounded-full" />
+          </div>
+
+          {/* Featured Skeleton */}
+          <div className="grid lg:grid-cols-2 gap-8 mb-16">
+            <FeaturedBlogSkeleton />
+            <FeaturedBlogSkeleton />
+          </div>
+
+          {/* Grid Skeleton */}
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+            {[...Array(6)].map((_, i) => (
+              <BlogCardSkeleton key={i} />
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section id="blogs" className="py-20 bg-gray-50 dark:bg-gray-900" dir={dir}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -160,7 +195,7 @@ const Blogs = () => {
                 placeholder={t("blogsSection.searchPlaceholder")}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-12 pr-4 rtl:pr-12 rtl:pl-4 py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-full focus:ring-2 focus:ring-nutty-blue focus:border-transparent"
+                className="w-full pl-12 pr-4 rtl:pr-12 rtl:pl-4 py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-full focus:ring-2 focus:ring-nutty-cyan focus:border-transparent"
               />
             </div>
           </motion.div>
@@ -178,7 +213,7 @@ const Blogs = () => {
                 onClick={() => setActiveCategory(category.id)}
                 className={`px-4 py-2 rounded-full transition-all ${
                   activeCategory === category.id
-                    ? 'bg-nutty-blue text-white'
+                    ? 'bg-nutty-cyan text-white'
                     : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                 }`}
               >
@@ -202,7 +237,7 @@ const Blogs = () => {
                 <button
                   key={index}
                   onClick={() => setSearchTerm(tag)}
-                  className="px-3 py-1 bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-full text-sm hover:bg-nutty-blue hover:text-white transition-colors"
+                  className="px-3 py-1 bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-full text-sm hover:bg-nutty-cyan hover:text-white transition-colors"
                 >
                   #{tag}
                 </button>
@@ -233,7 +268,7 @@ const Blogs = () => {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                   <div className="absolute top-4 left-4 rtl:left-auto rtl:right-4">
-                    <span className="px-3 py-1 bg-nutty-yellow text-gray-900 rounded-full text-sm font-semibold">
+                    <span className="px-3 py-1 bg-nutty-lime text-gray-900 rounded-full text-sm font-semibold">
                       {t("articlesSection.featured")}
                     </span>
                   </div>
@@ -257,7 +292,7 @@ const Blogs = () => {
                     </div>
                   </div>
 
-                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 group-hover:text-nutty-blue transition-colors">
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 group-hover:text-nutty-cyan transition-colors">
                     {blog.title}
                   </h3>
                   <p className="text-gray-600 dark:text-gray-400 mb-6">
@@ -339,7 +374,7 @@ const Blogs = () => {
                       </div>
                     </div>
 
-                    <h4 className="text-lg font-bold text-gray-900 dark:text-white mb-2 group-hover:text-nutty-blue transition-colors line-clamp-2">
+                    <h4 className="text-lg font-bold text-gray-900 dark:text-white mb-2 group-hover:text-nutty-cyan transition-colors line-clamp-2">
                       {blog.title}
                     </h4>
                     <p className="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-2">
@@ -370,7 +405,7 @@ const Blogs = () => {
           viewport={{ once: true }}
           className="text-center"
         >
-          <div className="bg-gradient-to-r from-nutty-blue to-purple-600 rounded-2xl p-8 md:p-12">
+          <div className="bg-gradient-to-r from-nutty-cyan to-nutty-cyan-dark rounded-2xl p-8 md:p-12">
             <BookOpen className="w-16 h-16 mx-auto mb-6 text-white" />
             <h3 className="text-3xl font-bold text-white mb-4">
               {t("blogsSection.newsletter.title")}
@@ -392,7 +427,7 @@ const Blogs = () => {
                 <button 
                   type="submit" 
                   disabled={subscribing}
-                  className="px-8 py-3 bg-white text-nutty-blue rounded-full font-semibold text-lg hover:bg-gray-100 transition-colors transform hover:scale-105 disabled:opacity-75"
+                  className="px-8 py-3 bg-white text-nutty-cyan rounded-full font-semibold text-lg hover:bg-gray-100 transition-colors transform hover:scale-105 disabled:opacity-75"
                 >
                   {subscribing ? "..." : t("articlesSection.newsletter.button")}
                 </button>

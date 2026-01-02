@@ -13,6 +13,16 @@
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 255, 255, 255;
   --background-end-rgb: 255, 255, 255;
+  
+  /* Nutty Scientists Brand Colors */
+  --nutty-orange: #FF6B35;
+  --nutty-yellow: #FFD700;
+  --nutty-cyan: #00BCD4;
+  --nutty-cyan-dark: #0097A7;
+  --nutty-cyan-light: #4DD0E1;
+  --nutty-lime: #C4D600;
+  --nutty-lime-dark: #9FA800;
+  --nutty-lime-light: #D4E157;
 }
 
 @media (prefers-color-scheme: dark) {

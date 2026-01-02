@@ -18,28 +18,54 @@ import "swiper/css/effect-fade";
 
 export const metadata: Metadata = {
   title: {
-    default: "Nutty Scientists",
-    template: "%s | Nutty Scientists"
+    default: "Nutty Scientists Egypt - Where Science Meets Fun!",
+    template: "%s | Nutty Scientists Egypt"
   },
-  description: "Transforming young minds through innovative science education and interactive experiments. Where Science Meets Fun!",
-  keywords: ["Science", "Education", "Experiments", "Kids", "STEM", "Workshops", "Camps", "Nutty Scientists"],
-  authors: [{ name: "Nutty Scientists Team" }],
+  description: "Nutty Scientists is the global leader in interactive science programs for children. From workshops and camps to corporate events, we make science fun and engaging in Egypt.",
+  keywords: [
+    "Science for kids Egypt", 
+    "Educational entertainment Cairo", 
+    "STEM workshops Egypt", 
+    "Nutty Scientists Egypt", 
+    "Kids science camps", 
+    "School science programs", 
+    "Corporate CSR science",
+    "تجارب علمية للأطفال مصر",
+    "ورش عمل تعليمية",
+    "برامج ترفيهية للأطفال"
+  ],
+  authors: [{ name: "Nutty Scientists Egypt" }],
   creator: "Nutty Scientists",
-  publisher: "Nutty Scientists",
+  publisher: "Nutty Scientists Egypt",
   robots: "index, follow",
+  alternates: {
+    canonical: "https://nuttyscientists-egypt.com",
+    languages: {
+      'en-US': 'https://nuttyscientists-egypt.com/en',
+      'ar-EG': 'https://nuttyscientists-egypt.com/ar',
+    },
+  },
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://nuttyscientists.com",
-    title: "Nutty Scientists - Where Science Meets Fun!",
-    description: "Transforming young minds through innovative science education and interactive experiments.",
-    siteName: "Nutty Scientists",
+    url: "https://nuttyscientists-egypt.com",
+    title: "Nutty Scientists Egypt - Interactive Science for Kids",
+    description: "The world's leading science education program for children. Workshops, camps, and events that inspire curiosity and fun!",
+    siteName: "Nutty Scientists Egypt",
+    images: [
+      {
+        url: "/Nutty-Scientists.webp",
+        width: 1200,
+        height: 630,
+        alt: "Nutty Scientists Egypt",
+      }
+    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Nutty Scientists",
-    description: "Where Science Meets Fun!",
-    creator: "@nuttyscientists",
+    title: "Nutty Scientists Egypt",
+    description: "Transforming young minds through innovative science education. Where Science Meets Fun!",
+    images: ["/Nutty-Scientists.webp"],
   },
   icons: {
     icon: "/favicon.ico",

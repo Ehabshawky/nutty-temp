@@ -4,6 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Check, X, Trash2, MessageSquare, AlertCircle } from 'lucide-react';
 import AdminLayout from '@/components/admin/AdminLayout';
+import { AdminTableSkeleton } from "@/components/skeletons/AdminTableSkeleton";
+
 
 export default function AdminComments() {
   const { t, i18n } = useTranslation();
@@ -70,7 +72,15 @@ export default function AdminComments() {
     }
   };
 
-  if (loading) return <div className="p-8">Loading...</div>;
+  if (loading) {
+    return (
+      <AdminLayout>
+        <div className="p-8">
+          <AdminTableSkeleton rows={6} />
+        </div>
+      </AdminLayout>
+    );
+  }
 
   return (
     <AdminLayout>

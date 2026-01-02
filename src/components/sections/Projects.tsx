@@ -12,6 +12,9 @@ import {
   Target
 } from 'lucide-react';
 import i18n from '@/utils/i18n';
+import { Skeleton } from "@/components/ui/Skeleton";
+import { ProjectCardSkeleton } from "@/components/skeletons/ProjectCardSkeleton";
+import { FeaturedProjectSkeleton } from "@/components/skeletons/FeaturedProjectSkeleton";
 
 const FeaturedProjectCard = ({ 
   project, 
@@ -43,7 +46,7 @@ const FeaturedProjectCard = ({
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
           <div className="absolute top-4 right-4">
-            <span className="px-3 py-1 bg-nutty-yellow text-gray-900 rounded-full text-sm font-semibold">
+            <span className="px-3 py-1 bg-nutty-lime text-gray-900 rounded-full text-sm font-semibold">
               {t('projects.featured')}
             </span>
           </div>
@@ -67,7 +70,7 @@ const FeaturedProjectCard = ({
             {shouldTruncate && (
               <button
                 onClick={() => setIsExpanded(!isExpanded)}
-                className="text-nutty-blue hover:text-blue-700 text-sm font-medium mt-2 inline-flex items-center"
+                className="text-nutty-cyan hover:text-blue-700 text-sm font-medium mt-2 inline-flex items-center"
               >
                 {isExpanded ? (currentLanguage === 'ar' ? 'عرض أقل' : 'Show Less') : (currentLanguage === 'ar' ? 'المزيد' : 'Read More')}
               </button>
@@ -103,7 +106,7 @@ const FeaturedProjectCard = ({
           <div className="flex space-x-4 rtl:space-x-reverse mt-auto">
             <a
               href={formatProjectLink(project.id)}
-              className="flex-1 flex items-center justify-center px-4 py-2 bg-nutty-blue text-white rounded-lg hover:bg-blue-700 transition-colors"
+              className="flex-1 flex items-center justify-center px-4 py-2 bg-nutty-cyan text-white rounded-lg hover:bg-blue-700 transition-colors"
             >
               <ExternalLink className="w-4 h-4 mr-2" />
               {t('projects.action.viewProject')}
@@ -168,9 +171,31 @@ const Projects = () => {
 
   if (loading) {
      return (
-       <div className="py-20 flex items-center justify-center min-h-[400px]">
-         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-nutty-orange"></div>
-       </div>
+       <section id="projects" className="py-20 bg-gray-50 dark:bg-gray-900">
+         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            {/* Header Skeleton */}
+            <div className="text-center mb-12 space-y-4">
+              <Skeleton className="h-10 w-48 mx-auto rounded-lg" />
+              <Skeleton className="h-6 w-96 mx-auto rounded-lg" />
+            </div>
+            
+            {/* Filter Skeleton */}
+            <div className="flex justify-center gap-4 mb-12">
+               {[1,2,3].map(i => <Skeleton key={i} className="h-12 w-32 rounded-full" />)}
+            </div>
+
+            {/* Featured Skeleton */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
+               <FeaturedProjectSkeleton />
+               <FeaturedProjectSkeleton />
+            </div>
+
+            {/* Grid Skeleton */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+               {[...Array(6)].map((_, i) => <ProjectCardSkeleton key={i} />)}
+            </div>
+         </div>
+       </section>
      );
   }
 
@@ -205,7 +230,7 @@ const Projects = () => {
               onClick={() => setFilter(category)}
               className={`px-6 py-3 rounded-full transition-all ${
                 filter === category
-                  ? 'bg-nutty-blue text-white'
+                  ? 'bg-nutty-cyan text-white'
                   : 'bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700'
               }`}
             >
@@ -262,7 +287,7 @@ const Projects = () => {
 
                     {/* Content */}
                     <div className="p-6">
-                      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-nutty-blue transition-colors">
+                      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-nutty-cyan transition-colors">
                         {project.title}
                       </h3>
                       <p className="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-2">
@@ -275,7 +300,7 @@ const Projects = () => {
                         </span>
                         <a
                           href={formatProjectLink(project.id)}
-                          className="text-nutty-blue hover:text-blue-700 transition-colors"
+                          className="text-nutty-cyan hover:text-blue-700 transition-colors"
                         >
                           <ExternalLink className="w-4 h-4" />
                         </a>
@@ -307,7 +332,7 @@ const Projects = () => {
           viewport={{ once: true }}
           className="mt-16 text-center"
         >
-          <div className="bg-gradient-to-r from-nutty-yellow to-orange-500 rounded-2xl p-8 md:p-12">
+          <div className="bg-gradient-to-r from-nutty-lime to-orange-500 rounded-2xl p-8 md:p-12">
             <Target className="w-16 h-16 mx-auto mb-6 text-white" />
             <h3 className="text-3xl font-bold text-gray-900 mb-4">
               {t('projects.cta.title')}

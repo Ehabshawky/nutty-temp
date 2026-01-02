@@ -6,7 +6,7 @@ import i18n from "../utils/i18n";
 import { ThemeProvider } from "../contexts/ThemeContext";
 import { LanguageProvider } from "../contexts/LanguageContext";
 import { SessionProvider } from "next-auth/react";
-import Chatbot from "../components/sections/Chatbot";
+import { ChatbotProvider } from "../contexts/ChatbotContext";
 
 
 export default function Providers({ children }: { children: React.ReactNode }) {
@@ -15,8 +15,9 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       <I18nextProvider i18n={i18n}>
         <ThemeProvider>
           <LanguageProvider>
-            {children}
-            <Chatbot />
+            <ChatbotProvider>
+              {children}
+            </ChatbotProvider>
           </LanguageProvider>
         </ThemeProvider>
       </I18nextProvider>

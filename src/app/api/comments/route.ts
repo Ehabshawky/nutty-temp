@@ -71,6 +71,25 @@ export async function POST(request: NextRequest) {
 
     if (error) throw error;
 
+    // Send Notification Email
+    try {
+      const { sendNotificationEmail } = await import('@/lib/email');
+      await sendNotificationEmail({
+        subject: `New Comment from ${name}`,
+        html: `
+          <h3>New Comment on ${article_id ? 'Article' : 'Blog'}</h3>
+          <p><strong>Name:</strong> ${name}</p>
+          <p><strong>Email:</strong> ${email}</p>
+          <p><strong>Content:</strong></p>
+          <p>"${content}"</p>
+          <p><em>This comment requires approval.</em></p>
+        `,
+        type: 'comment'
+      });
+    } catch (e) {
+      console.error('Failed to send email notification', e);
+    }
+
     return NextResponse.json({ success: true, message: 'Comment submitted for moderation' });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });

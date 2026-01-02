@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Save, Trash2, Plus, X, Briefcase, MapPin, Clock, CheckCircle, AlertCircle } from "lucide-react";
 import AdminLayout from "@/components/admin/AdminLayout";
+import { AdminGridSkeleton } from "@/components/skeletons/AdminGridSkeleton";
 
 export default function AdminCareersPage() {
   const { i18n } = useTranslation();
@@ -14,6 +15,8 @@ export default function AdminCareersPage() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
   const [editId, setEditId] = useState<string | null>(null);
+  const [showForm, setShowForm] = useState(false);
+  const formRef = React.useRef<HTMLDivElement>(null);
   
   const [formData, setFormData] = useState({
     title_en: "",
@@ -121,7 +124,10 @@ export default function AdminCareersPage() {
       requirements_ar: job.requirements_ar || [],
       active: job.active ?? true,
     });
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setShowForm(true);
+    setTimeout(() => {
+      formRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
   };
 
   const handleCancel = () => {
@@ -141,6 +147,15 @@ export default function AdminCareersPage() {
       requirements_ar: [],
       active: true,
     });
+    setShowForm(false);
+  };
+
+  const handleAddNew = () => {
+    handleCancel();
+    setShowForm(true);
+    setTimeout(() => {
+      formRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
   };
 
   const handleDelete = async (id: string) => {
@@ -156,15 +171,32 @@ export default function AdminCareersPage() {
     }
   };
 
-  if (loading) return <div className="p-10">{isRTL ? "جاري التحميل..." : "Loading..."}</div>;
+  if (loading) {
+    return (
+      <AdminLayout>
+        <div className="max-w-6xl mx-auto p-4 md:p-8 py-20">
+          <AdminGridSkeleton count={4} cardsPerRow={2} />
+        </div>
+      </AdminLayout>
+    );
+  }
 
   return (
     <AdminLayout>
       <div className="max-w-6xl mx-auto p-4 md:p-8">
-        <h2 className="text-3xl font-black text-gray-900 dark:text-white mb-8 flex items-center gap-3">
-          <Briefcase className="w-8 h-8 text-nutty-orange" />
-          {isRTL ? "إدارة الوظائف" : "Manage Careers"}
-        </h2>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
+          <h2 className="text-3xl font-black text-gray-900 dark:text-white flex items-center gap-3">
+            <Briefcase className="w-8 h-8 text-nutty-orange" />
+            {isRTL ? "إدارة الوظائف" : "Manage Careers"}
+          </h2>
+          <button
+            onClick={handleAddNew}
+            className="px-6 py-3 bg-green-500 text-white rounded-xl hover:bg-green-600 transition-colors flex items-center gap-2 shadow-sm font-bold"
+          >
+            <Plus className="w-5 h-5" />
+            {isRTL ? "إضافة وظيفة جديدة" : "Post New Position"}
+          </button>
+        </div>
 
         {message && (
           <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 rounded-xl flex justify-between items-center shadow-sm">
@@ -174,113 +206,115 @@ export default function AdminCareersPage() {
         )}
 
         {/* Job Form */}
-        <div className="bg-white dark:bg-gray-800 rounded-3xl p-8 border border-gray-100 dark:border-gray-700 shadow-xl mb-12">
-          <h3 className="text-xl font-bold mb-8 text-gray-800 dark:text-gray-200 uppercase tracking-widest">
-            {editId ? (isRTL ? "تعديل وظيفة" : "Edit Job Position") : (isRTL ? "إضافة وظيفة جديدة" : "Post New Position")}
-          </h3>
+        {showForm && (
+          <div ref={formRef} className="bg-white dark:bg-gray-800 rounded-3xl p-8 border border-gray-100 dark:border-gray-700 shadow-xl mb-12 animate-in fade-in slide-in-from-bottom-4 duration-300">
+            <h3 className="text-xl font-bold mb-8 text-gray-800 dark:text-gray-200 uppercase tracking-widest">
+              {editId ? (isRTL ? "تعديل وظيفة" : "Edit Job Position") : (isRTL ? "إضافة وظيفة جديدة" : "Post New Position")}
+            </h3>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Titles */}
-            <div className="space-y-4">
-              <label className="block text-sm font-black text-gray-400 uppercase tracking-widest">{isRTL ? "المسمى الوظيفي (EN)" : "Job Title (EN)"}</label>
-              <input type="text" value={formData.title_en} onChange={e => handleFieldChange("title_en", e.target.value)} className="w-full p-4 bg-gray-50 dark:bg-gray-700 border-none rounded-2xl focus:ring-2 focus:ring-nutty-blue transition-all" />
-            </div>
-            <div className="space-y-4">
-              <label className="block text-sm font-black text-gray-400 uppercase tracking-widest">{isRTL ? "المسمى الوظيفي (AR)" : "Job Title (AR)"}</label>
-              <input type="text" dir="rtl" value={formData.title_ar} onChange={e => handleFieldChange("title_ar", e.target.value)} className="w-full p-4 bg-gray-50 dark:bg-gray-700 border-none rounded-2xl focus:ring-2 focus:ring-nutty-blue transition-all" />
-            </div>
-
-            {/* Department */}
-            <div className="space-y-4">
-              <label className="block text-sm font-black text-gray-400 uppercase tracking-widest">{isRTL ? "القسم (EN)" : "Department (EN)"}</label>
-              <input type="text" value={formData.department_en} onChange={e => handleFieldChange("department_en", e.target.value)} className="w-full p-4 bg-gray-50 dark:bg-gray-700 border-none rounded-2xl focus:ring-2 focus:ring-nutty-blue transition-all" />
-            </div>
-            <div className="space-y-4">
-              <label className="block text-sm font-black text-gray-400 uppercase tracking-widest">{isRTL ? "القسم (AR)" : "Department (AR)"}</label>
-              <input type="text" dir="rtl" value={formData.department_ar} onChange={e => handleFieldChange("department_ar", e.target.value)} className="w-full p-4 bg-gray-50 dark:bg-gray-700 border-none rounded-2xl focus:ring-2 focus:ring-nutty-blue transition-all" />
-            </div>
-
-            {/* Location & Type */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {/* Titles */}
               <div className="space-y-4">
-                <label className="block text-sm font-black text-gray-400 uppercase tracking-widest">{isRTL ? "الموقع (EN)" : "Location (EN)"}</label>
-                <input type="text" value={formData.location_en} onChange={e => handleFieldChange("location_en", e.target.value)} className="w-full p-4 bg-gray-50 dark:bg-gray-700 border-none rounded-2xl" />
+                <label className="block text-sm font-black text-gray-400 uppercase tracking-widest">{isRTL ? "المسمى الوظيفي (EN)" : "Job Title (EN)"}</label>
+                <input type="text" value={formData.title_en} onChange={e => handleFieldChange("title_en", e.target.value)} className="w-full p-4 bg-gray-50 dark:bg-gray-700 border-none rounded-2xl focus:ring-2 focus:ring-nutty-blue transition-all" />
               </div>
               <div className="space-y-4">
-                <label className="block text-sm font-black text-gray-400 uppercase tracking-widest">{isRTL ? "النوع (EN)" : "Type (EN)"}</label>
-                <input type="text" value={formData.type_en} onChange={e => handleFieldChange("type_en", e.target.value)} className="w-full p-4 bg-gray-50 dark:bg-gray-700 border-none rounded-2xl" />
+                <label className="block text-sm font-black text-gray-400 uppercase tracking-widest">{isRTL ? "المسمى الوظيفي (AR)" : "Job Title (AR)"}</label>
+                <input type="text" dir="rtl" value={formData.title_ar} onChange={e => handleFieldChange("title_ar", e.target.value)} className="w-full p-4 bg-gray-50 dark:bg-gray-700 border-none rounded-2xl focus:ring-2 focus:ring-nutty-blue transition-all" />
               </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4" dir="rtl">
+
+              {/* Department */}
               <div className="space-y-4">
-                <label className="block text-sm font-black text-gray-400 uppercase tracking-widest">{isRTL ? "الموقع (AR)" : "Location (AR)"}</label>
-                <input type="text" value={formData.location_ar} onChange={e => handleFieldChange("location_ar", e.target.value)} className="w-full p-4 bg-gray-50 dark:bg-gray-700 border-none rounded-2xl" />
+                <label className="block text-sm font-black text-gray-400 uppercase tracking-widest">{isRTL ? "القسم (EN)" : "Department (EN)"}</label>
+                <input type="text" value={formData.department_en} onChange={e => handleFieldChange("department_en", e.target.value)} className="w-full p-4 bg-gray-50 dark:bg-gray-700 border-none rounded-2xl focus:ring-2 focus:ring-nutty-blue transition-all" />
               </div>
               <div className="space-y-4">
-                <label className="block text-sm font-black text-gray-400 uppercase tracking-widest">{isRTL ? "النوع (AR)" : "Type (AR)"}</label>
-                <input type="text" value={formData.type_ar} onChange={e => handleFieldChange("type_ar", e.target.value)} className="w-full p-4 bg-gray-50 dark:bg-gray-700 border-none rounded-2xl" />
+                <label className="block text-sm font-black text-gray-400 uppercase tracking-widest">{isRTL ? "القسم (AR)" : "Department (AR)"}</label>
+                <input type="text" dir="rtl" value={formData.department_ar} onChange={e => handleFieldChange("department_ar", e.target.value)} className="w-full p-4 bg-gray-50 dark:bg-gray-700 border-none rounded-2xl focus:ring-2 focus:ring-nutty-blue transition-all" />
+              </div>
+
+              {/* Location & Type */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-4">
+                  <label className="block text-sm font-black text-gray-400 uppercase tracking-widest">{isRTL ? "الموقع (EN)" : "Location (EN)"}</label>
+                  <input type="text" value={formData.location_en} onChange={e => handleFieldChange("location_en", e.target.value)} className="w-full p-4 bg-gray-50 dark:bg-gray-700 border-none rounded-2xl" />
+                </div>
+                <div className="space-y-4">
+                  <label className="block text-sm font-black text-gray-400 uppercase tracking-widest">{isRTL ? "النوع (EN)" : "Type (EN)"}</label>
+                  <input type="text" value={formData.type_en} onChange={e => handleFieldChange("type_en", e.target.value)} className="w-full p-4 bg-gray-50 dark:bg-gray-700 border-none rounded-2xl" />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4" dir="rtl">
+                <div className="space-y-4">
+                  <label className="block text-sm font-black text-gray-400 uppercase tracking-widest">{isRTL ? "الموقع (AR)" : "Location (AR)"}</label>
+                  <input type="text" value={formData.location_ar} onChange={e => handleFieldChange("location_ar", e.target.value)} className="w-full p-4 bg-gray-50 dark:bg-gray-700 border-none rounded-2xl" />
+                </div>
+                <div className="space-y-4">
+                  <label className="block text-sm font-black text-gray-400 uppercase tracking-widest">{isRTL ? "النوع (AR)" : "Type (AR)"}</label>
+                  <input type="text" value={formData.type_ar} onChange={e => handleFieldChange("type_ar", e.target.value)} className="w-full p-4 bg-gray-50 dark:bg-gray-700 border-none rounded-2xl" />
+                </div>
+              </div>
+
+              {/* Descriptions */}
+              <div className="space-y-4">
+                <label className="block text-sm font-black text-gray-400 uppercase tracking-widest">{isRTL ? "الوصف (EN)" : "Description (EN)"}</label>
+                <textarea rows={4} value={formData.description_en} onChange={e => handleFieldChange("description_en", e.target.value)} className="w-full p-4 bg-gray-50 dark:bg-gray-700 border-none rounded-2xl" />
+              </div>
+              <div className="space-y-4">
+                <label className="block text-sm font-black text-gray-400 uppercase tracking-widest">{isRTL ? "الوصف (AR)" : "Description (AR)"}</label>
+                <textarea rows={4} dir="rtl" value={formData.description_ar} onChange={e => handleFieldChange("description_ar", e.target.value)} className="w-full p-4 bg-gray-50 dark:bg-gray-700 border-none rounded-2xl" />
+              </div>
+
+              {/* Requirements EN */}
+              <div className="space-y-4">
+                <label className="block text-sm font-black text-gray-400 uppercase tracking-widest">{isRTL ? "المتطلبات (EN)" : "Requirements (EN)"}</label>
+                <div className="flex gap-2">
+                  <input type="text" value={newReqEn} onChange={e => setNewReqEn(e.target.value)} className="flex-1 p-4 bg-gray-50 dark:bg-gray-700 border-none rounded-2xl" placeholder="Add requirement..." />
+                  <button onClick={() => addRequirement('en')} className="p-4 bg-nutty-blue text-white rounded-2xl"><Plus /></button>
+                </div>
+                <div className="space-y-2">
+                  {formData.requirements_en.map((req, i) => (
+                    <div key={i} className="flex justify-between items-center bg-gray-50 dark:bg-gray-700/50 p-3 rounded-xl">
+                      <span className="text-sm">{req}</span>
+                      <button onClick={() => removeRequirement('en', i)} className="text-red-500"><X className="w-4 h-4" /></button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Requirements AR */}
+              <div className="space-y-4">
+                <label className="block text-sm font-black text-gray-400 uppercase tracking-widest">{isRTL ? "المتطلبات (AR)" : "Requirements (AR)"}</label>
+                <div className="flex gap-2" dir="rtl">
+                  <input type="text" value={newReqAr} onChange={e => setNewReqAr(e.target.value)} className="flex-1 p-4 bg-gray-50 dark:bg-gray-700 border-none rounded-2xl" placeholder="أضف شرطاً..." />
+                  <button onClick={() => addRequirement('ar')} className="p-4 bg-nutty-blue text-white rounded-2xl"><Plus /></button>
+                </div>
+                <div className="space-y-2" dir="rtl">
+                  {formData.requirements_ar.map((req, i) => (
+                    <div key={i} className="flex justify-between items-center bg-gray-50 dark:bg-gray-700/50 p-3 rounded-xl text-right">
+                      <span className="text-sm">{req}</span>
+                      <button onClick={() => removeRequirement('ar', i)} className="text-red-500"><X className="w-4 h-4" /></button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="md:col-span-2 flex items-center gap-4 py-4 border-t border-gray-100 dark:border-gray-700 mt-4">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input type="checkbox" checked={formData.active} onChange={e => handleFieldChange("active", e.target.checked)} className="w-5 h-5 rounded text-nutty-orange" />
+                  <span className="font-bold text-gray-700 dark:text-gray-300">{isRTL ? "وظيفة مفعلة (تظهر في الموقع)" : "Active Position (Publicly Visible)"}</span>
+                </label>
               </div>
             </div>
 
-            {/* Descriptions */}
-            <div className="space-y-4">
-              <label className="block text-sm font-black text-gray-400 uppercase tracking-widest">{isRTL ? "الوصف (EN)" : "Description (EN)"}</label>
-              <textarea rows={4} value={formData.description_en} onChange={e => handleFieldChange("description_en", e.target.value)} className="w-full p-4 bg-gray-50 dark:bg-gray-700 border-none rounded-2xl" />
-            </div>
-            <div className="space-y-4">
-              <label className="block text-sm font-black text-gray-400 uppercase tracking-widest">{isRTL ? "الوصف (AR)" : "Description (AR)"}</label>
-              <textarea rows={4} dir="rtl" value={formData.description_ar} onChange={e => handleFieldChange("description_ar", e.target.value)} className="w-full p-4 bg-gray-50 dark:bg-gray-700 border-none rounded-2xl" />
-            </div>
-
-            {/* Requirements EN */}
-            <div className="space-y-4">
-              <label className="block text-sm font-black text-gray-400 uppercase tracking-widest">{isRTL ? "المتطلبات (EN)" : "Requirements (EN)"}</label>
-              <div className="flex gap-2">
-                <input type="text" value={newReqEn} onChange={e => setNewReqEn(e.target.value)} className="flex-1 p-4 bg-gray-50 dark:bg-gray-700 border-none rounded-2xl" placeholder="Add requirement..." />
-                <button onClick={() => addRequirement('en')} className="p-4 bg-nutty-blue text-white rounded-2xl"><Plus /></button>
-              </div>
-              <div className="space-y-2">
-                {formData.requirements_en.map((req, i) => (
-                  <div key={i} className="flex justify-between items-center bg-gray-50 dark:bg-gray-700/50 p-3 rounded-xl">
-                    <span className="text-sm">{req}</span>
-                    <button onClick={() => removeRequirement('en', i)} className="text-red-500"><X className="w-4 h-4" /></button>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Requirements AR */}
-            <div className="space-y-4">
-              <label className="block text-sm font-black text-gray-400 uppercase tracking-widest">{isRTL ? "المتطلبات (AR)" : "Requirements (AR)"}</label>
-              <div className="flex gap-2" dir="rtl">
-                <input type="text" value={newReqAr} onChange={e => setNewReqAr(e.target.value)} className="flex-1 p-4 bg-gray-50 dark:bg-gray-700 border-none rounded-2xl" placeholder="أضف شرطاً..." />
-                <button onClick={() => addRequirement('ar')} className="p-4 bg-nutty-blue text-white rounded-2xl"><Plus /></button>
-              </div>
-              <div className="space-y-2" dir="rtl">
-                {formData.requirements_ar.map((req, i) => (
-                  <div key={i} className="flex justify-between items-center bg-gray-50 dark:bg-gray-700/50 p-3 rounded-xl text-right">
-                    <span className="text-sm">{req}</span>
-                    <button onClick={() => removeRequirement('ar', i)} className="text-red-500"><X className="w-4 h-4" /></button>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="md:col-span-2 flex items-center gap-4 py-4 border-t border-gray-100 dark:border-gray-700 mt-4">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" checked={formData.active} onChange={e => handleFieldChange("active", e.target.checked)} className="w-5 h-5 rounded text-nutty-orange" />
-                <span className="font-bold text-gray-700 dark:text-gray-300">{isRTL ? "وظيفة مفعلة (تظهر في الموقع)" : "Active Position (Publicly Visible)"}</span>
-              </label>
+            <div className="mt-10 flex gap-4">
+              <button onClick={handleSave} disabled={saving} className="px-10 py-4 bg-nutty-orange text-white rounded-2xl font-black shadow-lg shadow-orange-500/20 active:scale-95 transition-all">
+                {saving ? "..." : (isRTL ? "حفظ الوظيفة" : "Save Job")}
+              </button>
+              <button onClick={handleCancel} className="px-10 py-4 border border-gray-200 dark:border-gray-700 rounded-2xl font-bold">{isRTL ? "إلغاء" : "Cancel"}</button>
             </div>
           </div>
-
-          <div className="mt-10 flex gap-4">
-            <button onClick={handleSave} disabled={saving} className="px-10 py-4 bg-nutty-orange text-white rounded-2xl font-black shadow-lg shadow-orange-500/20 active:scale-95 transition-all">
-              {saving ? "..." : (isRTL ? "حفظ الوظيفة" : "Save Job")}
-            </button>
-            {editId && <button onClick={handleCancel} className="px-10 py-4 border border-gray-200 dark:border-gray-700 rounded-2xl font-bold">{isRTL ? "إلغاء" : "Cancel"}</button>}
-          </div>
-        </div>
+        )}
 
         {/* Jobs List */}
         <div className="space-y-6">
@@ -288,27 +322,45 @@ export default function AdminCareersPage() {
           {jobs.length === 0 ? (
             <div className="bg-gray-50 dark:bg-gray-800/50 p-12 text-center rounded-3xl border border-dashed border-gray-200">{isRTL ? "لا توجد وظائف حالياً" : "No jobs posted yet."}</div>
           ) : (
-            <div className="grid grid-cols-1 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {jobs.map(job => (
-                <div key={job.id} className="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm flex items-center justify-between group hover:shadow-md transition-all">
-                  <div className="flex items-center gap-4">
-                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${job.active ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-400'}`}>
+                <div key={job.id} className="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm flex flex-col gap-4 group hover:shadow-md transition-all relative">
+                  <div className="flex items-start justify-between">
+                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${job.active ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-400'}`}>
                       {job.active ? <CheckCircle className="w-6 h-6" /> : <AlertCircle className="w-6 h-6" />}
                     </div>
-                    <div>
-                      <h4 className="font-bold text-gray-900 dark:text-white">{isRTL ? job.title_ar : job.title_en}</h4>
-                      <div className="flex gap-3 mt-1 text-xs text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider">
-                        <span className="flex items-center gap-1"><MapPin className="w-3 h-3" /> {isRTL ? job.location_ar : job.location_en}</span>
-                        <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {isRTL ? job.type_ar : job.type_en}</span>
-                      </div>
+                    <div className="flex gap-2">
+                       <button onClick={() => handleEdit(job)} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors text-blue-500"><Plus className="w-5 h-5 rotate-45" /></button>
+                       <button onClick={() => handleDelete(job.id)} className="p-2 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors text-red-500"><Trash2 className="w-5 h-5" /></button>
                     </div>
                   </div>
-                  <div className="flex gap-2">
-                    <button onClick={() => handleEdit(job)} className="p-3 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition-colors"><Plus className="w-5 h-5 text-nutty-blue rotate-45" /></button>
-                    <button onClick={() => handleDelete(job.id)} className="p-3 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-colors"><Trash2 className="w-5 h-5 text-red-500" /></button>
+                  
+                  <div>
+                    <h4 className="font-bold text-gray-900 dark:text-white text-lg line-clamp-1" title={isRTL ? job.title_ar : job.title_en}>{isRTL ? job.title_ar : job.title_en}</h4>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{isRTL ? job.department_ar : job.department_en}</p>
+                  </div>
+
+                  <div className="flex flex-wrap gap-2 mt-auto pt-4 border-t border-gray-100 dark:border-gray-700">
+                    <span className="px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded-lg text-xs font-bold text-gray-600 dark:text-gray-300 flex items-center gap-1">
+                      <MapPin className="w-3 h-3" /> {isRTL ? job.location_ar : job.location_en}
+                    </span>
+                    <span className="px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded-lg text-xs font-bold text-gray-600 dark:text-gray-300 flex items-center gap-1">
+                      <Clock className="w-3 h-3" /> {isRTL ? job.type_ar : job.type_en}
+                    </span>
                   </div>
                 </div>
               ))}
+               {!showForm && (
+                 <button 
+                    onClick={handleAddNew}
+                    className="min-h-[250px] rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-700 flex flex-col items-center justify-center text-gray-400 hover:text-nutty-blue hover:border-nutty-blue hover:bg-blue-50 dark:hover:bg-blue-900/10 transition-all gap-4 group"
+                 >
+                    <div className="w-14 h-14 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center group-hover:bg-blue-100 dark:group-hover:bg-blue-900/30 transition-colors">
+                      <Plus className="w-6 h-6" />
+                    </div>
+                    <span className="font-bold text-lg">{isRTL ? "إضافة وظيفة جديدة" : "Post New Position"}</span>
+                 </button>
+               )}
             </div>
           )}
         </div>

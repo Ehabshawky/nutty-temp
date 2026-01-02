@@ -43,6 +43,25 @@ export async function POST(req: NextRequest) {
 
     if (error) throw error;
 
+    // Send Notification Email
+    try {
+      const { sendNotificationEmail } = await import('@/lib/email');
+      await sendNotificationEmail({
+        subject: `New Testimonial from ${body.name}`,
+        html: `
+          <h3>New Testimonial Submitted</h3>
+          <p><strong>Name:</strong> ${body.name}</p>
+          <p><strong>Rating:</strong> ${body.rating || 5}/5</p>
+          <p><strong>Content:</strong></p>
+          <p>"${body.content}"</p>
+          <p><em>This testimonial requires approval in the admin panel.</em></p>
+        `,
+        type: 'review'
+      });
+    } catch (e) {
+      console.error('Failed to send email notification', e);
+    }
+
     return NextResponse.json(data[0]);
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });

@@ -57,7 +57,6 @@ const Navbar = () => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
 
-      // Scroll Spy Logic - يعمل فقط في الصفحة الرئيسية
       if (pathname === "/") {
         const sections = ['home', 'services', 'about', 'members', 'articles', 'testimonials', 'blogs', 'contact'];
         const scrollPosition = window.scrollY + 150;
@@ -79,7 +78,6 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [pathname]);
 
-  // تحديد إذا كنا في الصفحة الرئيسية
   const isHomePage = pathname === "/";
 
   const navItems = [
@@ -87,13 +85,10 @@ const Navbar = () => {
     { name: t("servicesNav"), href: isHomePage ? "#services" : "/#services", section: "services", external: false },
     { name: t("aboutNav"), href: isHomePage ? "#about" : "/#about", section: "about", external: false },
     { name: t("members"), href: isHomePage ? "#members" : "/#members", section: "members", external: false },
-    { name: t("articles"), href: isHomePage ? "#articles" : "/#articles", section: "articles", external: false },
-    { name: t("testimonials"), href: isHomePage ? "#testimonials" : "/#testimonials", section: "testimonials", external: false },
     { name: t("blogs"), href: isHomePage ? "#blogs" : "/#blogs", section: "blogs", external: false },
     { name: t("contact"), href: isHomePage ? "#contact" : "/#contact", section: "contact", external: false },
   ];
 
-  // روابط الصفحات الكاملة
   const pageLinks = [
     { 
       name: t("careers"), 
@@ -102,35 +97,17 @@ const Navbar = () => {
       external: false,
       badge: true 
     },
-    // { 
-    //   name: t("privacyPolicy"), 
-    //   href: "/privacy-policy", 
-    //   external: false 
-    // },
-    // { 
-    //   name: t("termsOfService"), 
-    //   href: "/terms", 
-    //   external: false 
-    // },
-    // { 
-    //   name: t("cookiePolicy"), 
-    //   href: "/cookie-policy", 
-    //   external: false 
-    // },
   ];
 
-  // ✅ دالة موحدة تتعامل مع جميع أنواع الروابط
   const handleNavClick = useCallback((item: { href: string; section?: string; external?: boolean }) => {
     const currentPath = window.location.pathname;
     
-    // إذا كان الرابط يبدأ بـ #
     if (item.href.startsWith('#')) {
       if (isHomePage) {
-        // في الصفحة الرئيسية، قم بالتمرير السلس
         const targetId = item.href.substring(1);
         const element = document.getElementById(targetId);
         if (element) {
-          const offset = 80; // Navbar height offset
+          const offset = 80;
           const elementPosition = element.getBoundingClientRect().top;
           const offsetPosition = elementPosition + window.pageYOffset - offset;
           
@@ -142,11 +119,9 @@ const Navbar = () => {
           window.history.pushState(null, "", `#${targetId}`);
         }
       } else {
-        // إذا كنا في صفحة أخرى، انتقل إلى الصفحة الرئيسية مع الهاش
         router.push(`/${item.href}`);
       }
     } else {
-      // روابط الصفحات الكاملة
       if (item.external) {
         window.open(item.href, '_blank');
       } else {
@@ -157,7 +132,6 @@ const Navbar = () => {
     setIsOpen(false);
   }, [router, isHomePage]);
 
-  // Handle hash scroll on page load or navigation
   useEffect(() => {
     if (isHomePage && window.location.hash) {
       const targetId = window.location.hash.substring(1);
@@ -182,13 +156,44 @@ const Navbar = () => {
     <motion.nav
       initial={{ y: -100 }}
       animate={{ y: 0 }}
-      className={`fixed w-full z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 w-full z-50 transition-all duration-300 overflow-hidden ${
         scrolled
-          ? "bg-white/95 dark:bg-gray-900/95 backdrop-blur-lg shadow-xl"
-          : "bg-white/80 dark:bg-gray-900/80 backdrop-blur-md"
+          ? "bg-gradient-to-b from-white/95 to-white/85 dark:from-gray-900/95 dark:to-gray-900/85 backdrop-blur-lg shadow-lg"
+          : "bg-gradient-to-b from-white/90 to-white/80 dark:from-gray-900/90 dark:to-gray-900/80 backdrop-blur-md"
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Enhanced Wave Decoration with Gradient */}
+      <div className="absolute top-0 left-0 right-0 w-full h-[200px] pointer-events-none overflow-hidden z-0">
+        <svg viewBox="0 0 1440 60" className="w-full h-full" preserveAspectRatio="none">
+          {/* Top Lime Strip - Thinner */}
+          <path
+            d="M0,0 L1440,0 L1440,10 Q720,20 0,10 Z"
+            fill="#C4D600" // Nutty Lime
+            opacity="0.6"
+          />
+          {/* Cyan Wave below - Very subtle and high up */}
+          <path
+            d="M0,10 Q720,20 1440,10 L1440,25 Q720,35 0,25 Z"
+            fill="#00BCD4" // Nutty Cyan
+            opacity="0.6"
+          />
+          
+          <defs>
+            <linearGradient id="lime-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#C4D600" />
+              <stop offset="50%" stopColor="#A5B800" />
+              <stop offset="100%" stopColor="#8CA000" />
+            </linearGradient>
+            <linearGradient id="cyan-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#00BCD4" />
+              <stop offset="50%" stopColor="#0097A7" />
+              <stop offset="100%" stopColor="#00838F" />
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+      
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="flex justify-between items-center h-16 sm:h-20">
           {/* Logo */}
           <motion.div
@@ -219,28 +224,28 @@ const Navbar = () => {
               >
                 <button
                   onClick={() => handleNavClick(item)} 
-                  className={`group relative px-1 py-2 transition-colors ${
+                  className={`group relative px-1 py-2 transition-all duration-300 font-semibold ${
                     (isHomePage && activeSection === item.section)
-                      ? "text-nutty-blue dark:text-nutty-yellow font-semibold"
-                      : "text-gray-700 dark:text-gray-300 hover:text-nutty-blue dark:hover:text-nutty-yellow"
+                      ? "text-transparent bg-clip-text bg-gradient-to-r from-nutty-cyan to-nutty-lime"
+                      : "text-gray-700 dark:text-gray-300 hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-nutty-cyan hover:to-nutty-lime"
                   }`}
                 >
                   {item.name}
                   <span
-                    className={`absolute bottom-0 left-0 h-0.5 bg-nutty-blue dark:bg-nutty-yellow transition-all duration-300 ${
+                    className={`absolute bottom-0 left-0 h-[3px] rounded-full transition-all duration-500 ${
                       (isHomePage && activeSection === item.section)
-                        ? "w-full"
-                        : "w-0 group-hover:w-full"
+                        ? "w-full bg-gradient-to-r from-nutty-cyan to-nutty-lime"
+                        : "w-0 group-hover:w-full bg-gradient-to-r from-nutty-purple to-nutty-cyan"
                     }`}
                   ></span>
                 </button>
               </motion.div>
             ))}
 
-            {/* Separator */}
-            <div className="w-px h-6 bg-gray-300 dark:bg-gray-700"></div>
+            {/* Colorful Separator */}
+            <div className="w-[2px] h-8 bg-gradient-to-b from-nutty-cyan via-nutty-lime to-nutty-purple rounded-full"></div>
 
-            {/* Page Links (Careers فقط في Navigation) */}
+            {/* Careers Button with Gradient */}
             <motion.div
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -248,12 +253,13 @@ const Navbar = () => {
             >
               <button
                 onClick={() => handleNavClick(pageLinks[0])}
-                className="flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-nutty-blue to-purple-600 text-white rounded-full hover:opacity-90 transition-opacity group"
+                className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-nutty-cyan via-nutty-lime to-nutty-cyan text-white rounded-xl hover:shadow-lg hover:scale-[1.02] transition-all duration-300 group relative overflow-hidden"
               >
-                <Briefcase className="w-4 h-4" />
-                <span className="font-medium">{pageLinks[0].name}</span>
+                <div className="absolute inset-0 bg-gradient-to-r from-nutty-purple via-nutty-cyan to-nutty-cyan opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <Briefcase className="w-4 h-4 relative z-10" />
+                <span className="font-semibold relative z-10">{pageLinks[0].name}</span>
                 {pageLinks[0].badge && (
-                  <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+                  <span className="relative z-10 ml-2 w-2 h-2 bg-white rounded-full animate-ping opacity-75"></span>
                 )}
               </button>
             </motion.div>
@@ -267,7 +273,7 @@ const Navbar = () => {
             <motion.button
               whileTap={{ scale: 0.9 }}
               onClick={() => setIsOpen(!isOpen)}
-              className="lg:hidden p-2 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-nutty-blue hover:text-white transition-colors"
+              className="lg:hidden p-2 rounded-xl bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 text-gray-700 dark:text-gray-300 hover:bg-gradient-to-br hover:from-nutty-cyan hover:to-nutty-lime hover:text-white transition-all duration-300 shadow-sm"
               aria-label={isOpen ? "Close menu" : "Open menu"}
             >
               {isOpen ? <X size={24} /> : <Menu size={24} />}
@@ -285,7 +291,7 @@ const Navbar = () => {
           >
             <div className="p-6">
               <div className="flex justify-center mb-6 pb-4 border-b border-gray-200 dark:border-gray-700">
-                <div className="w-14 h-14 bg-gradient-to-br from-nutty-blue/10 to-nutty-purple/10 rounded-xl flex items-center justify-center">
+                <div className="w-14 h-14 rounded-xl flex items-center justify-center">
                   <div className="relative w-12 h-12">
                     <Image
                       src={logoUrl}
@@ -300,21 +306,26 @@ const Navbar = () => {
 
               {/* Navigation Sections */}
               <div className="mb-6">
-                <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
+                <h3 className="text-sm font-semibold text-nutty-cyan uppercase tracking-wider mb-3 px-4">
                   {t("navigation") || "Navigation"}
                 </h3>
-                <div className="space-y-1">
+                <div className="space-y-2">
                   {navItems.map((item) => (
                     <motion.button
                       key={item.name}
                       whileTap={{ scale: 0.98 }}
                       onClick={() => handleNavClick(item)} 
-                      className={`flex items-center w-full text-left px-4 py-3 rounded-xl transition-colors ${
+                      className={`flex items-center w-full text-left px-4 py-3.5 rounded-xl transition-all font-semibold group ${
                         (isHomePage && activeSection === item.section)
-                          ? "bg-nutty-blue/10 text-nutty-blue dark:text-nutty-yellow"
-                          : "hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300"
+                          ? "bg-gradient-to-r from-nutty-cyan to-nutty-yellow text-transparent bg-clip-text bg-gradient-to-r from-nutty-cyan to-nutty-yellow border-l-4 border-nutty-cyan"
+                          : "hover:bg-gradient-to-r hover:from-nutty-cyan hover:to-nutty-yellow text-gray-700 dark:text-gray-200 hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-nutty-cyan hover:to-nutty-yellow"
                       }`}
                     >
+                      <div className={`w-1.5 h-1.5 rounded-full mr-3 transition-all ${
+                        (isHomePage && activeSection === item.section)
+                          ? "bg-gradient-to-r from-nutty-cyan to-nutty-yellow"
+                          : "bg-gray-300 dark:bg-gray-600 group-hover:bg-gradient-to-r group-hover:from-nutty-cyan group-hover:to-nutty-yellow"
+                      }`} />
                       {item.name}
                     </motion.button>
                   ))}
@@ -322,26 +333,26 @@ const Navbar = () => {
               </div>
 
               {/* Page Links Section */}
-              <div>
-                <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
+              <div className="mb-6">
+                <h3 className="text-sm font-semibold text-nutty-purple uppercase tracking-wider mb-3">
                   {t("pages") || "Pages"}
                 </h3>
-                <div className="space-y-1">
+                <div className="space-y-2">
                   {pageLinks.map((item) => (
                     <motion.button
                       key={item.name}
                       whileTap={{ scale: 0.98 }}
                       onClick={() => handleNavClick(item)}
-                      className={`flex items-center w-full text-left px-4 py-3 rounded-xl transition-colors ${
-                        item.badge
-                          ? "bg-gradient-to-r from-nutty-blue/10 to-purple-600/10 text-nutty-blue dark:text-purple-300 border border-nutty-blue/20"
-                          : "hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300"
-                      }`}
+                      className="flex items-center w-full text-left px-4 py-3.5 rounded-xl bg-gradient-to-r from-nutty-cyan via-nutty-lime to-nutty-cyan hover:from-nutty-cyan/20 hover:via-nutty-lime/10 hover:to-nutty-cyan/10 transition-all group border border-nutty-cyan/20"
                     >
-                      {item.icon && <item.icon className="w-4 h-4 mr-3" />}
-                      {item.name}
+                      {item.icon && (
+                        <item.icon className="w-4 h-4 mr-3 text-nutty-yellow group-hover:text-nutty-lime transition-colors" />
+                      )}
+                      <span className="font-semibold text-nutty-yellow">
+                        {item.name}
+                      </span>
                       {item.badge && (
-                        <span className="ml-auto w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+                        <span className="ml-auto w-2 h-2 bg-gradient-to-r from-red-500 to-pink-500 rounded-full animate-pulse"></span>
                       )}
                     </motion.button>
                   ))}
@@ -351,22 +362,26 @@ const Navbar = () => {
               {/* Contact Info in Mobile */}
               <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
                 <div className="flex flex-col space-y-4">
-                  <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
-                    <Phone className="w-4 h-4 mr-2" />
+                  <div className="flex items-center text-sm group">
+                    <div className="w-8 h-8 rounded-lg flex items-center justify-center mr-3">
+                      <Phone className="w-4 h-4 text-nutty-cyan" />
+                    </div>
                     {loadingContact ? (
-                      <div className="h-4 w-32 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+                      <div className="h-4 w-32 bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 rounded animate-pulse"></div>
                     ) : (
-                      <a href={`tel:${contactInfo.phone}`} className="hover:text-nutty-blue transition-colors">
+                      <a href={`tel:${contactInfo.phone}`} className="font-medium text-nutty-cyan hover:text-nutty-lime transition-colors">
                         {contactInfo.phone}
                       </a>
                     )}
                   </div>
-                  <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
-                    <Mail className="w-4 h-4 mr-2" />
+                  <div className="flex items-center text-sm group">
+                    <div className="w-8 h-8 rounded-lg flex items-center justify-center mr-3">
+                      <Mail className="w-4 h-4 text-nutty-cyan" />
+                    </div>
                     {loadingContact ? (
-                      <div className="h-4 w-40 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+                      <div className="h-4 w-40 bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 rounded animate-pulse"></div>
                     ) : (
-                      <a href={`mailto:${contactInfo.email}`} className="hover:text-nutty-blue transition-colors truncate">
+                      <a href={`mailto:${contactInfo.email}`} className="font-medium text-nutty-cyan hover:text-nutty-lime transition-colors">
                         {contactInfo.email}
                       </a>
                     )}

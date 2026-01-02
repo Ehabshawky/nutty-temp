@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { supabaseAdmin } from '@/lib/supabase';
+import { deleteFileFromStorage } from '@/lib/storage';
 
 export const dynamic = 'force-dynamic';
 
@@ -46,6 +47,19 @@ export async function PUT(req: NextRequest) {
     const body = await req.json();
     const { id, ...updates } = body;
     
+    // If image is updated, delete the old one
+    if (updates.image_url) {
+      const { data: oldBlog } = await supabaseAdmin
+        .from('blogs')
+        .select('image_url')
+        .eq('id', id)
+        .single();
+      
+      if (oldBlog && oldBlog.image_url && oldBlog.image_url !== updates.image_url) {
+        await deleteFileFromStorage(oldBlog.image_url);
+      }
+    }
+
     const { data, error } = await supabaseAdmin
       .from('blogs')
       .update(updates)
@@ -69,12 +83,25 @@ export async function DELETE(req: NextRequest) {
     
     if (!id) return NextResponse.json({ error: 'ID required' }, { status: 400 });
 
+    // Get the blog to delete its image
+    const { data: blog } = await supabaseAdmin
+      .from('blogs')
+      .select('image_url')
+      .eq('id', id)
+      .single();
+
     const { error } = await supabaseAdmin
       .from('blogs')
       .delete()
       .eq('id', id);
 
     if (error) throw error;
+
+    // Delete the image from storage if it exists
+    if (blog?.image_url) {
+      await deleteFileFromStorage(blog.image_url);
+    }
+
     return NextResponse.json({ success: true });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });

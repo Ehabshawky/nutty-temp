@@ -62,7 +62,7 @@ const HeroSection = () => {
     },
     {
       id: 4,
-      image: "/hero4.jpg",
+      image: "/hero1.jpg",
       title: isRTL ? "التعلم العملي" : "Hands-On Learning",
       description: isRTL
         ? "ورش عمل علمية تفاعلية للعقول الصغيرة"
@@ -184,7 +184,7 @@ const HeroSection = () => {
                     style={{ backgroundImage: `url(${slide.image})` }}
                   />
                 )}
-                <div className="absolute inset-0 bg-black/50 md:bg-black/40" />
+                <div className="absolute inset-0 bg-black/50 md:bg-black/60" />
               </div>
             ))}
           </>
@@ -204,7 +204,7 @@ const HeroSection = () => {
                   className="absolute inset-0 bg-cover bg-no-repeat bg-center"
                   style={{ backgroundImage: `url(${slide.image})` }}
                 />
-                <div className="absolute inset-0 bg-black/70 md:bg-black/60" />
+                <div className="absolute inset-0 bg-black/60 md:bg-black/70" />
               </div>
             ))}
           </>
@@ -234,7 +234,7 @@ const HeroSection = () => {
 
       {/* Main Content */}
       <div className="relative z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 lg:py-32">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-32 md:pt-20 md:pb-32 lg:py-32">
           <div className="text-center">
             {/* Animated Icons */}
             <div className="flex justify-center gap-4 md:gap-6 mb-6 md:mb-8 flex-wrap">
@@ -249,7 +249,7 @@ const HeroSection = () => {
                     repeat: Infinity,
                     ease: "easeInOut",
                   }}
-                  className="bg-white/10 backdrop-blur-sm rounded-full p-3 md:p-4"
+                  className="bg-white/10 backdrop-blur-sm rounded-full p-3 md:p-4 shadow-lg"
                 >
                   <Icon className={`h-6 w-6 md:h-8 md:w-8 ${color}`} />
                 </motion.div>
@@ -261,7 +261,7 @@ const HeroSection = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
-              className="text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-4 md:mb-6 px-2"
+              className="text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-4 md:mb-6 px-2 drop-shadow-lg"
             >
               {editableHero?.slides && editableHero.slides.length > 0
                 ? (isRTL 
@@ -275,7 +275,7 @@ const HeroSection = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-yellow-400 mb-6 md:mb-8 px-4"
+              className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-yellow-400 mb-6 md:mb-8 px-4 font-semibold drop-shadow-md"
             >
               {editableHero?.slides && editableHero.slides.length > 0
                 ? (isRTL
@@ -289,7 +289,7 @@ const HeroSection = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
-              className="text-base sm:text-lg md:text-xl text-white/90 max-w-3xl mx-auto mb-8 md:mb-12 px-4 md:px-0"
+              className="text-base sm:text-lg md:text-xl text-white/95 max-w-3xl mx-auto mb-8 md:mb-12 px-4 md:px-0 drop-shadow"
             >
               {editableHero?.slides && editableHero.slides.length > 0
                 ? (isRTL
@@ -306,7 +306,7 @@ const HeroSection = () => {
               className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 mb-10 md:mb-16 px-4"
             >
               <button
-                className="px-6 py-3 md:px-8 md:py-3 bg-yellow-500 text-gray-900 rounded-full font-semibold text-base md:text-lg hover:bg-yellow-400 transition-colors transform hover:scale-105 shadow-lg w-full sm:w-auto"
+                className="px-6 py-3 md:px-8 md:py-3 bg-nutty-lime text-white rounded-full font-semibold text-base md:text-lg hover:bg-nutty-lime-dark transition-colors transform hover:scale-105 shadow-lg w-full sm:w-auto"
                 onClick={() => {
                   const contactSection = document.getElementById("contact");
                   if (contactSection) {
@@ -338,12 +338,12 @@ const HeroSection = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.8 + index * 0.1 }}
                   whileHover={{ scale: 1.05 }}
-                  className="text-center p-3 md:p-4 lg:p-6 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20"
+                  className="text-center p-3 md:p-4 lg:p-6 bg-black/40 backdrop-blur-md rounded-xl border border-white/20 shadow-lg"
                 >
-                  <div className="text-xl md:text-2xl lg:text-3xl font-bold text-white mb-1">
+                  <div className="text-xl md:text-2xl lg:text-3xl font-bold text-white mb-1 drop-shadow-md">
                     {stat.value}
                   </div>
-                  <div className="text-xs sm:text-sm md:text-base text-white/80 leading-tight">
+                  <div className="text-xs sm:text-sm md:text-base text-white/90 leading-tight">
                     {stat.label}
                   </div>
                 </motion.div>
@@ -354,7 +354,7 @@ const HeroSection = () => {
       </div>
 
     {/* Navigation Controls */}
-    <div className="absolute bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-4">
+    <div className="absolute bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-4">
       
       {/* Slide Indicators */}
       <div className="flex gap-2">
@@ -374,11 +374,11 @@ const HeroSection = () => {
               key={index}
               onClick={() => setCurrentSlide(index)}
               className={`
-                h-2 md:h-3 rounded-full transition-all duration-300 
+                h-3 md:h-4 rounded-full transition-all duration-300 
                 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-offset-2 focus:ring-offset-gray-900
                 ${isActive 
-                  ? "bg-yellow-500 w-4 md:w-6" 
-                  : "bg-white/50 w-2 md:w-3 hover:bg-white/70"
+                  ? "bg-yellow-500 w-6 md:w-8" 
+                  : "bg-white/60 w-3 md:w-4 hover:bg-white/80"
                 }
               `}
               aria-label={`Go to slide ${index + 1}`}
@@ -401,8 +401,8 @@ const HeroSection = () => {
         role="button"
         tabIndex={0}
       >
-        <div className="w-5 h-8 md:w-6 md:h-10 border-2 border-white/50 rounded-full flex justify-center hover:border-white/80 transition-colors">
-          <div className="w-1 h-2 md:h-3 bg-white/70 rounded-full mt-2"></div>
+        <div className="w-5 h-8 md:w-6 md:h-10 border-2 border-white/60 rounded-full flex justify-center hover:border-white/90 transition-colors">
+          <div className="w-1 h-2 md:h-3 bg-white/80 rounded-full mt-2"></div>
         </div>
       </motion.div>
     </div>  

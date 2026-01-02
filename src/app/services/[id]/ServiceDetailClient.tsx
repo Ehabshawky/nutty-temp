@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { ArrowLeft, ArrowRight, Calendar, Clock, Users, MapPin, ChevronRight, Award } from "lucide-react";
+import { ServiceDetailSkeleton } from "@/components/skeletons/ServiceDetailSkeleton";
 
 export default function ServiceDetailClient({ id }: { id: string }) {
   const router = useRouter();
@@ -16,43 +17,45 @@ export default function ServiceDetailClient({ id }: { id: string }) {
   const [service, setService] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [relatedServices, setRelatedServices] = useState<any[]>([]);
+  const [settings, setSettings] = useState<any>({});
 
   useEffect(() => {
-    async function fetchService() {
+    async function fetchData() {
       try {
-        const res = await fetch(`/api/services/${id}`);
-        if (res.ok) {
-          const data = await res.json();
+        const [serviceRes, settingsRes] = await Promise.all([
+          fetch(`/api/services/${id}`),
+          fetch(`/api/site-content?t=${Date.now()}`)
+        ]);
+
+        if (serviceRes.ok) {
+          const data = await serviceRes.json();
           setService(data);
           
-          // جلب خدمات ذات صلة (نفس الفئة)
-          const relatedRes = await fetch(`/api/services?category=${data.category || 'families'}&limit=4`);
+          // جلب خدمات ذات صلة (نفس الفئة الرئيسية)
+          const primaryCategory = data.category ? data.category.split(',')[0].trim() : 'families';
+          const relatedRes = await fetch(`/api/services?category=${primaryCategory}&limit=4`);
           if (relatedRes.ok) {
             const relatedData = await relatedRes.json();
             // استبعاد الخدمة الحالية
             setRelatedServices(relatedData.filter((s: any) => s.id !== id));
           }
         }
+
+        if (settingsRes.ok) {
+          const data = await settingsRes.json();
+          if (data.settings) setSettings(data.settings);
+        }
       } catch (err) {
-        console.error("Error fetching service detail:", err);
+        console.error("Error fetching data:", err);
       } finally {
         setLoading(false);
       }
     }
-    fetchService();
+    fetchData();
   }, [id]);
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 pt-20">
-        <div className="flex flex-col items-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-nutty-blue"></div>
-          <p className="mt-4 text-lg text-gray-900 dark:text-white">
-            {isRTL ? "جاري تحميل الخدمة..." : "Loading service details..."}
-          </p>
-        </div>
-      </div>
-    );
+    return <ServiceDetailSkeleton />;
   }
 
   if (!service) {
@@ -61,10 +64,10 @@ export default function ServiceDetailClient({ id }: { id: string }) {
         <div className="text-center">
           <div className="text-6xl mb-4">🔍</div>
           <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-            {isRTL ? "الخدمة غير موجودة" : "Service Not Found"}
+            {isRTL ? "البرنامج غير موجود" : "Program Not Found"}
           </h2>
           <p className="text-gray-600 dark:text-gray-400 mb-8 max-w-md">
-            {isRTL ? "عذراً، لم نتمكن من العثور على الخدمة المطلوبة." : "Sorry, we couldn't find the requested service."}
+            {isRTL ? "عذراً، لم نتمكن من العثور على البرنامج المطلوب." : "Sorry, we couldn't find the requested program."}
           </p>
           <button 
             onClick={() => router.push("/services")}
@@ -73,12 +76,12 @@ export default function ServiceDetailClient({ id }: { id: string }) {
             {isRTL ? (
               <>
                 <ArrowRight className="w-5 h-5" />
-                العودة إلى الخدمات
+                العودة إلى البرامج
               </>
             ) : (
               <>
                 <ArrowLeft className="w-5 h-5" />
-                Back to Services
+                Back to Programs
               </>
             )}
           </button>
@@ -163,11 +166,23 @@ if (service.price_range) {
               transition={{ duration: 0.5 }}
             >
               {/* Category Badge */}
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 text-purple-800 dark:text-purple-300 font-medium mb-6">
-                <span className="w-2 h-2 rounded-full bg-purple-500"></span>
-                {service.category === 'families' ? t("services.categories.families") :
-                 service.category === 'schools' ? t("services.categories.schools") :
-                 service.category === 'corporate' ? t("services.categories.corporate") : "General"}
+              {/* Category Badges */}
+              <div className="flex flex-wrap gap-3 mb-6">
+                {(service.category ? service.category.split(',') : ['families']).map((cat: string) => {
+                  const category = cat.trim();
+                  return (
+                    <div key={category} className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 text-purple-800 dark:text-purple-300 font-medium">
+                      <span className={`w-2 h-2 rounded-full ${
+                        category === 'families' ? 'bg-purple-500' :
+                        category === 'schools' ? 'bg-green-500' :
+                        category === 'corporate' ? 'bg-blue-500' : 'bg-gray-500'
+                      }`}></span>
+                      {category === 'families' ? t("services.categories.families") :
+                       category === 'schools' ? t("services.categories.schools") :
+                       category === 'corporate' ? t("services.categories.corporate") : "General"}
+                    </div>
+                  );
+                })}
               </div>
               
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">
@@ -182,11 +197,15 @@ if (service.price_range) {
               <div className="flex flex-wrap gap-4">
                 <button 
                   onClick={() => {
-                    const contactSection = document.getElementById("contact");
-                    if (contactSection) {
-                      contactSection.scrollIntoView({ behavior: "smooth" });
+                    if (settings.phone) {
+                       window.location.href = `tel:${settings.phone}`;
                     } else {
-                      router.push("/#contact");
+                        const contactSection = document.getElementById("contact");
+                        if (contactSection) {
+                          contactSection.scrollIntoView({ behavior: "smooth" });
+                        } else {
+                          router.push("/#contact");
+                        }
                     }
                   }}
                   className="px-8 py-3 bg-nutty-blue text-white rounded-full font-semibold hover:bg-nutty-blue/90 transition-colors flex items-center gap-2"
@@ -199,7 +218,7 @@ if (service.price_range) {
                   onClick={() => router.push("/services")}
                   className="px-8 py-3 border-2 border-nutty-blue text-nutty-blue rounded-full font-semibold hover:bg-nutty-blue/5 transition-colors"
                 >
-                  {t("services.viewAll") || "View All Services"}
+                  {t("services.viewAll") || "View All Programs"}
                 </button>
               </div>
             </motion.div>
@@ -277,7 +296,7 @@ if (service.price_range) {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="prose prose-lg dark:prose-invert max-w-none">
             <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">
-              {isRTL ? "تفاصيل الخدمة" : "Service Details"}
+              {isRTL ? "تفاصيل البرنامج" : "Program Details"}
             </h2>
             
             {longDescription ? (
@@ -310,10 +329,10 @@ if (service.price_range) {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-4">
               <div>
                 <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-                  {isRTL ? "خدمات ذات صلة" : "Related Services"}
+                  {isRTL ? "برامج ذات صلة" : "Related Programs"}
                 </h2>
                 <p className="text-gray-600 dark:text-gray-400">
-                  {isRTL ? "اكتشف خدمات مشابهة قد تعجبك" : "Discover similar services you might like"}
+                  {isRTL ? "اكتشف برامج مشابهة قد تعجبك" : "Discover similar programs you might like"}
                 </p>
               </div>
               <button 
@@ -385,8 +404,8 @@ if (service.price_range) {
           </h2>
           <p className="text-xl text-blue-100 mb-10 max-w-2xl mx-auto">
             {isRTL 
-              ? "احجز خدمتك اليوم واختبر متعة التعلم التفاعلي!" 
-              : "Book your service today and experience the joy of interactive learning!"}
+              ? "احجز برنامجك اليوم واختبر متعة التعلم التفاعلي!" 
+              : "Book your program today and experience the joy of interactive learning!"}
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <button 

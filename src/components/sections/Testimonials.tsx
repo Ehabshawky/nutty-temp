@@ -12,6 +12,8 @@ import {
   Building,
   Upload
 } from 'lucide-react';
+import { Skeleton } from "@/components/ui/Skeleton";
+import { TestimonialCardSkeleton, FeaturedTestimonialSkeleton } from "@/components/skeletons/TestimonialSkeleton";
 
 const Testimonials = () => {
   const { t, i18n } = useTranslation();
@@ -70,6 +72,32 @@ const Testimonials = () => {
   const featuredTestimonials = textReviews.slice(0, 3); 
   const gridTestimonials = textReviews.slice(3);
 
+  if (loading) {
+     return (
+       <section id="testimonials" className="py-20 bg-white dark:bg-gray-900" dir={dir}>
+         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            {/* Header Skeleton */}
+            <div className="text-center mb-16 space-y-4">
+               <Skeleton className="h-10 w-64 mx-auto rounded-lg" />
+               <Skeleton className="h-6 w-96 mx-auto rounded-lg" />
+            </div>
+
+            {/* Featured Skeleton */}
+            <div className="grid lg:grid-cols-3 gap-8 mb-16">
+               <FeaturedTestimonialSkeleton />
+               <FeaturedTestimonialSkeleton />
+               <FeaturedTestimonialSkeleton />
+            </div>
+
+            {/* Grid Skeleton */}
+            <div className="grid md:grid-cols-2 gap-6 mb-16">
+               {[...Array(4)].map((_, i) => <TestimonialCardSkeleton key={i} />)}
+            </div>
+         </div>
+       </section>
+     );
+  }
+
   return (
     <section id="testimonials" className="py-20 bg-white dark:bg-gray-900" dir={dir}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -102,7 +130,7 @@ const Testimonials = () => {
               className="group"
             >
               <div className="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-800 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 h-full">
-                <Quote className="w-12 h-12 text-nutty-blue/30 mb-6" />
+                <Quote className="w-12 h-12 text-nutty-cyan/30 mb-6" />
                 <p className="text-gray-700 dark:text-gray-300 text-lg italic mb-8">
                   "{testimonial.content}"
                 </p>
@@ -204,7 +232,7 @@ const Testimonials = () => {
                   className="group relative cursor-pointer"
                   onClick={() => window.open(testimonial.screenshot_url, '_blank')}
                 >
-                  <div className="absolute -inset-1 bg-gradient-to-r from-nutty-orange to-nutty-yellow rounded-2xl blur opacity-25 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
+                  <div className="absolute -inset-1 bg-gradient-to-r from-nutty-orange to-nutty-lime rounded-2xl blur opacity-25 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
                   <div className="relative bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-xl ring-1 ring-gray-900/5">
                     <img 
                       src={testimonial.screenshot_url} 

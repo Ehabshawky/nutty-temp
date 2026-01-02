@@ -14,6 +14,8 @@ import {
   Briefcase,
   GraduationCap
 } from 'lucide-react';
+import { Skeleton } from "@/components/ui/Skeleton";
+import { MemberCardSkeleton, FeaturedMemberSkeleton } from "@/components/skeletons/TeamMemberSkeleton";
 
 const Members = () => {
   const { t, i18n } = useTranslation();
@@ -63,9 +65,27 @@ const Members = () => {
 
   if (loading) {
      return (
-       <div className="py-20 flex items-center justify-center min-h-[400px]">
-         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-nutty-orange"></div>
-       </div>
+       <section id="members" className="py-20 bg-white dark:bg-gray-900">
+         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-16 space-y-4">
+               <Skeleton className="h-10 w-64 mx-auto rounded-lg" />
+               <Skeleton className="h-6 w-1/2 mx-auto rounded-lg" />
+            </div>
+
+            <div className="flex justify-center gap-4 mb-12">
+               {[1,2,3,4].map(i => <Skeleton key={i} className="h-12 w-32 rounded-full" />)}
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
+               <FeaturedMemberSkeleton />
+               <FeaturedMemberSkeleton />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+               {[...Array(6)].map((_, i) => <MemberCardSkeleton key={i} />)}
+            </div>
+         </div>
+       </section>
      );
   }
 
@@ -103,7 +123,7 @@ const Members = () => {
               onClick={() => setActiveFilter(dept.id)}
               className={`px-6 py-3 rounded-full transition-all flex items-center space-x-2 rtl:space-x-reverse ${
                 activeFilter === dept.id
-                  ? 'bg-nutty-blue text-white shadow-md'
+                  ? 'bg-nutty-cyan text-white shadow-md'
                   : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
               }`}
             >
@@ -134,7 +154,7 @@ const Members = () => {
                     {/* Member Image */}
                     <div className="flex-shrink-0 cursor-pointer" onClick={() => setSelectedMember(member)}>
                       <div className="relative w-48 h-48 mx-auto md:mx-0">
-                        <div className="absolute inset-0 bg-gradient-to-br from-nutty-blue to-purple-600 rounded-2xl transform rotate-3 group-hover:rotate-6 transition-transform"></div>
+                        <div className="absolute inset-0 bg-gradient-to-br from-nutty-cyan to-nutty-cyan-dark rounded-2xl transform rotate-3 group-hover:rotate-6 transition-transform"></div>
                         <img
                           src={member.image || '/default-avatar.avif'}
                           alt={member.name}
@@ -146,10 +166,10 @@ const Members = () => {
                     {/* Member Info */}
                     <div className="flex-1 min-w-0">
                       <div className="mb-4">
-                        <h3 className="text-2xl font-bold text-gray-900 dark:text-white cursor-pointer hover:text-nutty-blue transition-colors" onClick={() => setSelectedMember(member)}>
+                        <h3 className="text-2xl font-bold text-gray-900 dark:text-white cursor-pointer hover:text-nutty-cyan transition-colors" onClick={() => setSelectedMember(member)}>
                           {member.name}
                         </h3>
-                        <p className="text-nutty-blue dark:text-nutty-yellow font-bold uppercase tracking-wider text-sm">
+                        <p className="text-nutty-cyan dark:text-nutty-lime font-bold uppercase tracking-wider text-sm">
                           {member.position[currentLanguage]}
                         </p>
                       </div>
@@ -200,7 +220,7 @@ const Members = () => {
                       <div className="flex space-x-4 rtl:space-x-reverse pt-4 border-t border-gray-100 dark:border-gray-700">
                         <a
                           href={`mailto:${member.email}`}
-                          className="w-10 h-10 flex items-center justify-center bg-gray-100 dark:bg-gray-700 rounded-xl hover:bg-nutty-blue hover:text-white transition-all transform hover:-translate-y-1 shadow-sm"
+                          className="w-10 h-10 flex items-center justify-center bg-gray-100 dark:bg-gray-700 rounded-xl hover:bg-nutty-cyan hover:text-white transition-all transform hover:-translate-y-1 shadow-sm"
                           title="Email"
                         >
                           <Mail className="w-5 h-5" />
@@ -225,7 +245,7 @@ const Members = () => {
                         )}
                         <button 
                           onClick={() => setSelectedMember(member)}
-                          className="px-6 py-2 bg-nutty-blue text-white rounded-xl font-bold text-xs hover:bg-nutty-blue/90 transition-all transform hover:-translate-y-1 shadow-md shadow-nutty-blue/20 uppercase tracking-wider h-10 ml-auto rtl:ml-0 rtl:mr-auto"
+                          className="px-6 py-2 bg-nutty-cyan text-white rounded-xl font-bold text-xs hover:bg-nutty-cyan/90 transition-all transform hover:-translate-y-1 shadow-md shadow-nutty-cyan/20 uppercase tracking-wider h-10 ml-auto rtl:ml-0 rtl:mr-auto"
                         >
                           {currentLanguage === 'ar' ? 'عرض الملف' : 'Profile'}
                         </button>
@@ -261,7 +281,7 @@ const Members = () => {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
                     <div className="absolute bottom-4 left-4 rtl:left-auto rtl:right-4">
-                      <span className="px-3 py-1 bg-nutty-blue/90 text-white rounded-full text-xs font-bold uppercase tracking-wider">
+                      <span className="px-3 py-1 bg-nutty-cyan/90 text-white rounded-full text-xs font-bold uppercase tracking-wider">
                         {departments.find(d => d.id === member.department)?.label[currentLanguage] || member.department}
                       </span>
                     </div>
@@ -270,10 +290,10 @@ const Members = () => {
                   {/* Content */}
                   <div className="p-6 flex flex-col flex-1">
                     <div className="mb-4">
-                      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-1 cursor-pointer hover:text-nutty-blue transition-colors" onClick={() => setSelectedMember(member)}>
+                      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-1 cursor-pointer hover:text-nutty-cyan transition-colors" onClick={() => setSelectedMember(member)}>
                         {member.name}
                       </h3>
-                      <p className="text-nutty-blue dark:text-nutty-yellow text-sm font-bold uppercase tracking-wide">
+                      <p className="text-nutty-cyan dark:text-nutty-lime text-sm font-bold uppercase tracking-wide">
                         {member.position[currentLanguage]}
                       </p>
                     </div>
@@ -316,7 +336,7 @@ const Members = () => {
                       <div className="flex space-x-3 rtl:space-x-reverse">
                         <a
                           href={`mailto:${member.email}`}
-                          className="text-gray-400 hover:text-nutty-blue transition-colors"
+                          className="text-gray-400 hover:text-nutty-cyan transition-colors"
                           title="Email"
                         >
                           <Mail className="w-5 h-5" />
@@ -333,7 +353,7 @@ const Members = () => {
                       </div>
                       <button 
                         onClick={() => setSelectedMember(member)}
-                        className="text-xs font-bold text-nutty-blue hover:text-blue-700 transition-colors uppercase tracking-wider"
+                        className="text-xs font-bold text-nutty-cyan hover:text-blue-700 transition-colors uppercase tracking-wider"
                       >
                         {currentLanguage === 'ar' ? 'عرض الملف' : 'Profile'}
                       </button>
@@ -351,7 +371,7 @@ const Members = () => {
           viewport={{ once: true }}
           className="text-center"
         >
-          <div className="bg-gradient-to-r from-nutty-yellow to-nutty-orange rounded-[2.5rem] p-8 md:p-12 shadow-xl shadow-nutty-orange/20">
+          <div className="bg-gradient-to-r from-nutty-lime to-nutty-orange rounded-[2.5rem] p-8 md:p-12 shadow-xl shadow-nutty-orange/20">
             <Briefcase className="w-16 h-16 mx-auto mb-6 text-white" />
             <h3 className="text-3xl font-bold text-white mb-4">
               {currentLanguage === 'ar' ? 'هل تريد الانضمام إلى فريقنا؟' : 'Want to Join Our Team?'}
@@ -383,40 +403,41 @@ const Members = () => {
         {selectedMember && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={() => setSelectedMember(null)}>
             <motion.div 
-              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="bg-white dark:bg-gray-800 rounded-3xl overflow-hidden max-w-4xl w-full max-h-[90vh] shadow-2xl relative"
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="bg-white dark:bg-gray-800 rounded-3xl overflow-hidden w-full max-w-4xl max-h-[90vh] shadow-2xl relative flex flex-col md:flex-row"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Close Button */}
               <button 
                 onClick={() => setSelectedMember(null)}
-                className="absolute top-4 right-4 z-10 w-10 h-10 bg-black/10 dark:bg-white/10 rounded-full flex items-center justify-center hover:bg-black/20 dark:hover:bg-white/20 transition-colors text-gray-900 dark:text-white"
+                className="absolute top-4 right-4 z-20 w-10 h-10 bg-black/50 text-white rounded-full flex items-center justify-center hover:bg-black/70 transition-colors backdrop-blur-sm"
               >
-                <span className="text-2xl">&times;</span>
+                <span className="text-2xl leading-none">&times;</span>
               </button>
 
-              <div className="flex flex-col md:flex-row h-full overflow-y-auto">
+              <div className="flex flex-col md:flex-row h-full overflow-y-auto w-full">
                 {/* Left Side - Image */}
-                <div className="md:w-2/5 relative h-80 md:h-auto">
+                <div className="md:w-5/12 relative h-64 sm:h-72 md:h-auto flex-shrink-0">
                   <img 
                     src={selectedMember.image || '/default-avatar.avif'} 
                     alt={selectedMember.name} 
                     className="absolute inset-0 w-full h-full object-cover"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent md:bg-gradient-to-r md:from-transparent md:to-black/20"></div>
-                  <div className="absolute bottom-6 left-6 md:hidden">
-                    <h2 className="text-3xl font-black text-white mb-1">{selectedMember.name}</h2>
-                    <p className="text-nutty-yellow font-bold uppercase tracking-widest text-sm">{selectedMember.position[currentLanguage]}</p>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent md:bg-gradient-to-r md:from-transparent md:to-black/10"></div>
+                  <div className="absolute bottom-6 left-6 md:hidden text-white z-10">
+                    <h2 className="text-2xl sm:text-3xl font-black mb-1 drop-shadow-md">{selectedMember.name}</h2>
+                    <p className="text-nutty-lime font-bold uppercase tracking-widest text-xs sm:text-sm drop-shadow-md">{selectedMember.position[currentLanguage]}</p>
                   </div>
                 </div>
 
                 {/* Right Side - Content */}
-                <div className="md:w-3/5 p-8 md:p-12">
-                  <div className="hidden md:block mb-8">
-                    <h2 className="text-4xl font-black text-gray-900 dark:text-white mb-2">{selectedMember.name}</h2>
-                    <p className="text-nutty-blue dark:text-nutty-yellow font-black uppercase tracking-[0.2em] text-sm">
+                <div className="md:w-7/12 p-6 md:p-10 flex flex-col">
+                  {/* Desktop Header */}
+                  <div className="hidden md:block mb-6">
+                    <h2 className="text-3xl lg:text-4xl font-black text-gray-900 dark:text-white mb-2 leading-tight">{selectedMember.name}</h2>
+                    <p className="text-nutty-cyan dark:text-nutty-lime font-black uppercase tracking-[0.2em] text-sm">
                       {selectedMember.position[currentLanguage]}
                     </p>
                   </div>
@@ -442,8 +463,8 @@ const Members = () => {
 
                     {/* Department */}
                     <div className="flex items-start gap-4">
-                      <div className="w-10 h-10 bg-nutty-blue/10 rounded-xl flex items-center justify-center flex-shrink-0">
-                        <Briefcase className="w-5 h-5 text-nutty-blue" />
+                      <div className="w-10 h-10 bg-nutty-cyan/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <Briefcase className="w-5 h-5 text-nutty-cyan" />
                       </div>
                       <div>
                         <h4 className="text-xs font-black text-gray-400 uppercase tracking-widest mb-1">{isRTL ? 'القسم' : 'Department'}</h4>
@@ -476,7 +497,7 @@ const Members = () => {
                   <div className="flex items-center gap-4 pt-8 border-t border-gray-100 dark:border-gray-700">
                     <a 
                       href={`mailto:${selectedMember.email}`}
-                      className="flex items-center gap-2 px-6 py-3 bg-nutty-blue text-white rounded-xl font-bold hover:bg-nutty-blue/90 transition-all transform hover:-translate-y-1 shadow-lg shadow-nutty-blue/20"
+                      className="flex items-center gap-2 px-6 py-3 bg-nutty-cyan text-white rounded-xl font-bold hover:bg-nutty-cyan/90 transition-all transform hover:-translate-y-1 shadow-lg shadow-nutty-cyan/20"
                     >
                       <Mail className="w-4 h-4" />
                       {isRTL ? 'تواصل' : 'Contact'}

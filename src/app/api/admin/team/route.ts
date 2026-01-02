@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { supabaseAdmin } from '@/lib/supabase';
+import { deleteFileFromStorage } from '@/lib/storage';
 
 export const dynamic = 'force-dynamic';
 
@@ -67,6 +68,19 @@ export async function PUT(req: Request) {
     return NextResponse.json({ error: 'Missing id' }, { status: 400 });
   }
 
+  // If image is updated, delete the old one
+  if (rest.image) {
+    const { data: oldMember } = await supabaseAdmin
+      .from('team_members')
+      .select('image')
+      .eq('id', id)
+      .single();
+
+    if (oldMember && oldMember.image && oldMember.image !== rest.image) {
+      await deleteFileFromStorage(oldMember.image);
+    }
+  }
+
   const { error } = await supabaseAdmin
     .from('team_members')
     .update(rest)
@@ -92,6 +106,13 @@ export async function DELETE(req: Request) {
     return NextResponse.json({ error: 'Missing id' }, { status: 400 });
   }
 
+  // Get the member to delete its image
+  const { data: member } = await supabaseAdmin
+    .from('team_members')
+    .select('image')
+    .eq('id', id)
+    .single();
+
   const { error } = await supabaseAdmin
     .from('team_members')
     .delete()
@@ -99,6 +120,11 @@ export async function DELETE(req: Request) {
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  // Delete the image from storage if it exists
+  if (member?.image) {
+    await deleteFileFromStorage(member.image);
   }
 
   return NextResponse.json({ success: true });

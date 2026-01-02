@@ -3,7 +3,9 @@
 import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { Target, Eye, Heart, Users, Award, Sparkles } from "lucide-react";
+import Partners from "@/components/sections/Partners";
 
 export default function AboutPage() {
   const { t, i18n } = useTranslation();
@@ -260,16 +262,21 @@ export default function AboutPage() {
                 : "Join millions of children discovering the joy of science with us"}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="px-8 py-3 bg-nutty-orange text-white rounded-lg font-semibold hover:bg-nutty-orange/90 transition-colors shadow-lg">
-                {isRTL ? "تواصل معنا" : "Contact Us"}
-              </button>
-              <button className="px-8 py-3 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
-                {isRTL ? "استكشف برامجنا" : "Explore Our Programs"}
-              </button>
+              <Link href="/#contact">
+                <button className="w-full sm:w-auto px-8 py-3 bg-nutty-orange text-white rounded-lg font-semibold hover:bg-nutty-orange/90 transition-colors shadow-lg">
+                  {isRTL ? "تواصل معنا" : "Contact Us"}
+                </button>
+              </Link>
+              <Link href="/services">
+                <button className="w-full sm:w-auto px-8 py-3 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
+                  {isRTL ? "استكشف برامجنا" : "Explore Our Programs"}
+                </button>
+              </Link>
             </div>
           </div>
         </div>
       </section>
+      <Partners />
     </div>
   );
 }

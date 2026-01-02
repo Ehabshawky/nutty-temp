@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { supabaseAdmin } from '@/lib/supabase';
+import { deleteFileFromStorage } from '@/lib/storage';
 
 export const dynamic = 'force-dynamic';
 
@@ -130,9 +131,21 @@ export async function PUT(req: Request) {
 
     // Add updated_at timestamp
     const updateData = {
-      ...rest,
-      updated_at: new Date().toISOString()
+      ...rest
     };
+
+    // If image is updated, delete the old one
+    if (rest.image) {
+      const { data: oldService } = await supabaseAdmin
+        .from('services')
+        .select('image')
+        .eq('id', id)
+        .single();
+
+      if (oldService && oldService.image && oldService.image !== rest.image) {
+        await deleteFileFromStorage(oldService.image);
+      }
+    }
 
     const { error } = await supabaseAdmin
       .from('services')
@@ -167,6 +180,13 @@ export async function DELETE(req: Request) {
       return NextResponse.json({ error: 'Missing id' }, { status: 400 });
     }
 
+    // Get the service to delete its image
+    const { data: service } = await supabaseAdmin
+      .from('services')
+      .select('image')
+      .eq('id', id)
+      .single();
+
     const { error } = await supabaseAdmin
       .from('services')
       .delete()
@@ -175,6 +195,11 @@ export async function DELETE(req: Request) {
     if (error) {
       console.error('Error deleting service:', error);
       return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    // Delete the image from storage if it exists
+    if (service?.image) {
+      await deleteFileFromStorage(service.image);
     }
 
     return NextResponse.json({ success: true });

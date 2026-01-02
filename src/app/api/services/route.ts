@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
 
     // Filter by category if specified
     if (category && category !== 'all') {
-      query = query.eq('category', category);
+      query = query.ilike('category', `%${category}%`);
     }
 
     // Limit results if specified

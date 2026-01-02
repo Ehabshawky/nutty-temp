@@ -9,11 +9,16 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        // Primary brand colors from Nutty Scientists
         "nutty-orange": "#FF6B35",
-        "nutty-yellow": "#FFD700",
-        "nutty-blue": "#1E40AF",
-        "nutty-green": "#10B981",
-        "nutty-purple": "#8B5CF6",
+        "nutty-yellow": "#FFD700",      // Standard Gold/Yellow
+        "nutty-cyan": "#00BCD4",        // Main cyan/turquoise
+        "nutty-cyan-dark": "#0097A7",   // Darker variant for hover states
+        "nutty-cyan-light": "#4DD0E1",  // Lighter variant
+        "nutty-lime": "#C4D600",        // Main lime green
+        "nutty-lime-dark": "#9FA800",   // Darker variant for hover states
+        "nutty-lime-light": "#D4E157",  // Lighter variant
+        "nutty-blue": "#3B82F6",        // Standard blue
       },
       fontFamily: {
         cairo: ["var(--font-cairo)", "sans-serif"],

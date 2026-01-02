@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { UserPlus, Trash2, Edit2, Shield, Save, X, Key } from "lucide-react";
 import AdminLayout from "@/components/admin/AdminLayout";
+import { AdminTableSkeleton } from "@/components/skeletons/AdminTableSkeleton";
+
 
 interface AdminUser {
   id: string;
@@ -117,8 +119,8 @@ export default function AdminUsersPage() {
   if (loading) {
     return (
       <AdminLayout>
-        <div className="flex items-center justify-center min-h-[400px]">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-nutty-orange"></div>
+        <div className="max-w-4xl mx-auto px-4 py-20">
+          <AdminTableSkeleton rows={3} />
         </div>
       </AdminLayout>
     );

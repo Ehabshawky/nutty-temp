@@ -11,8 +11,11 @@ import {
   CheckCircle,
   MessageSquare,
   Globe,
-  Users
+  Users,
+  ChevronRight,
+  HelpCircle
 } from 'lucide-react';
+import { ContactSkeleton } from "@/components/skeletons/ContactSkeleton";
 
 const Contact = () => {
   const { t, i18n } = useTranslation();
@@ -39,21 +42,30 @@ const Contact = () => {
     dept_corporate_email: 'info@nuttyscientists-egypt.com',
     dept_corporate_phone: '01222668543',
   });
-  const dir = i18n.language === 'ar' ? 'rtl' : 'ltr';
+  const [faqs, setFaqs] = useState<any[]>([]);
+  const [activeFaq, setActiveFaq] = useState<number | null>(null);
+  const [loading, setLoading] = useState(true);
+  const isRTL = i18n.language === 'ar';
+  const dir = isRTL ? 'rtl' : 'ltr';
 
   React.useEffect(() => {
-    async function fetchSettings() {
+    async function fetchData() {
       try {
         const res = await fetch("/api/site-content?t=" + Date.now());
         if (res.ok) {
           const data = await res.json();
           if (data.settings) setSettings(data.settings);
+          if (data.faq && data.faq.questions) {
+            setFaqs(data.faq.questions);
+          }
         }
       } catch (e) {
-        console.error("Error fetching settings:", e);
+        console.error("Error fetching content:", e);
+      } finally {
+        setLoading(false);
       }
     }
-    fetchSettings();
+    fetchData();
   }, []);
 
   const contactInfo = [
@@ -148,6 +160,10 @@ const Contact = () => {
     }
   };
 
+  if (loading) {
+    return <ContactSkeleton />;
+  }
+
   return (
     <section id="contact" className="py-20 bg-white dark:bg-gray-900" dir={dir}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -216,7 +232,7 @@ const Contact = () => {
                   return (
                     <div key={index} className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
                       <div className="flex items-start">
-                        <Icon className="w-5 h-5 text-nutty-blue mt-1 mr-3 rtl:mr-0 rtl:ml-3 flex-shrink-0" />
+                        <Icon className="w-5 h-5 text-nutty-cyan mt-1 mr-3 rtl:mr-0 rtl:ml-3 flex-shrink-0" />
                         <div>
                           <h4 className="font-bold text-gray-900 dark:text-white">
                             {dept.name}
@@ -276,7 +292,7 @@ const Contact = () => {
                           value={formData.name}
                           onChange={handleChange}
                           required
-                          className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-nutty-blue focus:border-transparent transition-all"
+                          className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-nutty-cyan focus:border-transparent transition-all"
                           placeholder={t('contactSection.form.placeholders.name')}
                         />
                       </div>
@@ -290,7 +306,7 @@ const Contact = () => {
                           value={formData.email}
                           onChange={handleChange}
                           required
-                          className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-nutty-blue focus:border-transparent transition-all"
+                          className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-nutty-cyan focus:border-transparent transition-all"
                           placeholder={t('contactSection.form.placeholders.email')}
                         />
                       </div>
@@ -306,7 +322,7 @@ const Contact = () => {
                           name="phone"
                           value={formData.phone}
                           onChange={handleChange}
-                          className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-nutty-blue focus:border-transparent transition-all"
+                          className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-nutty-cyan focus:border-transparent transition-all"
                           placeholder={t('contactSection.form.placeholders.phone')}
                         />
                       </div>
@@ -320,7 +336,7 @@ const Contact = () => {
                           value={formData.subject}
                           onChange={handleChange}
                           required
-                          className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-nutty-blue focus:border-transparent transition-all"
+                          className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-nutty-cyan focus:border-transparent transition-all"
                           placeholder={t('contactSection.form.placeholders.subject')}
                         />
                       </div>
@@ -336,7 +352,7 @@ const Contact = () => {
                         onChange={handleChange}
                         required
                         rows={6}
-                        className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-nutty-blue focus:border-transparent transition-all resize-none"
+                        className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-nutty-cyan focus:border-transparent transition-all resize-none"
                         placeholder={t('contactSection.form.placeholders.message')}
                       />
                     </div>
@@ -345,7 +361,7 @@ const Contact = () => {
                         <button
                           type="submit"
                           disabled={isSubmitting}
-                          className="flex items-center px-8 py-3 bg-nutty-blue text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="flex items-center px-8 py-3 bg-nutty-cyan text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           {isSubmitting ? (
                             <>
@@ -375,37 +391,54 @@ const Contact = () => {
               viewport={{ once: true }}
               className="mt-12"
             >
-              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-8 flex items-center gap-3">
+                <HelpCircle className="w-8 h-8 text-nutty-orange" />
                 {t('contactSection.faq.title')}
               </h3>
+              
               <div className="space-y-4">
-                {[
-                  {
-                    q: t('contactSection.faq.q1'),
-                    a: t('contactSection.faq.a1')
-                  },
-                  {
-                    q: t('contactSection.faq.q2'),
-                    a: t('contactSection.faq.a2')
-                  },
-                  {
-                    q: t('contactSection.faq.q3'),
-                    a: t('contactSection.faq.a3')
-                  },
-                  {
-                    q: t('contactSection.faq.q4'),
-                    a: t('contactSection.faq.a4')
-                  }
-                ].map((faq, index) => (
-                  <div key={index} className="bg-gray-50 dark:bg-gray-800 rounded-xl p-6">
-                    <h4 className="font-bold text-gray-900 dark:text-white mb-2">
-                      {faq.q}
-                    </h4>
-                    <p className="text-gray-600 dark:text-gray-400">
-                      {faq.a}
-                    </p>
-                  </div>
-                ))}
+                {faqs.length > 0 ? (
+                  faqs.map((faq, index) => (
+                    <div 
+                      key={index} 
+                      className={`bg-gray-50 dark:bg-gray-800 rounded-2xl overflow-hidden border-2 transition-all duration-300 ${
+                        activeFaq === index 
+                          ? 'border-nutty-cyan shadow-lg shadow-nutty-cyan/5' 
+                          : 'border-transparent hover:border-gray-200 dark:hover:border-gray-700'
+                      }`}
+                    >
+                      <button
+                        onClick={() => setActiveFaq(activeFaq === index ? null : index)}
+                        className="w-full px-6 py-5 flex items-center justify-between text-left rtl:text-right transition-colors"
+                      >
+                        <h4 className="font-black text-gray-900 dark:text-white text-lg pr-4 rtl:pr-0 rtl:pl-4 transition-colors">
+                          {i18n.language === 'ar' ? faq.question_ar : faq.question_en}
+                        </h4>
+                        <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 ${
+                          activeFaq === index 
+                            ? 'bg-nutty-cyan text-white shadow-lg' 
+                            : 'bg-white dark:bg-gray-700 text-gray-400'
+                        }`}>
+                          <ChevronRight className={`w-5 h-5 transition-transform duration-300 ${
+                            activeFaq === index ? 'rotate-90' : (isRTL ? 'rotate-180' : '')
+                          }`} />
+                        </div>
+                      </button>
+                      
+                      <motion.div
+                        initial={false}
+                        animate={{ height: activeFaq === index ? 'auto' : 0 }}
+                        className="overflow-hidden"
+                      >
+                        <div className="px-6 pb-6 text-gray-600 dark:text-gray-400 font-bold border-t border-gray-100 dark:border-gray-700 pt-4 bg-white/50 dark:bg-gray-900/50">
+                          {i18n.language === 'ar' ? faq.answer_ar : faq.answer_en}
+                        </div>
+                      </motion.div>
+                    </div>
+                  ))
+                ) : (
+                   <p className="text-gray-500 italic">{isRTL ? "لا توجد أسئلة شائعة حالياً" : "No FAQs available at the moment."}</p>
+                )}
               </div>
             </motion.div>
           </motion.div>
@@ -418,7 +451,7 @@ const Contact = () => {
           viewport={{ once: true }}
           className="mt-16"
         >
-          <div className="bg-gradient-to-r from-nutty-yellow to-orange-500 rounded-2xl p-8 md:p-12">
+          <div className="bg-gradient-to-r from-nutty-lime to-orange-500 rounded-2xl p-8 md:p-12">
             <div className="grid lg:grid-cols-2 gap-8 items-center">
               <div>
                 <h3 className="text-3xl font-bold text-gray-900 mb-4">

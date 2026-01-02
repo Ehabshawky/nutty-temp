@@ -14,6 +14,9 @@ import {
   Filter
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { Skeleton } from "@/components/ui/Skeleton";
+import { BlogCardSkeleton } from "@/components/skeletons/BlogCardSkeleton";
+import { FeaturedBlogSkeleton } from "@/components/skeletons/FeaturedBlogSkeleton";
 
 // Import articles from shared data
 // Articles data is now loaded from API
@@ -161,6 +164,32 @@ const Articles = () => {
   const featuredArticles = articles.filter(article => article.featured);
   const trendingArticles = articles.filter(article => article.trending);
 
+  if (isLoading) {
+     return (
+       <section id="articles" className="py-20 bg-gray-50 dark:bg-gray-900" dir={dir}>
+         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-16 space-y-4">
+               <Skeleton className="h-10 w-48 mx-auto rounded-lg" />
+               <Skeleton className="h-6 w-96 mx-auto rounded-lg" />
+            </div>
+
+             <div className="flex justify-center gap-3 mb-12">
+               {[1,2,3].map(i => <Skeleton key={i} className="h-10 w-24 rounded-full" />)}
+            </div>
+
+            <div className="grid lg:grid-cols-2 gap-8 mb-16">
+               <FeaturedBlogSkeleton />
+               <FeaturedBlogSkeleton />
+            </div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+               {[...Array(6)].map((_, i) => <BlogCardSkeleton key={i} />)}
+            </div>
+         </div>
+       </section>
+     );
+  }
+
   return (
     <section id="articles" className="py-20 bg-gray-50 dark:bg-gray-900" dir={dir}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -203,7 +232,7 @@ const Articles = () => {
               onClick={() => setActiveCategory(category.id)}
               className={`px-4 py-2 rounded-full transition-all ${
                 activeCategory === category.id
-                  ? 'bg-nutty-blue text-white'
+                  ? 'bg-nutty-cyan text-white'
                   : 'bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700'
               }`}
             >
@@ -237,7 +266,7 @@ const Articles = () => {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                   <div className="absolute top-4 left-4 rtl:left-auto rtl:right-4">
-                    <span className="px-3 py-1 bg-nutty-yellow text-gray-900 rounded-full text-sm font-semibold">
+                    <span className="px-3 py-1 bg-nutty-lime text-gray-900 rounded-full text-sm font-semibold">
                       {t("articlesSection.featured")}
                     </span>
                   </div>
@@ -252,20 +281,20 @@ const Articles = () => {
                     <div className="flex items-center space-x-4 rtl:space-x-reverse">
                       <button 
                         onClick={(e) => toggleBookmark(e, article.id)}
-                        className={`transition-colors ${bookmarkedIds.includes(article.id) ? 'text-nutty-blue' : 'text-gray-400 hover:text-nutty-blue'}`}
+                        className={`transition-colors ${bookmarkedIds.includes(article.id) ? 'text-nutty-cyan' : 'text-gray-400 hover:text-nutty-cyan'}`}
                       >
                         <Bookmark className={`w-5 h-5 ${bookmarkedIds.includes(article.id) ? 'fill-current' : ''}`} />
                       </button>
                       <button 
                         onClick={(e) => shareArticle(e, article)}
-                        className="text-gray-400 hover:text-nutty-blue transition-colors"
+                        className="text-gray-400 hover:text-nutty-cyan transition-colors"
                       >
                         <Share2 className="w-5 h-5" />
                       </button>
                     </div>
                   </div>
 
-                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 group-hover:text-nutty-blue transition-colors">
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 group-hover:text-nutty-cyan transition-colors">
                     {article.title}
                   </h3>
                   <p className="text-gray-600 dark:text-gray-400 mb-6">
@@ -303,7 +332,7 @@ const Articles = () => {
                   </div>
 
                   {/* Read More */}
-                  <button className="mt-6 text-nutty-blue font-semibold hover:text-blue-700 transition-colors flex items-center">
+                  <button className="mt-6 text-nutty-cyan font-semibold hover:text-blue-700 transition-colors flex items-center">
                     {t("articlesSection.readMore")} 
                     <span className="mx-1 rtl:rotate-180">→</span>
                   </button>
@@ -347,13 +376,13 @@ const Articles = () => {
                       </span>
                       <button 
                          onClick={(e) => toggleBookmark(e, article.id)}
-                         className={`transition-colors ${bookmarkedIds.includes(article.id) ? 'text-nutty-blue' : 'text-gray-400 hover:text-nutty-blue'}`}
+                         className={`transition-colors ${bookmarkedIds.includes(article.id) ? 'text-nutty-cyan' : 'text-gray-400 hover:text-nutty-cyan'}`}
                       >
                         <Bookmark className={`w-4 h-4 ${bookmarkedIds.includes(article.id) ? 'fill-current' : ''}`} />
                       </button>
                     </div>
 
-                    <h4 className="text-lg font-bold text-gray-900 dark:text-white mb-2 group-hover:text-nutty-blue transition-colors line-clamp-2">
+                    <h4 className="text-lg font-bold text-gray-900 dark:text-white mb-2 group-hover:text-nutty-cyan transition-colors line-clamp-2">
                       {article.title}
                     </h4>
                     <p className="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-2">
@@ -390,7 +419,7 @@ const Articles = () => {
           viewport={{ once: true }}
           className="text-center"
         >
-          <div className="bg-gradient-to-r from-nutty-blue to-purple-600 rounded-2xl p-8 md:p-12">
+          <div className="bg-gradient-to-r from-nutty-cyan to-nutty-cyan-dark rounded-2xl p-8 md:p-12">
             <h3 className="text-3xl font-bold text-white mb-4">
               {t("articlesSection.newsletter.title")}
             </h3>
@@ -409,7 +438,7 @@ const Articles = () => {
                 <button 
                   onClick={handleSubscribe}
                   disabled={subscribing}
-                  className="px-8 py-3 bg-white text-nutty-blue rounded-full font-semibold text-lg hover:bg-gray-100 transition-colors transform hover:scale-105 disabled:opacity-50"
+                  className="px-8 py-3 bg-white text-nutty-cyan rounded-full font-semibold text-lg hover:bg-gray-100 transition-colors transform hover:scale-105 disabled:opacity-50"
                 >
                   {subscribing ? (i18n.language === 'ar' ? 'جاري...' : '...') : t("articlesSection.newsletter.button")}
                 </button>

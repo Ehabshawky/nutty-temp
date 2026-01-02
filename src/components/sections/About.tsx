@@ -20,11 +20,13 @@ import {
   Brain,
   Microscope,
 } from "lucide-react";
+import { AboutSkeleton } from "@/components/skeletons/AboutSkeleton";
 
 const About = () => {
   const { t, i18n } = useTranslation();
   const isRTL = i18n.language === "ar";
   const [aboutData, setAboutData] = React.useState<any>(null);
+  const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
     async function fetchAbout() {
@@ -38,6 +40,8 @@ const About = () => {
         }
       } catch (err) {
         console.error("Error fetching about content:", err);
+      } finally {
+        setLoading(false);
       }
     }
     fetchAbout();
@@ -101,6 +105,10 @@ const About = () => {
         },
       ];
 
+  if (loading) {
+     return <AboutSkeleton />;
+  }
+
   return (
     <section id="about" className="py-20 bg-white dark:bg-gray-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -128,7 +136,7 @@ const About = () => {
             className="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-800 rounded-2xl p-8"
           >
             <div className="flex items-center mb-6">
-              <Target className="w-12 h-12 text-nutty-blue mr-4" />
+              <Target className="w-12 h-12 text-nutty-cyan mr-4" />
               <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
                 {(isRTL ? aboutData?.mission?.title_ar : aboutData?.mission?.title_en) || t("mission")}
               </h3>
@@ -146,7 +154,7 @@ const About = () => {
             className="bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-gray-800 dark:to-gray-800 rounded-2xl p-8"
           >
             <div className="flex items-center mb-6">
-              <Eye className="w-12 h-12 text-nutty-yellow mr-4" />
+              <Eye className="w-12 h-12 text-nutty-lime mr-4" />
               <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
                 {(isRTL ? aboutData?.vision?.title_ar : aboutData?.vision?.title_en) || t("vision")}
               </h3>
@@ -174,8 +182,8 @@ const About = () => {
                 whileHover={{ scale: 1.05 }}
                 className="bg-gray-50 dark:bg-gray-800 rounded-xl p-6 text-center hover:shadow-xl transition-all"
               >
-                <div className="w-16 h-16 mx-auto mb-4 bg-nutty-blue/10 rounded-full flex items-center justify-center">
-                  <value.icon className="w-8 h-8 text-nutty-blue" />
+                <div className="w-16 h-16 mx-auto mb-4 bg-nutty-cyan/10 rounded-full flex items-center justify-center">
+                  <value.icon className="w-8 h-8 text-nutty-cyan" />
                 </div>
                 <h4 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
                   {value.title}
@@ -200,7 +208,7 @@ const About = () => {
           </h3>
           <div className="relative">
             {/* Timeline line */}
-            <div className="absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-gradient-to-b from-nutty-blue to-nutty-yellow"></div>
+            <div className="absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-gradient-to-b from-nutty-cyan to-nutty-lime"></div>
 
             {milestones.map((milestone: any, index: number) => (
               <motion.div
@@ -220,7 +228,7 @@ const About = () => {
                   }`}
                 >
                   <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg">
-                    <div className="text-2xl font-bold text-nutty-blue dark:text-nutty-yellow mb-2">
+                    <div className="text-2xl font-bold text-nutty-cyan-dark dark:text-nutty-lime mb-2">
                       {milestone.year}
                     </div>
                     <p className="text-gray-700 dark:text-gray-300">
@@ -230,7 +238,7 @@ const About = () => {
                 </div>
 
                 {/* Dot */}
-                <div className="absolute left-1/2 transform -translate-x-1/2 w-6 h-6 bg-white border-4 border-nutty-blue rounded-full"></div>
+                <div className="absolute left-1/2 transform -translate-x-1/2 w-6 h-6 bg-white border-4 border-nutty-cyan rounded-full"></div>
 
                 {/* Empty space for alignment */}
                 <div className="w-5/12"></div>
@@ -244,7 +252,7 @@ const About = () => {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="bg-gradient-to-r from-nutty-blue to-purple-600 rounded-2xl p-8 md:p-12"
+          className="bg-gradient-to-r from-nutty-cyan to-nutty-cyan-dark rounded-2xl p-8 md:p-12"
         >
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {[
@@ -272,7 +280,7 @@ const About = () => {
         >
           <Link
             href="/about"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-nutty-blue text-white rounded-full font-bold text-lg hover:bg-nutty-blue/90 transition-all transform hover:scale-105 shadow-lg group"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-nutty-cyan text-white rounded-full font-bold text-lg hover:bg-nutty-cyan/90 transition-all transform hover:scale-105 shadow-lg group"
           >
             {isRTL ? "المزيد عنا" : "More About Us"}
             <ArrowRight className={`w-5 h-5 transition-transform duration-300 ${isRTL ? "rotate-180 group-hover:-translate-x-2" : "group-hover:translate-x-2"}`} />
