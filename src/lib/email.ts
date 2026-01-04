@@ -64,7 +64,7 @@ export async function sendNotificationEmail({
     
     if (!emails || !Array.isArray(emails) || emails.length === 0) {
       console.log('No notification emails configured.');
-      return;
+      return { success: false, error: 'No notification emails configured.' };
     }
 
     const transporter = nodemailer.createTransport(TRANSPORTER_CONFIG);
