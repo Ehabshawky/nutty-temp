@@ -9,6 +9,7 @@ import { getFontForLanguage, getFontClasses, type FontLanguage, PRIMARY_FONTS, S
 import ClientComponents from "@/components/ClientComponents";
 import LoadingOverlay from "@/components/LoadingOverlay";
 import ClientScripts from "@/components/ClientScripts";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 // Import Swiper styles
 import "swiper/css";
@@ -179,6 +180,7 @@ export default function RootLayout({
           </div>
           
           <ClientComponents language={language} />
+          <SpeedInsights />
         </Providers>
       </body>
     </html>
