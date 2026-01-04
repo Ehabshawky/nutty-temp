@@ -511,7 +511,7 @@ const Services = () => {
               icon: "🏫",
             },
             {
-              value: "24/7",
+              value: "12/7",
               label: t("services.stats.supportAvailable") || "Support Available",
               icon: "🕒",
             },

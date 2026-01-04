@@ -1,73 +1,86 @@
-// src/app/cookie-policy/page.tsx
-import { Metadata } from 'next';
-
-export const metadata: Metadata = {
-  title: 'Cookie Policy | Nutty Scientists',
-  description: 'Cookie usage and tracking information',
-};
+"use client";
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { motion } from 'framer-motion';
+import { Shield, Cookie, Info, AlertCircle } from 'lucide-react';
 
 export default function CookiePolicyPage() {
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === 'ar';
+
+  const [mounted, setMounted] = React.useState(false);
+  React.useEffect(() => setMounted(true), []);
+
+  const sections = t('cookiePolicy.sections', { returnObjects: true }) as Record<string, { title: string; content: string }>;
+
+  if (!mounted) return null;
+
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 pt-24 pb-20">
+    <div className={`min-h-screen bg-slate-50 dark:bg-gray-900 pt-32 pb-20 ${isRTL ? 'text-right' : 'text-left'}`} dir={isRTL ? 'rtl' : 'ltr'}>
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="prose prose-lg dark:prose-invert max-w-none">
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-8">
-            Cookie Policy
-          </h1>
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white dark:bg-gray-800 rounded-3xl p-8 md:p-12 shadow-sm mb-8 border border-slate-100 dark:border-gray-700 relative overflow-hidden"
+        >
+          <Cookie className="absolute -right-8 -top-8 w-64 h-64 text-slate-50 dark:text-gray-700/50 -z-0 rotate-12" />
           
-          <div className="mb-8 text-gray-600 dark:text-gray-400">
-            <p className="mb-4">
-              Last updated: {new Date().toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-              })}
-            </p>
+          <div className="relative z-10">
+            <h1 className="text-4xl md:text-5xl font-black text-gray-900 dark:text-white mb-6">
+              {t('cookiePolicy.title')}
+            </h1>
+            <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
+              <AlertCircle className="w-5 h-5" />
+              <p>
+                {t('cookiePolicy.lastUpdated')}: {new Date('2025-01-04').toLocaleDateString(i18n.language === 'ar' ? 'ar-EG' : 'en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })}
+              </p>
+            </div>
           </div>
+        </motion.div>
 
-          <div className="space-y-6 text-gray-700 dark:text-gray-300">
-            <section>
-              <h2 className="text-2xl font-semibold mb-4">What Are Cookies</h2>
-              <p>Cookies are small text files that are placed on your computer or mobile device when you visit our website.</p>
-            </section>
-
-            <section>
-              <h2 className="text-2xl font-semibold mb-4">How We Use Cookies</h2>
-              <table className="min-w-full border border-gray-300 dark:border-gray-700">
-                <thead>
-                  <tr className="bg-gray-100 dark:bg-gray-800">
-                    <th className="py-2 px-4 border text-left">Cookie Type</th>
-                    <th className="py-2 px-4 border text-left">Purpose</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td className="py-2 px-4 border">Essential Cookies</td>
-                    <td className="py-2 px-4 border">Required for basic site functionality</td>
-                  </tr>
-                  <tr>
-                    <td className="py-2 px-4 border">Analytics Cookies</td>
-                    <td className="py-2 px-4 border">Help us understand how visitors use our site</td>
-                  </tr>
-                  <tr>
-                    <td className="py-2 px-4 border">Preference Cookies</td>
-                    <td className="py-2 px-4 border">Remember your settings and preferences</td>
-                  </tr>
-                </tbody>
-              </table>
-            </section>
-
-            <section>
-              <h2 className="text-2xl font-semibold mb-4">Cookie Consent</h2>
-              <p>By continuing to use our website, you consent to our use of cookies as described in this policy.</p>
-            </section>
-
-            <section>
-              <h2 className="text-2xl font-semibold mb-4">Managing Cookies</h2>
-              <p>You can control cookies through your browser settings. Please note that disabling cookies may affect your experience.</p>
-            </section>
-          </div>
+        <div className="space-y-6">
+          {Object.entries(sections).map(([key, section], index) => (
+            <motion.section
+              key={key}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.05 }}
+              className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-sm border border-slate-100 dark:border-gray-700"
+            >
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 pb-2 border-b border-slate-100 dark:border-gray-700 flex items-center gap-3">
+                <span className="w-2 h-8 bg-nutty-cyan rounded-full hidden md:block"></span>
+                {section.title}
+              </h2>
+              <div 
+                className="prose prose-slate dark:prose-invert max-w-none text-gray-600 dark:text-gray-300 leading-relaxed faq-answer-content"
+                dangerouslySetInnerHTML={{ __html: section.content }}
+              />
+            </motion.section>
+          ))}
         </div>
+
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="mt-12 bg-nutty-orange/10 dark:bg-nutty-orange/5 rounded-3xl p-8 border-2 border-dashed border-nutty-orange/30 text-center"
+        >
+          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+            {isRTL ? 'هل لديك أي استفسار حول ملفات تعريف الارتباط؟' : 'Have any questions about cookies?'}
+          </h3>
+          <p className="text-gray-600 dark:text-gray-300 mb-6">
+            {isRTL ? 'نحن نسعى دائماً لتقديم أفضل تجربة تصفح لكم.' : 'We always strive to provide the best browsing experience for you.'}
+          </p>
+          <a 
+            href="/contact"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-nutty-orange text-white rounded-2xl font-bold hover:bg-nutty-orange-dark transition-all transform hover:-translate-y-1 shadow-lg shadow-nutty-orange/20"
+          >
+            {t('contact')}
+          </a>
+        </motion.div>
       </div>
     </div>
   );

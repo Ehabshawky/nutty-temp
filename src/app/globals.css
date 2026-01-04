@@ -43,6 +43,28 @@ body {
     rgb(var(--background-start-rgb));
 }
 
+@layer components {
+  .faq-answer-content p {
+    margin-bottom: 0.5rem;
+  }
+  .faq-answer-content p:last-child {
+    margin-bottom: 0;
+  }
+  .faq-answer-content ul {
+    list-style-type: disc;
+    margin-left: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+  .faq-answer-content ol {
+    list-style-type: decimal;
+    margin-left: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+  .faq-answer-content a {
+    color: #3b82f6;
+    text-decoration: underline;
+  }
+}
 @layer base {
   /* Base English font */
   body {

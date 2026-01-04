@@ -17,6 +17,7 @@ import "swiper/css/pagination";
 import "swiper/css/effect-fade";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://nuttyscientists-egypt.com"),
   title: {
     default: "Nutty Scientists Egypt - Where Science Meets Fun!",
     template: "%s | Nutty Scientists Egypt"

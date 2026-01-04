@@ -39,8 +39,16 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# utility scripts
 seed-admin.js
+migrate-data.js
+fix-email.js
+test-conn.js
 setup_admin.sql
+
+# temporary data results
 final_hash.txt
 seed_output.txt
 hash.txt
+data/site-content.json

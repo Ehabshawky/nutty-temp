@@ -3,11 +3,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { Briefcase, MapPin, Clock, ChevronRight, ChevronLeft, ArrowRight, ArrowLeft, Mail, AlertCircle, Search, Filter, CheckCircle } from 'lucide-react';
+import { Briefcase, MapPin, Clock, ChevronRight, ChevronLeft, ArrowRight, ArrowLeft, Mail, AlertCircle, Search, Filter, CheckCircle, X, Upload, Paperclip, Send, Loader2 } from 'lucide-react';
 import { JobCardSkeleton } from "@/components/skeletons/JobCardSkeleton";
 import Link from 'next/link';
-import Navbar from '@/components/layout/Navbar';
-import Footer from '@/components/layout/Footer';
 
 const CareersPage = () => {
   const { t, i18n } = useTranslation();
@@ -19,7 +17,23 @@ const CareersPage = () => {
   const isRTL = i18n.language === 'ar';
   const currentLanguage = (i18n.language || 'en') as 'en' | 'ar';
 
+  // Modal State
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedJob, setSelectedJob] = useState<any>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState("");
+  const [mounted, setMounted] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    message: ""
+  });
+  const [cvFile, setCvFile] = useState<File | null>(null);
+
   useEffect(() => {
+    setMounted(true);
     async function fetchData() {
       try {
         const [jobsRes, settingsRes] = await Promise.all([
@@ -41,18 +55,89 @@ const CareersPage = () => {
     fetchData();
   }, []);
 
+  if (!mounted) {
+    return <div className="min-h-screen bg-gray-50 dark:bg-gray-900" />;
+  }
+
   const departments = ["all", ...new Set(jobs.map(j => j.department.en))];
 
   const filteredJobs = jobs.filter(job => {
-    const matchesSearch = 
-      job.title[currentLanguage].toLowerCase().includes(searchTerm.toLowerCase()) ||
-      job.description[currentLanguage].toLowerCase().includes(searchTerm.toLowerCase());
+    const titleMatch = job.title[currentLanguage]?.toLowerCase().includes(searchTerm.toLowerCase());
+    const descMatch = job.description[currentLanguage]?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = titleMatch || descMatch;
     const matchesDept = selectedDept === "all" || job.department.en === selectedDept;
     return matchesSearch && matchesDept;
   });
 
+  const handleApplyClick = (job: any) => {
+    setSelectedJob(job);
+    setIsModalOpen(true);
+    setSubmitted(false);
+    setError("");
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      if (file.size > 10 * 1024 * 1024) { // 10MB limit
+        setError(isRTL ? "حجم الملف كبير جداً (الحد الأقصى 10 ميجابايت)" : "File is too large (max 10MB)");
+        return;
+      }
+      setCvFile(file);
+      setError("");
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!cvFile) {
+      setError(isRTL ? "يرجى تحميل سيرتك الذاتية" : "Please upload your CV");
+      return;
+    }
+
+    setSubmitting(true);
+    setError("");
+
+    try {
+      const data = new FormData();
+      data.append("jobId", selectedJob?.id || "general");
+      data.append("jobTitle", selectedJob ? selectedJob.title[currentLanguage] : "General Application");
+      data.append("name", formData.name);
+      data.append("email", formData.email);
+      data.append("phone", formData.phone);
+      data.append("message", formData.message);
+      data.append("cv", cvFile);
+
+      const res = await fetch("/api/jobs/apply", {
+        method: "POST",
+        body: data
+      });
+
+      if (res.ok) {
+        setSubmitted(true);
+        setFormData({ name: "", email: "", phone: "", message: "" });
+        setCvFile(null);
+      } else {
+        const err = await res.json();
+        setError(err.error || (isRTL ? "فشل تقديم الطلب" : "Failed to submit application"));
+      }
+    } catch (e) {
+      setError(isRTL ? "حدث خطأ ما" : "Something went wrong");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
-    <div className={`min-h-screen bg-gray-50 dark:bg-gray-900 ${isRTL ? 'font-cairo' : ''}`} dir={isRTL ? 'rtl' : 'ltr'}>
+    <div 
+      className={`min-h-screen bg-gray-50 dark:bg-gray-900 ${isRTL ? 'font-cairo' : ''}`} 
+      dir={isRTL ? 'rtl' : 'ltr'}
+      suppressHydrationWarning
+    >
 
       {/* Hero Section */}
       <section className="relative py-24 overflow-hidden">
@@ -91,7 +176,7 @@ const CareersPage = () => {
       </section>
 
       {/* Search & Filter */}
-      <section className="py-12 bg-white dark:bg-gray-800 shadow-sm sticky top-0 md:top-20 z-30">
+      <section className="py-12 bg-white dark:bg-gray-800 shadow-sm sticky top-0 md:top-20 z-30 border-b border-gray-100 dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row gap-6 items-center">
             <div className="relative flex-1 w-full">
@@ -160,7 +245,7 @@ const CareersPage = () => {
                             <MapPin className="w-3 h-3" /> {job.location[currentLanguage]}
                           </span>
                         </div>
-                        <h3 className="text-3xl md:text-4xl font-black text-gray-900 dark:text-white mb-4 group-hover:text-nutty-blue transition-colors">
+                        <h3 className="text-3xl md:text-4xl font-black text-gray-900 dark:text-white mb-4 group-hover:text-nutty-blue transition-colors text-gradient">
                           {job.title[currentLanguage]}
                         </h3>
                         <p className="text-lg text-gray-600 dark:text-gray-400 mb-8 max-w-3xl leading-relaxed">
@@ -186,13 +271,13 @@ const CareersPage = () => {
                       </div>
 
                       <div className="flex-shrink-0">
-                        <Link
-                          href={`mailto:${settings.career_email || 'careers@nuttyscientists.com'}?subject=Application for ${job.title[currentLanguage]}`}
+                        <button
+                          onClick={() => handleApplyClick(job)}
                           className="inline-flex items-center gap-3 px-10 py-5 bg-gray-900 text-white rounded-3xl font-black text-lg hover:bg-black transition-all transform hover:-translate-y-1 shadow-xl shadow-black/20 group-hover:bg-nutty-blue group-hover:shadow-nutty-blue/20"
                         >
                           {isRTL ? 'قدم الآن' : 'Apply Now'}
                           {isRTL ? <ArrowLeft className="w-6 h-6" /> : <ArrowRight className="w-6 h-6" />}
-                        </Link>
+                        </button>
                       </div>
                     </div>
                   </motion.div>
@@ -239,17 +324,209 @@ const CareersPage = () => {
                   : 'Send us your CV and we\'ll get in touch when a suitable position becomes available.'
                 }
               </p>
-              <a 
-                href={`mailto:${settings.career_email || 'careers@nuttyscientists.com'}`} 
+              <button 
+                onClick={() => handleApplyClick(null)} 
                 className="inline-flex items-center gap-4 px-12 py-6 bg-nutty-orange text-white rounded-[2rem] font-black text-xl hover:bg-orange-600 transition-all transform hover:-translate-y-1 shadow-2xl shadow-orange-600/20 active:scale-95"
               >
-                <Mail className="w-6 h-6" />
+                <Upload className="w-6 h-6" />
                 {isRTL ? 'أرسل سيرتك الذاتية' : 'Submit Your CV'}
-              </a>
+              </button>
             </div>
           </div>
         </div>
       </section>
+
+      {/* Application Modal */}
+      <AnimatePresence>
+        {isModalOpen && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsModalOpen(false)}
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            />
+            
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="relative w-full max-w-2xl bg-white dark:bg-gray-800 rounded-[2.5rem] shadow-2xl overflow-hidden overflow-y-auto max-h-[90vh]"
+            >
+              <div className="p-8 md:p-12">
+                <button 
+                  onClick={() => setIsModalOpen(false)}
+                  className={`absolute ${isRTL ? 'left-6' : 'right-6'} top-6 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors`}
+                >
+                  <X className="w-6 h-6 text-gray-500" />
+                </button>
+
+                {submitted ? (
+                  <div className="text-center py-12">
+                    <div className="w-20 h-20 bg-green-100 dark:bg-green-900/30 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                      <CheckCircle className="w-10 h-10" />
+                    </div>
+                    <h2 className="text-3xl font-black text-gray-900 dark:text-white mb-4">
+                      {isRTL ? 'تم استلام طلبك!' : 'Application Received!'}
+                    </h2>
+                    <p className="text-lg text-gray-600 dark:text-gray-400 mb-8 font-medium">
+                      {isRTL 
+                        ? 'شكراً لاهتمامك بالانضمام إلينا. سيقوم فريقنا بمراجعة ملفك والتواصل معك قريباً.'
+                        : 'Thank you for your interest in joining us. Our team will review your application and get in touch with you soon.'
+                      }
+                    </p>
+                    <button
+                      onClick={() => setIsModalOpen(false)}
+                      className="px-10 py-4 bg-nutty-blue text-white rounded-2xl font-black text-lg shadow-xl shadow-nutty-blue/20"
+                    >
+                      {isRTL ? 'إغلاق' : 'Close'}
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    <div className="mb-10">
+                      <h2 className="text-3xl md:text-4xl font-black text-gray-900 dark:text-white mb-2">
+                        {isRTL ? 'نموذج التقديم' : 'Application Form'}
+                      </h2>
+                      <p className="text-lg text-gray-500 dark:text-gray-400 font-bold">
+                        {selectedJob 
+                          ? (isRTL ? `للتقديم على وظيفة: ${selectedJob.title[currentLanguage]}` : `Applying for: ${selectedJob.title[currentLanguage]}`)
+                          : (isRTL ? 'تقديم طلب عام' : 'General Application')
+                        }
+                      </p>
+                    </div>
+
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                          <label className="text-sm font-black text-gray-700 dark:text-gray-300 uppercase tracking-widest pl-1">
+                            {isRTL ? 'الاسم الكامل' : 'Full Name'} *
+                          </label>
+                          <input
+                            type="text"
+                            name="name"
+                            required
+                            value={formData.name}
+                            onChange={handleInputChange}
+                            className="w-full px-6 py-4 bg-gray-50 dark:bg-gray-700 border-none rounded-2xl focus:ring-2 focus:ring-nutty-blue transition-all font-bold text-gray-900 dark:text-white placeholder-gray-400"
+                            placeholder={isRTL ? 'أدخل اسمك بالكامل' : 'Enter your full name'}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-sm font-black text-gray-700 dark:text-gray-300 uppercase tracking-widest pl-1">
+                            {isRTL ? 'البريد الإلكتروني' : 'Email Address'} *
+                          </label>
+                          <input
+                            type="email"
+                            name="email"
+                            required
+                            value={formData.email}
+                            onChange={handleInputChange}
+                            className="w-full px-6 py-4 bg-gray-50 dark:bg-gray-700 border-none rounded-2xl focus:ring-2 focus:ring-nutty-blue transition-all font-bold text-gray-900 dark:text-white placeholder-gray-400"
+                            placeholder="example@mail.com"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <label className="text-sm font-black text-gray-700 dark:text-gray-300 uppercase tracking-widest pl-1">
+                          {isRTL ? 'رقم الهاتف' : 'Phone Number'}
+                        </label>
+                        <input
+                          type="tel"
+                          name="phone"
+                          value={formData.phone}
+                          onChange={handleInputChange}
+                          className="w-full px-6 py-4 bg-gray-50 dark:bg-gray-700 border-none rounded-2xl focus:ring-2 focus:ring-nutty-blue transition-all font-bold text-gray-900 dark:text-white placeholder-gray-400"
+                          placeholder="+20 1XX XXX XXXX"
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <label className="text-sm font-black text-gray-700 dark:text-gray-300 uppercase tracking-widest pl-1">
+                          {isRTL ? 'لماذا تريد الانضمام إلينا؟' : 'Why do you want to join us?'}
+                        </label>
+                        <textarea
+                          name="message"
+                          rows={4}
+                          value={formData.message}
+                          onChange={handleInputChange}
+                          className="w-full px-6 py-4 bg-gray-50 dark:bg-gray-700 border-none rounded-2xl focus:ring-2 focus:ring-nutty-blue transition-all font-bold text-gray-900 dark:text-white placeholder-gray-400 resize-none"
+                          placeholder={isRTL ? 'أخبرنا قليلاً عن شغفك...' : 'Tell us a bit about your passion...'}
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <label className="text-sm font-black text-gray-700 dark:text-gray-300 uppercase tracking-widest pl-1">
+                          {isRTL ? 'السيرة الذاتية (CV)' : 'Resume / CV'} *
+                        </label>
+                        <div className={`relative border-2 border-dashed rounded-[2rem] p-8 text-center transition-all ${cvFile ? 'border-nutty-blue bg-nutty-blue/5' : 'border-gray-200 dark:border-gray-700 hover:border-nutty-blue/50'}`}>
+                          <input
+                            type="file"
+                            accept=".pdf,.doc,.docx"
+                            onChange={handleFileChange}
+                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                          />
+                          {cvFile ? (
+                            <div className="flex flex-col items-center">
+                              <Paperclip className="w-12 h-12 text-nutty-blue mb-2" />
+                              <p className="font-bold text-gray-900 dark:text-white">{cvFile.name}</p>
+                              <p className="text-xs text-gray-500 mt-1">{(cvFile.size / (1024 * 1024)).toFixed(2)} MB</p>
+                              <button 
+                                type="button"
+                                onClick={(e) => { e.stopPropagation(); setCvFile(null); }}
+                                className="mt-4 text-sm text-red-500 hover:text-red-600 font-black uppercase tracking-widest"
+                              >
+                                {isRTL ? 'إزالة' : 'Remove'}
+                              </button>
+                            </div>
+                          ) : (
+                            <div className="flex flex-col items-center">
+                              <Upload className="w-12 h-12 text-gray-300 mb-4" />
+                              <p className="font-black text-gray-700 dark:text-gray-300 mb-1">
+                                {isRTL ? 'انقر أو اسحب الملف هنا' : 'Click or drag file here'}
+                              </p>
+                              <p className="text-sm text-gray-500">
+                                PDF, DOC, DOCX ({isRTL ? 'بحد أقصى 10 ميجابايت' : 'Max 10MB'})
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {error && (
+                        <div className="flex items-center gap-2 p-4 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-2xl animate-shake">
+                          <AlertCircle className="w-5 h-5 flex-shrink-0" />
+                          <p className="text-sm font-bold">{error}</p>
+                        </div>
+                      )}
+
+                      <button
+                        type="submit"
+                        disabled={submitting}
+                        className="w-full flex items-center justify-center gap-3 px-10 py-5 bg-nutty-blue text-white rounded-3xl font-black text-xl hover:bg-nutty-blue-dark transition-all transform hover:-translate-y-1 shadow-xl shadow-nutty-blue/20 disabled:opacity-50 disabled:transform-none"
+                      >
+                        {submitting ? (
+                          <>
+                            <Loader2 className="w-6 h-6 animate-spin" />
+                            {isRTL ? 'جاري التقديم...' : 'Submitting...'}
+                          </>
+                        ) : (
+                          <>
+                            <Send className="w-6 h-6" />
+                            {isRTL ? 'إرسال الطلب' : 'Submit Application'}
+                          </>
+                        )}
+                      </button>
+                    </form>
+                  </>
+                )}
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
     </div>
   );

@@ -256,11 +256,11 @@ const About = () => {
         >
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {[
-              { value: "50+", label: t("about.stats.expertScientists") },
-              { value: "15", label: t("about.stats.phdHolders") },
-              { value: "100%", label: t("about.stats.certifiedEducators") },
-              { value: "10+", label: t("about.stats.languagesSpoken") },
-            ].map((stat, index) => (
+                { value: "98%", label: t("about.stats.satisfactionRate") },
+                { value: "5K+", label: t("about.stats.happyStudents") },
+                { value: "200+", label: t("about.stats.schoolsPartnered") },
+                { value: "12/7", label: t("about.stats.supportAvailable") },
+              ].map((stat, index) => (
               <div key={index} className="text-center">
                 <div className="text-4xl font-bold text-white mb-2">
                   {stat.value}

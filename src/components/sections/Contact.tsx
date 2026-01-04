@@ -430,9 +430,10 @@ const Contact = () => {
                         animate={{ height: activeFaq === index ? 'auto' : 0 }}
                         className="overflow-hidden"
                       >
-                        <div className="px-6 pb-6 text-gray-600 dark:text-gray-400 font-bold border-t border-gray-100 dark:border-gray-700 pt-4 bg-white/50 dark:bg-gray-900/50">
-                          {i18n.language === 'ar' ? faq.answer_ar : faq.answer_en}
-                        </div>
+                        <div 
+                          className="px-6 pb-6 text-gray-600 dark:text-gray-400 font-bold border-t border-gray-100 dark:border-gray-700 pt-4 bg-white/50 dark:bg-gray-900/50 faq-answer-content"
+                          dangerouslySetInnerHTML={{ __html: i18n.language === 'ar' ? faq.answer_ar : faq.answer_en }}
+                        />
                       </motion.div>
                     </div>
                   ))

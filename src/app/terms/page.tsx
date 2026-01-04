@@ -1,67 +1,86 @@
-// src/app/terms/page.tsx
-import { Metadata } from 'next';
+"use client";
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { motion } from 'framer-motion';
+import { FileText, Scale, Shield, AlertCircle } from 'lucide-react';
 
-export const metadata: Metadata = {
-  title: 'Terms of Service | Nutty Scientists',
-  description: 'Terms and conditions of service',
-};
+export default function TermsPage() {
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === 'ar';
 
-export default function TermsOfServicePage() {
+  const [mounted, setMounted] = React.useState(false);
+  React.useEffect(() => setMounted(true), []);
+
+  const sections = t('termsConditions.sections', { returnObjects: true }) as Record<string, { title: string; content: string }>;
+
+  if (!mounted) return null;
+
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 pt-24 pb-20">
+    <div className={`min-h-screen bg-slate-50 dark:bg-gray-900 pt-32 pb-20 ${isRTL ? 'text-right' : 'text-left'}`} dir={isRTL ? 'rtl' : 'ltr'}>
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="prose prose-lg dark:prose-invert max-w-none">
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-8">
-            Terms of Service
-          </h1>
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white dark:bg-gray-800 rounded-3xl p-8 md:p-12 shadow-sm mb-8 border border-slate-100 dark:border-gray-700 relative overflow-hidden"
+        >
+          <Scale className="absolute -right-8 -top-8 w-64 h-64 text-slate-50 dark:text-gray-700/50 -z-0 rotate-12" />
           
-          <div className="mb-8 text-gray-600 dark:text-gray-400">
-            <p className="mb-4">
-              Last updated: {new Date().toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-              })}
-            </p>
+          <div className="relative z-10">
+            <h1 className="text-4xl md:text-5xl font-black text-gray-900 dark:text-white mb-6">
+              {t('termsConditions.title')}
+            </h1>
+            <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
+              <AlertCircle className="w-5 h-5" />
+              <p>
+                {t('termsConditions.lastUpdated')}: {new Date('2025-01-04').toLocaleDateString(i18n.language === 'ar' ? 'ar-EG' : 'en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })}
+              </p>
+            </div>
           </div>
+        </motion.div>
 
-          <div className="space-y-6 text-gray-700 dark:text-gray-300">
-            <section>
-              <h2 className="text-2xl font-semibold mb-4">1. Acceptance of Terms</h2>
-              <p>By accessing and using our services, you accept and agree to be bound by these Terms of Service.</p>
-            </section>
-
-            <section>
-              <h2 className="text-2xl font-semibold mb-4">2. Service Description</h2>
-              <p>Nutty Scientists provides interactive science education services including workshops, camps, and events for children and adults.</p>
-            </section>
-
-            <section>
-              <h2 className="text-2xl font-semibold mb-4">3. User Responsibilities</h2>
-              <ul className="list-disc pl-6 space-y-2">
-                <li>Provide accurate information when making bookings</li>
-                <li>Follow safety guidelines during events</li>
-                <li>Respect other participants and instructors</li>
-                <li>Pay for services in a timely manner</li>
-              </ul>
-            </section>
-
-            <section>
-              <h2 className="text-2xl font-semibold mb-4">4. Booking and Cancellation</h2>
-              <p>Bookings are confirmed upon full payment. Cancellations must be made at least 48 hours in advance for a full refund.</p>
-            </section>
-
-            <section>
-              <h2 className="text-2xl font-semibold mb-4">5. Liability</h2>
-              <p>We are not liable for any injuries or damages that occur during participation in our activities, except where caused by our negligence.</p>
-            </section>
-
-            <section>
-              <h2 className="text-2xl font-semibold mb-4">6. Changes to Terms</h2>
-              <p>We reserve the right to modify these terms at any time. Continued use of our services constitutes acceptance of changes.</p>
-            </section>
-          </div>
+        <div className="space-y-6">
+          {Object.entries(sections).map(([key, section], index) => (
+            <motion.section
+              key={key}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.05 }}
+              className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-sm border border-slate-100 dark:border-gray-700"
+            >
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 pb-2 border-b border-slate-100 dark:border-gray-700 flex items-center gap-3">
+                <span className="w-2 h-8 bg-nutty-orange rounded-full hidden md:block"></span>
+                {section.title}
+              </h2>
+              <div 
+                className="prose prose-slate dark:prose-invert max-w-none text-gray-600 dark:text-gray-300 leading-relaxed faq-answer-content"
+                dangerouslySetInnerHTML={{ __html: section.content }}
+              />
+            </motion.section>
+          ))}
         </div>
+
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="mt-12 bg-nutty-cyan/10 dark:bg-nutty-cyan/5 rounded-3xl p-8 border-2 border-dashed border-nutty-cyan/30 text-center"
+        >
+          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+            {isRTL ? 'هل لديك أي استفسار حول الشروط؟' : 'Have any questions about the terms?'}
+          </h3>
+          <p className="text-gray-600 dark:text-gray-300 mb-6">
+            {isRTL ? 'نحن نهتم بتوضيح كافة التفاصيل لضمان راحتكم.' : 'We care about clarifying all details to ensure your comfort.'}
+          </p>
+          <a 
+            href="/contact"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-nutty-cyan text-white rounded-2xl font-bold hover:bg-nutty-cyan-dark transition-all transform hover:-translate-y-1 shadow-lg shadow-nutty-cyan/20"
+          >
+            {t('contact')}
+          </a>
+        </motion.div>
       </div>
     </div>
   );

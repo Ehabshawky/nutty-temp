@@ -114,7 +114,7 @@ const Footer = () => {
     // { icon: Twitter, href: "https://x.com/NuttyWexford", label: "Twitter" },
     { icon: Instagram, href: "https://www.instagram.com/nuttyscientistsegy", label: "Instagram" },
     { icon: Youtube, href: "https://www.youtube.com/@nuttyscientistsegypt30", label: "YouTube" },
-    { icon: Linkedin, href: "https://www.linkedin.com/company/nutty-scientists/", label: "LinkedIn" },
+    { icon: Linkedin, href: "https://www.linkedin.com/company/2860329", label: "LinkedIn" },
     
   ];
 

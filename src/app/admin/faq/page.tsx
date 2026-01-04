@@ -5,6 +5,9 @@ import { useTranslation } from 'react-i18next';
 import { HelpCircle, Plus, Trash2, Save, X, ChevronRight, ChevronLeft, MessageSquare } from 'lucide-react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { AdminTableSkeleton } from "@/components/skeletons/AdminTableSkeleton";
+import dynamic from 'next/dynamic';
+
+const JoditEditor = dynamic(() => import('jodit-react'), { ssr: false });
 
 interface FAQItem {
   id: string;
@@ -201,14 +204,19 @@ export default function AdminFAQPage() {
                   </div>
                   <div>
                     <label className="block text-xs font-black text-gray-500 mb-1">Answer (EN)</label>
-                    <textarea
-                      required
-                      value={formData.answer_en}
-                      onChange={e => setFormData({ ...formData, answer_en: e.target.value })}
-                      rows={4}
-                      className="w-full p-4 bg-gray-50 dark:bg-gray-900 border-none rounded-2xl focus:ring-2 focus:ring-nutty-blue transition-all font-bold"
-                      placeholder="e.g. You can book via our website or by contacting our team."
-                    />
+                    <div className="rounded-2xl overflow-hidden border-2 border-transparent focus-within:border-nutty-blue transition-all">
+                      <JoditEditor
+                        value={formData.answer_en}
+                        onBlur={newContent => setFormData({ ...formData, answer_en: newContent })}
+                        config={{
+                          readonly: false,
+                          height: 300,
+                          theme: 'dark',
+                          toolbarButtonSize: 'middle',
+                          buttons: ['bold', 'italic', 'underline', 'strikethrough', 'eraser', 'ul', 'ol', 'font', 'fontsize', 'paragraph', 'brush', 'image', 'link', 'align', 'undo', 'redo', 'fullsize']
+                        }}
+                      />
+                    </div>
                   </div>
                 </div>
 
@@ -227,14 +235,20 @@ export default function AdminFAQPage() {
                   </div>
                   <div dir="rtl">
                     <label className="block text-xs font-black text-gray-500 mb-1">الإجابة (عربي)</label>
-                    <textarea
-                      required
-                      value={formData.answer_ar}
-                      onChange={e => setFormData({ ...formData, answer_ar: e.target.value })}
-                      rows={4}
-                      className="w-full p-4 bg-gray-50 dark:bg-gray-900 border-none rounded-2xl focus:ring-2 focus:ring-nutty-blue transition-all font-bold"
-                      placeholder="مثال: يمكنك الحجز عبر الموقع أو بالتواصل معنا مباشرة."
-                    />
+                    <div className="rounded-2xl overflow-hidden border-2 border-transparent focus-within:border-nutty-blue transition-all">
+                      <JoditEditor
+                        value={formData.answer_ar}
+                        onBlur={newContent => setFormData({ ...formData, answer_ar: newContent })}
+                        config={{
+                          readonly: false,
+                          height: 300,
+                          theme: 'dark',
+                          toolbarButtonSize: 'middle',
+                          buttons: ['bold', 'italic', 'underline', 'strikethrough', 'eraser', 'ul', 'ol', 'font', 'fontsize', 'paragraph', 'brush', 'image', 'link', 'align', 'undo', 'redo', 'fullsize'],
+                          direction: 'rtl'
+                        }}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -274,16 +288,16 @@ export default function AdminFAQPage() {
                   <div className="w-12 h-12 rounded-2xl bg-orange-50 dark:bg-orange-900/20 flex items-center justify-center flex-shrink-0 text-nutty-orange">
                     <HelpCircle className="w-6 h-6" />
                   </div>
-                  <div className="min-w-0">
-                    <h3 className="font-black text-gray-900 dark:text-white truncate">
+                  <div className="min-w-0 flex-1">
+                    <h3 className="font-black text-gray-900 dark:text-white line-clamp-1">
                       {isRTL ? f.question_ar : f.question_en}
                     </h3>
-                    <p className="text-sm text-gray-500 truncate mt-1">
-                      {isRTL ? f.answer_ar : f.answer_en}
+                    <p className="text-sm text-gray-500 line-clamp-2 mt-1 whitespace-normal">
+                      {(isRTL ? f.answer_ar : f.answer_en).replace(/<[^>]*>?/gm, '')}
                     </p>
                   </div>
                 </div>
-                <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="flex items-center gap-2 transition-opacity">
                   <button
                     onClick={() => handleEdit(f)}
                     className="p-3 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-xl transition-colors"

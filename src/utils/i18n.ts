@@ -97,10 +97,10 @@ const resources = {
           2025: "20,000+ Students Trained",
         },
         stats: {
-          expertScientists: "Expert Scientists",
-          phdHolders: "PhD Holders",
-          certifiedEducators: "Certified Educators",
-          languagesSpoken: "Languages Spoken",
+          satisfactionRate: "Satisfaction Rate 😊",
+          happyStudents: "Happy Students 👨‍🎓",
+          schoolsPartnered: "Schools Partnered 🏫",
+          supportAvailable: "Support Available 🕒",
         },
       },
 
@@ -371,6 +371,105 @@ const resources = {
           hours: "Open Everyday, 9 AM - 9 PM",
           getDirections: "Get Directions"
         }
+
+      },
+      privacyPolicy: {
+        title: "Privacy Policy",
+        lastUpdated: "Last updated",
+        sections: {
+          s1: {
+            title: "1. Information We Collect",
+            content: "We may collect the following types of information:<br/><br/><strong>Personal Information</strong><ul class='list-disc pl-6 mt-2 mb-4'><li>Parent/guardian name</li><li>Email address</li><li>Phone number</li><li>Child’s age (for program suitability only)</li><li>Event registrations and inquiries</li></ul><strong>Non-Personal Information</strong><ul class='list-disc pl-6 mt-2'><li>Browser type and device information</li><li>Pages visited on our website</li><li>General location data (city/region)</li><li>Website usage data via cookies or analytics tools</li></ul>"
+          },
+          s2: {
+            title: "2. How We Use Your Information",
+            content: "We use your information to:<ul class='list-disc pl-6 mt-2'><li>Process registrations for programs, camps, events, and workshops</li><li>Respond to inquiries and customer support requests</li><li>Communicate updates, schedules, and important announcements</li><li>Improve our website, services, and user experience</li><li>Send marketing or promotional messages (only if you opt in)</li></ul>"
+          },
+          s3: {
+            title: "3. Children’s Privacy",
+            content: "Protecting children’s privacy is extremely important to us.<ul class='list-disc pl-6 mt-2'><li>We do not knowingly collect personal data directly from children without parental consent</li><li>Any information related to children is provided by parents or guardians for registration and program purposes only</li><li>We do not sell, share, or misuse children’s personal information</li></ul>"
+          },
+          s4: {
+            title: "4. Sharing of Information",
+            content: "Nutty Scientists does not sell or rent your personal data. We may share information only with:<ul class='list-disc pl-6 mt-2 mb-4'><li>Trusted service providers (e.g., booking systems, payment processors)</li><li>Event partners or schools, strictly for event coordination</li><li>Legal authorities if required by law</li></ul>All partners are required to keep your information confidential.<br/><br/><strong>Photos & Media Usage</strong><br/>During our programs, events, camps, and activities, Nutty Scientists may take photos or short videos of children for educational, promotional, and marketing purposes, including use on our website and official social media channels.<ul class='list-disc pl-6 mt-2 mb-4'><li>Photos and videos are taken in a safe, respectful, and appropriate manner</li><li>We do not include children’s full names or personal details when sharing media</li><li>Media content is used solely to showcase activities and experiences</li></ul>By enrolling a child in our programs or attending our events, parents or guardians consent to the use of such photos or videos, unless they inform us otherwise in writing. Parents or guardians may request at any time:<ul class='list-disc pl-6 mt-2'><li>That their child not be photographed</li><li>Removal of specific images from our platforms</li></ul>Requests can be sent to us using the contact details below."
+          },
+          s5: {
+            title: "5. Cookies & Analytics",
+            content: "Our website may use cookies and analytics tools to:<ul class='list-disc pl-6 mt-2'><li>Understand how visitors use our website</li><li>Improve website performance and content</li></ul>You may disable cookies in your browser settings, but some features may not function properly."
+          },
+          s6: {
+            title: "6. Data Security",
+            content: "We take reasonable technical and organizational measures to protect your personal information against:<ul class='list-disc pl-6 mt-2'><li>Unauthorized access</li><li>Loss or misuse</li><li>Alteration or disclosure</li></ul>However, no online system can be 100% secure."
+          },
+          s7: {
+            title: "7. Your Rights",
+            content: "You have the right to:<ul class='list-disc pl-6 mt-2'><li>Request access to your personal data</li><li>Request correction or deletion of your information</li><li>Opt out of marketing communications at any time</li></ul>To exercise these rights, please contact us using the details below."
+          },
+          s8: {
+            title: "8. Third-Party Links",
+            content: "Our website may contain links to third-party websites. We are not responsible for the privacy practices or content of those sites."
+          },
+          s9: {
+            title: "9. Updates to This Policy",
+            content: "We may update this Privacy Policy from time to time. Any changes will be posted on this page with an updated revision date."
+          },
+          s10: {
+            title: "10. Contact Us",
+            content: "If you have any questions about this Privacy Policy or how we handle your data, please contact us:<br/><br/>📧 <strong>Email:</strong> info@nuttyscientists-egypt.com<br/>📞 <strong>Phone:</strong> 01222668543<br/>📍 <strong>Location:</strong> Garden 8 mall, 1st settlement, New Cairo, Egypt"
+          }
+        }
+      },
+      cookiePolicy: {
+        title: "Cookie Policy",
+        lastUpdated: "Last updated",
+        sections: {
+          s1: {
+            title: "1. What Are Cookies?",
+            content: "Cookies are small text files that are stored on your device when you visit a website. They help us provide a better experience by remembering your preferences and understanding how you use our site."
+          },
+          s2: {
+            title: "2. How We Use Cookies",
+            content: "We use cookies to improve our services, analyze website traffic, and for marketing purposes. This includes understanding which pages are most popular and ensuring the site functions correctly."
+          },
+          s3: {
+            title: "3. Types of Cookies We Use",
+            content: "<strong>Essential Cookies:</strong> Necessary for the website to function properly.<br/><strong>Analytics Cookies:</strong> Help us understand how visitors interact with our site.<br/><strong>Marketing Cookies:</strong> Used to track visitors across websites to display relevant ads."
+          },
+          s4: {
+            title: "4. Managing Cookies",
+            content: "You can choose to disable cookies through your browser settings. However, please note that some parts of our website may not function correctly if cookies are disabled."
+          }
+        }
+      },
+      termsConditions: {
+        title: "Terms & Conditions",
+        lastUpdated: "Last updated",
+        sections: {
+          s1: {
+            title: "1. Introduction",
+            content: "By accessing and using this website, you agree to comply with and be bound by the following terms and conditions. If you do not agree with any part of these terms, please do not use our website."
+          },
+          s2: {
+            title: "2. Intellectual Property",
+            content: "All content on this website, including text, graphics, logos, and images, is the property of Nutty Scientists and is protected by copyright laws. You may not reproduce or distribute any content without our prior written consent."
+          },
+          s3: {
+            title: "3. User Responsibilities",
+            content: "Users agree to use the website for lawful purposes only and not to engage in any activity that could damage or disrupt the site's functionality."
+          },
+          s4: {
+            title: "4. Program Enrolment & Payment",
+            content: "Enrolment in our programs is subject to availability and payment of the required fees. Cancellation and refund policies apply as specified during the booking process."
+          },
+          s5: {
+            title: "5. Limitation of Liability",
+            content: "Nutty Scientists will not be liable for any direct, indirect, or consequential damages arising from the use of our website or participation in our programs."
+          },
+          s6: {
+            title: "6. Governing Law",
+            content: "These terms and conditions are governed by and construed in accordance with the laws of Egypt. Any disputes will be subject to the exclusive jurisdiction of the Egyptian courts."
+          }
+        }
       }
     },
   },
@@ -454,10 +553,18 @@ const resources = {
           2025: "تدريب أكثر من 20,000 طالب",
         },
         stats: {
+          satisfactionRate: "نسبة الرضا 😊",
+          happyStudents: "طلاب سعداء 👨‍🎓",
+          schoolsPartnered: "مدارس شريكة 🏫",
+          supportAvailable: "دعم متاح 🕒",
           expertScientists: "علماء خبراء",
           phdHolders: "حملة دكتوراه",
           certifiedEducators: "معلمون معتمدون",
           languagesSpoken: "اللغات التي نتحدثها",
+          experiences: "تجارب علمية عملية",
+          availability: "7 أيام في الأسبوع",
+          schools: "300+ مدارس",
+          experienceYears: "30+ سنة خبرة عالمية",
         },
       },
 
@@ -734,6 +841,7 @@ const resources = {
           hours: "مفتوح يوميًا، 9 ص - 9 م",
           getDirections: "احصل على الاتجاهات"
         }
+
       },
 
       // Dates
@@ -749,6 +857,104 @@ const resources = {
       october: "أكتوبر",
       november: "نوفمبر",
       december: "ديسمبر",
+      privacyPolicy: {
+        title: "سياسة الخصوصية",
+        lastUpdated: "آخر تحديث",
+        sections: {
+          s1: {
+            title: "1. المعلومات التي نجمعها",
+            content: "قد نجمع الأنواع التالية من المعلومات:<br/><br/><strong>المعلومات الشخصية</strong><ul class='list-disc pr-6 mt-2 mb-4'><li>اسم ولي الأمر/الوصي</li><li>عنوان البريد الإلكتروني</li><li>رقم الهاتف</li><li>عمر الطفل (لأغراض ملاءمة البرنامج فقط)</li><li>تسجيلات الفعاليات والاستفسارات</li></ul><strong>المعلومات غير الشخصية</strong><ul class='list-disc pr-6 mt-2'><li>نوع المتاصفح ومعلومات الجهاز</li><li>الصفحات التي تمت زيارتها على موقعنا</li><li>بيانات الموقع العامة (المدينة/المنطقة)</li><li>بيانات استخدام الموقع عبر ملفات تعريف الارتباط أو أدوات التحليل</li></ul>"
+          },
+          s2: {
+            title: "2. كيف نستخدم معلوماتك",
+            content: "نستخدم معلوماتك من أجل:<ul class='list-disc pr-6 mt-2'><li>معالجة التسجيلات للبرامج والمعسكرات والفعاليات وورش العمل</li><li>الرد على الاستفسارات وطلبات دعم العملاء</li><li>التواصل بشأن التحديثات والجداول الزمنية والإعلانات الهامة</li><li>تحسين موقعنا وخدماتنا وتجربة المستخدم</li><li>إرسال رسائل تسويقية أو ترويجية (فقط إذا اخترت الاشتراك)</li></ul>"
+          },
+          s3: {
+            title: "3. خصوصية الأطفال",
+            content: "حماية خصوصية الأطفال أمر بالغ الأهمية بالنسبة لنا.<ul class='list-disc pr-6 mt-2'><li>نحن لا نجمع بيانات شخصية مباشرة من الأطفال عن عمد دون موافقة الوالدين</li><li>يتم تقديم أي معلومات تتعلق بالأطفال من قبل الآباء أو الأوصياء لأغراض التسجيل والبرامج فقط</li><li>نحن لا نبيع أو نشارك أو نسيء استخدام المعلومات الشخصية للأطفال</li></ul>"
+          },
+          s4: {
+            title: "4. مشاركة المعلومات",
+            content: "لا تقوم ناتي ساينتستس ببيع أو تأجير بياناتك الشخصية. قد نشارك المعلومات فقط مع:<ul class='list-disc pr-6 mt-2 mb-4'><li>مزودي الخدمة الموثوقين (مثل أنظمة الحجز ومعالجي الدفع)</li><li>شركاء الفعاليات أو المدارس، بدقة لتنسيق الفعاليات</li><li>السلطات القانونية إذا لزم الأمر بموجب القانون</li></ul>يُطلب من جميع الشركاء الحفاظ على سرية معلوماتك.<br/><br/><strong>استخدام الصور والوسائط</strong><br/>خلال برامجنا وفعالياتنا ومعسكراتنا وأنشطتنا، قد تلتقط ناتي ساينتستس صوراً أو مقاطع فيديو قصيرة للأطفال لأغراض تعليمية وترويجية وتسويقية، بما في ذلك الاستخدام على موقعنا وقنوات التواصل الاجتماعي الرسمية لدينا.<ul class='list-disc pr-6 mt-2 mb-4'><li>يتم التقاط الصور ومقاطع الفيديو بطريقة آمنة ومحترمة ومناسبة</li><li>نحن لا ندرج أسماء الأطفال الكاملة أو تفاصيلهم الشخصية عند مشاركة الوسائط</li><li>يتم استخدام محتوى الوسائط فقط لعرض الأنشطة والتجارب</li></ul>من خلال تسجيل الطفل في برامجنا أو حضور فعالياتنا، يوافق الآباء أو الأوصياء على استخدام هذه الصور أو مقاطع الفيديو، ما لم يبلغونا بخلاف ذلك كتابةً. يجوز للوالدين أو الأوصياء طلب ما يلي في أي وقت:<ul class='list-disc pr-6 mt-2'><li>عدم تصوير طفلهم</li><li>إزالة صور معينة من منصاتنا</li></ul>يمكن إرسال الطلبات إلينا باستخدام تفاصيل الاتصال أدناه."
+          },
+          s5: {
+            title: "5. ملفات تعريف الارتباط والتحليلات",
+            content: "قد يستخدم موقعنا ملفات تعريف الارتباط وأدوات التحليل من أجل:<ul class='list-disc pr-6 mt-2'><li>فهم كيفية استخدام الزوار لموقعنا</li><li>تحسين أداء الموقع ومحتواه</li></ul>يمكنك تعطيل ملفات تعريف الارتباط في إعدادات متصفحك، ولكن قد لا تعمل بعض الميزات بشكل صحيح."
+          },
+          s6: {
+            title: "6. أمن البيانات",
+            content: "نتخذ تدابير فنية وتنظيمية معقولة لحماية معلوماتك الشخصية من:<ul class='list-disc pr-6 mt-2'><li>الوصول غير المصرح به</li><li>الفقدان أو سوء الاستخدام</li><li>التعديل أو الإفصاح</li></ul>ومع ذلك، لا يمكن لأي نظام عبر الإنترنت أن يكون آمناً بنسبة 100٪."
+          },
+          s7: {
+            title: "7. حقوقك",
+            content: "لديك الحق في:<ul class='list-disc pr-6 mt-2'><li>طلب الوصول إلى بياناتك الشخصية</li><li>طلب تصحيح أو حذف معلوماتك</li><li>إلغاء الاشتراك في الاتصالات التسويقية في أي وقت</li></ul>لممارسة هذه الحقوق، يرجى الاتصال بنا باستخدام التفاصيل أدناه."
+          },
+          s8: {
+            title: "8. روابط الطرف الثالث",
+            content: "قد يحتوي موقعنا على روابط لم مواقع طرف ثالث. نحن لسنا مسؤولين عن ممارسات الخصوصية أو محتوى تلك المواقع."
+          },
+          s9: {
+            title: "9. تحديثات هذه السياسة",
+            content: "قد نقوم بتحديث سياسة الخصوصية هذه من وقت لآخر. سيتم نشر أي تغييرات على هذه الصفحة مع تاريخ مراجعة محدث."
+          },
+          s10: {
+            title: "10. اتصل بنا",
+            content: "إذا كان لديك أي أسئلة حول سياسة الخصوصية هذه أو كيفية تعاملنا مع بياناتك، يرجى الاتصال بنا:<br/><br/>📧 <strong>البريد الإلكتروني:</strong> info@nuttyscientists-egypt.com<br/>📞 <strong>الهاتف:</strong> 01222668543<br/>📍 <strong>الموقع:</strong> جاردن 8 مول، التجمع الأول، القاهرة الجديدة، مصر"
+          }
+        }
+      },
+      cookiePolicy: {
+        title: "سياسة ملفات تعريف الارتباط",
+        lastUpdated: "آخر تحديث",
+        sections: {
+          s1: {
+            title: "1. ما هي ملفات تعريف الارتباط؟",
+            content: "ملفات تعريف الارتباط هي ملفات نصية صغيرة يتم تخزينها على جهازك عند زيارة موقع ويب. تساعدنا في تقديم تجربة أفضل من خلال تذكر تفضيلاتك وفهم كيفية استخدامك لموقعنا."
+          },
+          s2: {
+            title: "2. كيف نستخدم ملفات تعريف الارتباط",
+            content: "نستخدم ملفات تعريف الارتباط لتحسين خدماتنا وتحليل حركة المرور على الموقع ولأغراض التسويق. يتضمن ذلك فهم الصفحات الأكثر شيوعًا والتأكد من عمل الموقع بشكل صحيح."
+          },
+          s3: {
+            title: "3. أنواع ملفات تعريف الارتباط التي نستخدمها",
+            content: "<strong>الملفات الضرورية:</strong> ضرورية لعمل الموقع بشكل صحيح.<br/><strong>ملفات التحليل:</strong> تساعدنا في فهم كيفية تفاعل الزوار مع موقعنا.<br/><strong>ملفات التسويق:</strong> تُستخدم لتتبع الزوار عبر المواقع لعرض إعلانات ذات صلة."
+          },
+          s4: {
+            title: "4. إدارة ملفات تعريف الارتباط",
+            content: "يمكنك اختيار تعطيل ملفات تعريف الارتباط من خلال إعدادات متصفحك. ومع ذلك، يرجى ملاحظة أن بعض أجزاء موقعنا قد لا تعمل بشكل صحيح إذا تم تعطيل ملفات تعريف الارتباط."
+          }
+        }
+      },
+      termsConditions: {
+        title: "الشروط والأحكام",
+        lastUpdated: "آخر تحديث",
+        sections: {
+          s1: {
+            title: "1. مقدمة",
+            content: "دخولك واستخدامك لهذا الموقع يعني موافقتك على الالتزام بالشروط والأحكام التالية. إذا كنت لا توافق على أي جزء من هذه الشروط، يرجى عدم استخدام موقعنا."
+          },
+          s2: {
+            title: "2. الملكية الفكرية",
+            content: "جميع المحتويات على هذا الموقع، بما في ذلك النصوص والرسومات والشعارات والصور، هي ملك لشركة ناتي ساينتستس ومحمية بموجب قوانين حقوق النشر. لا يجوز لك إعادة إنتاج أو توزيع أي محتوى دون موافقة خطية مسبقة منا."
+          },
+          s3: {
+            title: "3. مسؤوليات المستخدم",
+            content: "يوافق المستخدمون على استخدام الموقع لأغراض قانونية فقط وعدم الانخراط في أي نشاط قد يضر أو يعطل وظائف الموقع."
+          },
+          s4: {
+            title: "4. التسجيل في البرامج والدفع",
+            content: "يخضع التسجيل في برامجنا للتوافر ودفع الرسوم المطلوبة. تنطبق سياسات الإلغاء والاسترداد كما هو محدد أثناء عملية الحجز."
+          },
+          s5: {
+            title: "5. تحديد المسؤولية",
+            content: "لن تكون ناتي ساينتستس مسؤولة عن أي أضرار مباشرة أو غير مباشرة أو تبعية ناتجة عن استخدام موقعنا أو المشاركة في برامجنا."
+          },
+          s6: {
+            title: "6. القانون المعمول به",
+            content: "تخضع هذه الشروط والأحكام وتفسر وفقًا لقوانين جمهورية مصر العربية. وأي نزاعات ستخضع للولاية القضائية الحصرية للمحاكم المصرية."
+          }
+        }
+      }
     },
   },
 };
