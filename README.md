@@ -1,27 +1,63 @@
-# Nutty Scientists Egypt - Next.js Website
+# 🧪 Nutty Scientists Egypt
 
-Welcome to the official repository for **Nutty Scientists Egypt**. This is a modern, high-performance web application built with Next.js to showcase scientific programs, workshops, and events for children.
+Official website for **Nutty Scientists Egypt**, an educational organization providing fun science programs, workshops, and camps for kids.
 
-## 🚀 Key Features
+🌐 Live Website: https://nuttyscientists.vercel.app  
+📦 Repository: https://github.com/Ehabshawky/nuttyscientists-egypt
 
-- **Dynamic CMS**: Fully editable content via a custom Admin Dashboard (built with Supabase).
-- **Smart Local NLP Chatbot**: 
-  - **Fuzzy Matching**: Handles typos and variations in both English and Arabic.
-  - **Site Discovery**: Automatically directs users to relevant pages (Workshops, Camps, Careers, etc.) based on keywords.
-  - **Persistent History**: Chat history is preserved across page navigations.
-  - **Business Hours Integration**: Conditional WhatsApp support based on configurable working hours.
-- **Bilingual Support (i18n)**: Seamless switching between English and Arabic with full RTL support.
-- **Modern UI/UX**: Responsive design with Framer Motion animations, dark mode support, and premium aesthetics.
-- **Dynamic Services & Blog**: Manage programs, articles, and scientific tips from the admin panel.
+---
 
-## 🛠 Tech Stack
+## 🚀 Tech Stack
 
-- **Framework**: [Next.js 14+](https://nextjs.org/) (App Router)
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
-- **Database & Auth**: [Supabase](https://supabase.com/) & [NextAuth.js](https://next-auth.js.org/)
-- **Animations**: [Framer Motion](https://www.framer.com/motion/)
-- **Localization**: [i18next](https://www.i18next.com/)
-- **Email**: [Resend](https://resend.com/)
+- **Next.js** (App Router)
+- **TypeScript**
+- **Tailwind CSS**
+- **Supabase** (Database & CMS)
+- **NextAuth** (Authentication)
+- **i18n** (Arabic / English)
+- **Responsive Design**
+- **RTL / LTR Support**
+- **Dark Mode**
+
+---
+
+## ✨ Features
+
+- 🌍 Multi-language support (Arabic & English)
+- 🧑‍🏫 Dynamic content management via Supabase
+- 🖥️ Fully responsive UI
+- 🌙 Dark mode support
+- 🔐 Secure authentication
+- ⚡ High performance & SEO friendly
+- 📱 Mobile-first design
+- 🤖 Smart Local NLP Chatbot (Fuzzy Matching & Site Discovery)
+
+---
+
+## 📸 Screenshots
+
+### 🏠 Home Page
+![Home Page](/public/screenshots/home.png)
+
+### 🌍 Arabic Version
+![Arabic Home](/public/screenshots/homeArabic.png)
+
+### 🧪 Services & Programs
+![Services](/public/screenshots/services.png)
+
+### 📖 About Us
+![About](/public/screenshots/about.png)
+
+### 📝 Blog & News
+![Blog](/public/screenshots/Blog.png)
+
+### 📬 Contact Us
+![Contact](/public/screenshots/contact.png)
+
+### 🔐 Admin Dashboard
+![Admin Page](/public/screenshots/adminPage.png)
+
+---
 
 ## 🏁 Getting Started
 
@@ -35,21 +71,12 @@ RESEND_API_KEY=your_key
 NEXTAUTH_SECRET=your_secret
 ```
 
-### 2. Installation
+### 2. Installation & Running
 ```bash
 npm install
-```
-
-### 3. Run Development Server
-```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-## 🚢 Deployment
-
-The project is optimized for deployment on **Vercel**. Simply connect your repository and configure the environment variables.
-
 ---
-© 2026 Nutty Scientists Egypt. All rights reserved.
+
+📄 License: © 2026 Nutty Scientists Egypt. All rights reserved.
