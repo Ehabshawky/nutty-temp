@@ -1,0 +1,14 @@
+{
+  "buildCommand": "next build",
+  "devCommand": "next dev",
+  "installCommand": "npm install",
+  "framework": "nextjs",
+  "regions": ["iad1"],
+  "redirects": [
+    {
+      "source": "https://www.nuttyscientists-egypt.com/:path*",
+      "destination": "https://nuttyscientists-egypt.com/:path*",
+      "permanent": true
+    }
+  ]
+}
